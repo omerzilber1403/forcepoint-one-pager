@@ -8,9 +8,11 @@ interface ProjectModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  /** When true, the body fills available height with no padding/scroll (child manages its own layout) */
+  fullHeight?: boolean;
 }
 
-export function ProjectModal({ open, onClose, title, children }: ProjectModalProps) {
+export function ProjectModal({ open, onClose, title, children, fullHeight = false }: ProjectModalProps) {
   // Close on Escape key
   useEffect(() => {
     if (!open) return;
@@ -82,8 +84,8 @@ export function ProjectModal({ open, onClose, title, children }: ProjectModalPro
               </button>
             </div>
 
-            {/* Scrollable body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            {/* Body */}
+            <div className={fullHeight ? "flex-1 overflow-hidden" : "flex-1 overflow-y-auto p-6"}>
               {children}
             </div>
           </motion.div>
