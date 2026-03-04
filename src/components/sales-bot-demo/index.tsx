@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
+/* ─── API Base URL ───────────────────────────────────────────────────────── */
+// In production (Netlify): set NEXT_PUBLIC_SALES_BOT_API=https://your-backend.onrender.com
+// Locally: falls back to http://localhost:8080
+const API = (process.env.NEXT_PUBLIC_SALES_BOT_API ?? "http://localhost:8080").replace(/\/$/, "");
+
 /* ─── Types ─────────────────────────────────────────────────────────────── */
 interface Company {
   id: number;
@@ -827,7 +832,7 @@ function CustomerProfile({ customer }: { customer: Customer | null }) {
   useEffect(() => {
     if (customer) {
       setLoading(true);
-      fetch(`http://localhost:8080/api/v1/dev/customer/${customer.id}/profile`)
+      fetch(`${API}/api/v1/dev/customer/${customer.id}/profile`)
         .then((r) => r.ok ? r.json() : null)
         .then((d) => setProfile(d))
         .catch(() => setProfile(null))
@@ -911,7 +916,7 @@ function CompanySelector({
   useEffect(() => {
     if (selectedCompany) {
       setLoading(true);
-      fetch(`http://localhost:8080/api/v1/admin/companies/${selectedCompany.id}/users`)
+      fetch(`${API}/api/v1/admin/companies/${selectedCompany.id}/users`)
         .then((r) => r.ok ? r.json() : [])
         .then(setCustomers)
         .catch(() => setCustomers([]))
@@ -992,7 +997,7 @@ function ChatInterface({
 
   useEffect(() => {
     const check = () =>
-      fetch("http://localhost:8080/health")
+      fetch(API + "/health")
         .then((r) => setConnectionStatus(r.ok ? "connected" : "disconnected"))
         .catch(() => setConnectionStatus("disconnected"));
     check();
@@ -1008,7 +1013,7 @@ function ChatInterface({
     setSending(true);
     setTyping(true);
     try {
-      const r = await fetch("http://localhost:8080/api/v1/agent/reply", {
+      const r = await fetch(API + "/api/v1/agent/reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_id: company.id, user_id: String(customer.id), session_id: sessionId, message: text, channel: "dev" }),
@@ -1140,7 +1145,7 @@ function DemoInterface({ company }: { company: Company }) {
 
   useEffect(() => {
     const check = () =>
-      fetch("http://localhost:8080/health")
+      fetch(API + "/health")
         .then((r) => setConnectionStatus(r.ok ? "connected" : "disconnected"))
         .catch(() => setConnectionStatus("disconnected"));
     check();
@@ -1158,7 +1163,7 @@ function DemoInterface({ company }: { company: Company }) {
     setTyping(true);
     setMessageStatus("שולח...");
     try {
-      const r = await fetch("http://localhost:8080/api/v1/agent/reply", {
+      const r = await fetch(API + "/api/v1/agent/reply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text, company_id: company.id, customer_id: demoCustomer.external_id, session_id: sessionId, channel: "demo" }),
@@ -1183,7 +1188,7 @@ function DemoInterface({ company }: { company: Company }) {
     if (currentRating) {
       setRatingData((p) => [...p, { rating: currentRating }]);
       const rating = { id: Date.now(), rating: currentRating, feedback: currentFeedback, companyId: company.id, sessionId };
-      fetch("http://localhost:8080/api/v1/feedback/rating", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rating) }).catch(() => {});
+      fetch(API + "/api/v1/feedback/rating", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(rating) }).catch(() => {});
       setCurrentRating(null); setCurrentFeedback(""); setShowRatingModal(false);
     }
   };
@@ -1318,7 +1323,7 @@ function CreateCustomerModal({ company, onClose, onCustomerCreated }: {
     if (!form.name.trim()) { alert("שם הוא שדה חובה"); return; }
     setSubmitting(true);
     try {
-      const r = await fetch("http://localhost:8080/api/v1/dev/customers", {
+      const r = await fetch(API + "/api/v1/dev/customers", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, company_id: company.id, age: form.age ? parseInt(form.age) : null, interests: form.interests ? form.interests.split(",").map((s) => s.trim()) : [] }),
       });
@@ -1449,7 +1454,7 @@ function CreateCompanyModal({ isOpen, onClose, onCompanyCreated }: {
         brand_voice: { ...form.brand_voice, forbidden_words: form.brand_voice.forbidden_words.split(",").map((s) => s.trim()).filter(Boolean) },
         icp: { ...form.icp, industries: form.icp.industries.split(",").map((s) => s.trim()).filter(Boolean), buyer_roles: form.icp.buyer_roles.split(",").map((s) => s.trim()).filter(Boolean) },
       };
-      const r = await fetch("http://localhost:8080/api/v1/admin/companies", {
+      const r = await fetch(API + "/api/v1/admin/companies", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
@@ -1570,7 +1575,7 @@ function CompanySelectionPage({ onCompanySelect, onDemoMode }: {
   useEffect(() => {
     loadCompanies();
     const check = () =>
-      fetch("http://localhost:8080/health")
+      fetch(API + "/health")
         .then((r) => setServerStatus(r.ok ? "online" : "offline"))
         .catch(() => setServerStatus("offline"));
     check();
@@ -1580,7 +1585,7 @@ function CompanySelectionPage({ onCompanySelect, onDemoMode }: {
 
   const loadCompanies = () => {
     setLoading(true);
-    fetch("http://localhost:8080/api/v1/admin/companies")
+    fetch(API + "/api/v1/admin/companies")
       .then((r) => r.ok ? r.json() : [])
       .then(setCompanies)
       .catch(() => setCompanies([]))
@@ -1670,11 +1675,11 @@ function CompanyChatPage({ selectedCompany, onBackToSelection }: {
   const [serverStatus, setServerStatus] = useState("checking");
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/v1/coach/stats")
+    fetch(API + "/api/v1/coach/stats")
       .then((r) => r.ok ? r.json() : {})
       .then(setStats).catch(() => {});
     const check = () =>
-      fetch("http://localhost:8080/health")
+      fetch(API + "/health")
         .then((r) => setServerStatus(r.ok ? "online" : "offline"))
         .catch(() => setServerStatus("offline"));
     check();
@@ -1690,14 +1695,14 @@ function CompanyChatPage({ selectedCompany, onBackToSelection }: {
   }, [selectedCustomer]);
 
   const loadStats = () => {
-    fetch("http://localhost:8080/api/v1/coach/stats")
+    fetch(API + "/api/v1/coach/stats")
       .then((r) => r.ok ? r.json() : {}).then(setStats).catch(() => {});
   };
 
   const handleStartConversation = async () => {
     if (!selectedCustomer) { alert("בחר לקוח תחילה"); return; }
     try {
-      const r = await fetch("http://localhost:8080/api/v1/dev/conversations", {
+      const r = await fetch(API + "/api/v1/dev/conversations", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ company_id: selectedCompany.id, user_id: selectedCustomer.id, channel: "dev" }),
       });

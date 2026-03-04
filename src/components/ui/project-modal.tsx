@@ -37,10 +37,10 @@ export function ProjectModal({ open, onClose, title, children, fullHeight = fals
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — full screen, above navbar */}
           <motion.div
             key="modal-backdrop"
-            className="fixed inset-0 z-40 bg-black/75 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -48,10 +48,10 @@ export function ProjectModal({ open, onClose, title, children, fullHeight = fals
             onClick={onClose}
           />
 
-          {/* Modal panel — glass */}
+          {/* Modal panel — glass, nearly full screen */}
           <motion.div
             key="modal-panel"
-            className="fixed inset-4 sm:inset-8 md:inset-12 lg:inset-16 z-50 rounded-2xl border flex flex-col"
+            className="fixed inset-2 sm:inset-3 z-[201] rounded-2xl border flex flex-col"
             style={{
               background: "rgba(8, 8, 24, 0.7)",
               backdropFilter: "blur(28px)",
