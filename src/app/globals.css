@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* ─── Custom Design Tokens ──────────────────────────────────────────────── */
+@theme inline {
+  /* Background layers */
+  --color-bg: #0a0a0f;
+  --color-surface: #12121a;
+  --color-border-col: #1e1e2e;
+
+  /* Accent palette */
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+  --color-cyan-col: #22d3ee;
+
+  /* Text scale */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #475569;
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ─── Base Styles ───────────────────────────────────────────────────────── */
+:root {
+  --background: #0a0a0f;
+  --foreground: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ─── Text Selection ────────────────────────────────────────────────────── */
+::selection {
+  background: #6366f1;
+  color: #fff;
+}
+
+/* ─── Custom Scrollbar ──────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e1e2e;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
