@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { OWNER, NAV_LINKS } from "@/lib/data";
 import { Github, Download } from "lucide-react";
@@ -19,11 +18,14 @@ export function Navbar() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-bg/80 backdrop-blur-md border-b"
-          : "bg-transparent"
+        scrolled ? "border-b" : "bg-transparent"
       )}
-      style={{ borderColor: scrolled ? "#1e1e2e" : "transparent" }}
+      style={{
+        backdropFilter: scrolled ? "blur(24px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(24px)" : "none",
+        background: scrolled ? "rgba(8, 8, 20, 0.65)" : "transparent",
+        borderColor: scrolled ? "rgba(255, 255, 255, 0.08)" : "transparent",
+      }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo / Name */}
@@ -47,13 +49,17 @@ export function Navbar() {
           ))}
         </nav>
 
-        {/* GitHub CTA */}
+        {/* CTA buttons — glass style */}
         <div className="flex items-center gap-2">
           <a
             href={OWNER.cvPdf}
             download
-            className="hidden md:flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:border-accent transition-all duration-200"
-            style={{ borderColor: "#1e1e2e" }}
+            className="hidden md:flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary transition-all duration-200"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              backdropFilter: "blur(12px)",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+            }}
           >
             <Download className="w-3.5 h-3.5" /> CV
           </a>
@@ -61,8 +67,12 @@ export function Navbar() {
             href={OWNER.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:border-accent transition-all duration-200"
-            style={{ borderColor: "#1e1e2e" }}
+            className="flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary transition-all duration-200"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              backdropFilter: "blur(12px)",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+            }}
             aria-label="GitHub profile"
           >
             <Github className="w-4 h-4" />

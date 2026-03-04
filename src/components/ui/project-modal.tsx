@@ -46,11 +46,17 @@ export function ProjectModal({ open, onClose, title, children }: ProjectModalPro
             onClick={onClose}
           />
 
-          {/* Modal panel */}
+          {/* Modal panel — glass */}
           <motion.div
             key="modal-panel"
             className="fixed inset-4 sm:inset-8 md:inset-12 lg:inset-16 z-50 rounded-2xl border flex flex-col"
-            style={{ background: "#0d0d14", borderColor: "#1e1e2e" }}
+            style={{
+              background: "rgba(8, 8, 24, 0.7)",
+              backdropFilter: "blur(28px)",
+              WebkitBackdropFilter: "blur(28px)",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 32px 96px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+            }}
             initial={{ opacity: 0, scale: 0.96, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 16 }}
@@ -59,7 +65,7 @@ export function ProjectModal({ open, onClose, title, children }: ProjectModalPro
             {/* Header */}
             <div
               className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0"
-              style={{ borderColor: "#1e1e2e" }}
+              style={{ borderColor: "rgba(255, 255, 255, 0.08)" }}
             >
               <h3 className="font-bold text-text-primary text-lg leading-tight">
                 {title}
@@ -69,7 +75,7 @@ export function ProjectModal({ open, onClose, title, children }: ProjectModalPro
                 aria-label="Close modal"
                 className="flex items-center justify-center w-8 h-8 rounded-full transition-colors"
                 style={{ color: "#475569" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "#1e1e2e")}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
               >
                 <X className="w-4 h-4" />

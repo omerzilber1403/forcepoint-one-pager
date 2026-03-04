@@ -18,23 +18,25 @@ export function Hero() {
     <section
       id="hero"
       className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: "#0a0a0f" }}
     >
-      <BackgroundBeams className="z-0" />
+      <BackgroundBeams className="z-0 opacity-30" />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-6rem)]">
 
           {/* LEFT: text column */}
           <div className="flex flex-col justify-center">
-            {/* Role badge */}
+            {/* Role badge — glass */}
             <FadeIn delay={0}>
             <div
               className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-mono uppercase tracking-widest w-fit"
               style={{
-                borderColor: "rgba(99,102,241,0.3)",
+                background: "rgba(99, 102, 241, 0.1)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                borderColor: "rgba(99, 102, 241, 0.3)",
                 color: "#818cf8",
-                background: "rgba(99,102,241,0.06)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
             >
               Applying — Software Engineer Student @ Forcepoint
@@ -76,6 +78,7 @@ export function Hero() {
             {/* CTA row */}
             <FadeIn delay={0.35}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
+              {/* Primary CTA — solid accent */}
               <a
                 href="#projects"
                 className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
@@ -84,11 +87,18 @@ export function Hero() {
                 View My Work <ArrowDown className="w-4 h-4" />
               </a>
 
+              {/* Secondary CTAs — glass */}
               <a
                 href={OWNER.cvPdf}
                 download
                 className="flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold text-text-secondary hover:text-text-primary transition-all"
-                style={{ borderColor: "#1e1e2e" }}
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                }}
               >
                 <Download className="w-4 h-4" /> Download CV
               </a>
@@ -98,7 +108,13 @@ export function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold text-text-secondary hover:text-text-primary transition-all"
-                style={{ borderColor: "#1e1e2e" }}
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                }}
               >
                 <Linkedin className="w-4 h-4" /> LinkedIn
               </a>
@@ -108,7 +124,13 @@ export function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold text-text-secondary hover:text-text-primary transition-all"
-                style={{ borderColor: "#1e1e2e" }}
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                }}
               >
                 <Github className="w-4 h-4" /> GitHub
               </a>

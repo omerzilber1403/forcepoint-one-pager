@@ -56,6 +56,13 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${geistMono.variable} antialiased bg-bg text-text-primary overflow-x-hidden`}
       >
+        {/* Fixed background orb layer — enables glassmorphism across all sections */}
+        <div className="orb-field" aria-hidden="true">
+          <div className="orb orb-1" />
+          <div className="orb orb-2" />
+          <div className="orb orb-3" />
+          <div className="orb orb-4" />
+        </div>
         {children}
       </body>
     </html>

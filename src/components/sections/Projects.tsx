@@ -37,7 +37,7 @@ function SalesBotDetail({ project }: { project: Project }) {
       <p className="text-text-secondary leading-relaxed">{project.description}</p>
 
       {/* Before → After metric callout */}
-      <div className="rounded-xl p-4 border" style={{ background: "#0a0a0f", borderColor: "#1e1e2e" }}>
+      <div className="rounded-xl p-4 border" style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.08)" }}>
         <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">Impact</p>
         <div className="flex items-center gap-3 flex-wrap">
           <span className="text-text-muted text-sm line-through font-mono">{project.metricBefore}</span>
@@ -60,7 +60,7 @@ function SalesBotDetail({ project }: { project: Project }) {
             <div
               key={label}
               className="flex items-start gap-3 rounded-lg p-3 border"
-              style={{ background: "#12121a", borderColor: "#1e1e2e" }}
+              style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.08)" }}
             >
               <span className="flex-shrink-0 mt-0.5" style={{ color: "#6366f1" }}>{icon}</span>
               <div>
@@ -141,7 +141,7 @@ export function Projects() {
   const selectedProject = PROJECTS.find(p => p.id === selectedId) ?? null;
 
   return (
-    <section id="projects" style={{ background: "#0a0a0f" }}>
+    <section id="projects">
       <ContainerScroll titleComponent={<ProjectTitleComponent />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
           {PROJECTS.map((project) => (
@@ -175,7 +175,10 @@ export function Projects() {
               {/* Before → After metric */}
               <div
                 className="rounded-xl p-3 mb-4 border"
-                style={{ background: "#0a0a0f", borderColor: "#1e1e2e" }}
+                style={{
+                  background: "rgba(255, 255, 255, 0.04)",
+                  borderColor: "rgba(255, 255, 255, 0.08)",
+                }}
               >
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-text-muted text-xs line-through font-mono">
@@ -215,7 +218,7 @@ export function Projects() {
               {/* Footer */}
               <div
                 className="mt-auto flex items-center gap-4 pt-3 border-t"
-                style={{ borderColor: "#1e1e2e" }}
+                style={{ borderColor: "rgba(255, 255, 255, 0.07)" }}
               >
                 <a
                   href={project.links.github}

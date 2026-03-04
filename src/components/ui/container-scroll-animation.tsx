@@ -53,21 +53,23 @@ export function ContainerScroll({
           {titleComponent}
         </motion.div>
 
-        {/* 3D rotating card */}
+        {/* 3D rotating glass card */}
         <motion.div
           style={{
             rotateX: rotate,
             scale,
             boxShadow:
               "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026",
-            borderColor: "#1e1e2e",
-            background: "#12121a",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            borderColor: "rgba(255, 255, 255, 0.1)",
+            background: "rgba(8, 8, 20, 0.55)",
           }}
           className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full rounded-[30px] border-4 p-2 md:p-6 shadow-2xl"
         >
           <div
             className="h-full w-full overflow-y-auto rounded-2xl p-4 md:p-8"
-            style={{ background: "#0a0a0f" }}
+            style={{ background: "rgba(6, 6, 16, 0.65)" }}
           >
             {children}
           </div>

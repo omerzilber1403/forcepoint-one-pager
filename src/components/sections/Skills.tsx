@@ -21,7 +21,7 @@ export function Skills() {
     <section
       id="skills"
       className="py-24 border-y"
-      style={{ background: "#0d0d14", borderColor: "#1e1e2e" }}
+      style={{ borderColor: "rgba(255, 255, 255, 0.07)" }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
@@ -97,19 +97,23 @@ export function Skills() {
 
                 {/* Stack badges (WorkExperience) or cert chip (EducationExperience) */}
                 {isWork(exp) ? (
-                  <div className="flex flex-wrap gap-1.5 pt-3 border-t" style={{ borderColor: "#1e1e2e" }}>
+                  <div className="flex flex-wrap gap-1.5 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
                     {exp.stack.map((tech) => (
                       <span
                         key={tech}
                         className="px-2 py-0.5 rounded-md text-xs font-mono"
-                        style={{ background: "#1e1e2e", color: "#94a3b8" }}
+                        style={{
+                          background: "rgba(255, 255, 255, 0.06)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          color: "#94a3b8",
+                        }}
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
                 ) : exp.certifications && exp.certifications.length > 0 ? (
-                  <div className="pt-3 border-t" style={{ borderColor: "#1e1e2e" }}>
+                  <div className="pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
                     {exp.certifications.map((cert) => (
                       <span
                         key={cert}
