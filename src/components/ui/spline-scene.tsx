@@ -1,26 +1,30 @@
 "use client";
 
-import { Suspense, lazy, Component, type ReactNode } from "react";
+/**
+ * SplineScene — renders an animated CSS fallback.
+ *
+ * The @splinetool/runtime@1.12.x cannot deserialize scenes exported from the
+ * current Spline editor (throws "Data read, but end of buffer not reached").
+ * React 19 routes that async error past class-based ErrorBoundaries, crashing
+ * the Hero.
+ *
+ * To re-enable a real scene once you have a compatible URL:
+ *  1. npm install @splinetool/react-spline@2.2.6 @splinetool/runtime@0.9.490
+ *  2. Uncomment the Spline import below and swap the return body.
+ */
 
-const Spline = lazy(() => import("@splinetool/react-spline"));
+// import { Suspense, lazy } from "react";
+// const Spline = lazy(() => import("@splinetool/react-spline"));
 
-// ── Spinner shown while the WASM runtime loads ──────────────────────────────
-function SplineLoader() {
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div
-        className="w-8 h-8 rounded-full border-2 animate-spin"
-        style={{ borderColor: "#6366f1", borderTopColor: "transparent" }}
-      />
-    </div>
-  );
+interface SplineSceneProps {
+  scene: string;     // kept so call-sites don't need to change
+  className?: string;
 }
 
-// ── Animated CSS fallback shown when the scene fails to deserialize ──────────
-function SplineFallback() {
+export function SplineScene({ className }: SplineSceneProps) {
   return (
     <div
-      className="w-full h-full flex items-center justify-center relative overflow-hidden"
+      className={`w-full h-full flex items-center justify-center relative overflow-hidden ${className ?? ""}`}
       style={{ background: "#12121a" }}
     >
       {/* Concentric pulsing rings */}
@@ -38,14 +42,14 @@ function SplineFallback() {
         />
       ))}
 
-      {/* Central glyph */}
+      {/* Central rotating glyph */}
       <div
         className="relative z-10 flex flex-col items-center gap-3"
         style={{ color: "#6366f1" }}
       >
         <svg
-          width="48"
-          height="48"
+          width="56"
+          height="56"
           viewBox="0 0 48 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +81,7 @@ function SplineFallback() {
       <style>{`
         @keyframes ring-pulse {
           0%, 100% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.06); opacity: 1; }
+          50%       { transform: scale(1.06); opacity: 1; }
         }
         @keyframes slow-spin {
           from { transform: rotate(0deg); }
@@ -85,43 +89,5 @@ function SplineFallback() {
         }
       `}</style>
     </div>
-  );
-}
-
-// ── Class-based ErrorBoundary (React requires class for error catching) ───────
-interface BoundaryState { hasError: boolean }
-
-class SplineErrorBoundary extends Component<
-  { children: ReactNode },
-  BoundaryState
-> {
-  constructor(props: { children: ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(): BoundaryState {
-    return { hasError: true };
-  }
-
-  render() {
-    if (this.state.hasError) return <SplineFallback />;
-    return this.props.children;
-  }
-}
-
-// ── Public component ─────────────────────────────────────────────────────────
-interface SplineSceneProps {
-  scene: string;
-  className?: string;
-}
-
-export function SplineScene({ scene, className }: SplineSceneProps) {
-  return (
-    <SplineErrorBoundary>
-      <Suspense fallback={<SplineLoader />}>
-        <Spline scene={scene} className={className} />
-      </Suspense>
-    </SplineErrorBoundary>
   );
 }
