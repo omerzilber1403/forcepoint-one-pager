@@ -71,13 +71,13 @@ const SCOPED_CSS = `
   color: #333;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   min-height: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 .sba-root .app {
-  min-height: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -509,7 +509,7 @@ const SCOPED_CSS = `
   border-radius: 8px; border: 1px solid #feb2b2; margin: 12px 0;
 }
 .sba-root .company-selection-page {
-  min-height: 100%; height: 100%;
+  flex: 1; min-height: 0;
   display: flex; flex-direction: column;
 }
 .sba-root .selection-container {
@@ -599,13 +599,13 @@ const SCOPED_CSS = `
 }
 .sba-root .create-company-btn:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(72,187,120,.3); }
 .sba-root .company-chat-page {
-  min-height: 100%; height: 100%;
+  flex: 1; min-height: 0;
   display: flex; flex-direction: column;
 }
 /* Demo interface */
 .sba-root .demo-container {
   display: flex; flex-direction: column;
-  height: 100%;
+  flex: 1; min-height: 0;
   overflow: hidden;
 }
 .sba-root .demo-header {
