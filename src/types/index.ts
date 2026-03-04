@@ -43,9 +43,9 @@ export interface EducationExperience {
   period: string;
   icon: "GraduationCap";
   accentColor: string;
-  metric: string;
+  metric?: string;
   highlights: string[];
-  certifications: string[];
+  certifications?: string[];
 }
 
 export type ExperienceEntry = WorkExperience | EducationExperience;

@@ -66,6 +66,7 @@ export function Skills() {
                 </div>
 
                 {/* Metric callout */}
+                {exp.metric && (
                 <div
                   className="rounded-lg px-3 py-2 mb-4 text-sm font-bold font-mono"
                   style={{
@@ -76,6 +77,7 @@ export function Skills() {
                 >
                   {exp.metric}
                 </div>
+                )}
 
                 {/* Highlights */}
                 <ul className="space-y-2 mb-5 flex-1">
@@ -103,7 +105,7 @@ export function Skills() {
                       </span>
                     ))}
                   </div>
-                ) : (
+                ) : exp.certifications && exp.certifications.length > 0 ? (
                   <div className="pt-3 border-t" style={{ borderColor: "#1e1e2e" }}>
                     {exp.certifications.map((cert) => (
                       <span
@@ -115,7 +117,7 @@ export function Skills() {
                       </span>
                     ))}
                   </div>
-                )}
+                ) : null}
               </CardSpotlight>
             );
           })}

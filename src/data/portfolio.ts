@@ -1,6 +1,13 @@
 import type { WorkExperience, EducationExperience } from "@/types";
 
-export const CV = {
+export const CV: {
+  personal: {
+    name: string; email: string; phone: string;
+    linkedin: string; github: string; cvPdf: string;
+  };
+  profile: string;
+  experience: (WorkExperience | EducationExperience)[];
+} = {
   personal: {
     name: "Omer Zilbershtein",
     email: "omerzilber1403@gmail.com",
@@ -49,12 +56,10 @@ export const CV = {
       period: "2024 – 2027",
       icon: "GraduationCap" as const,
       accentColor: "#a78bfa",
-      metric: "~92 average grade",
       highlights: [
         "Data Structures: 98 | Introduction to CS: 92",
         "Systems Programming (SPL): 87 | Probability: 93",
       ],
-      certifications: ["Microsoft AZ-104 Azure Administrator (2022)"],
     } satisfies EducationExperience,
   ],
 };
