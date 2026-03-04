@@ -798,6 +798,43 @@ const SCOPED_CSS = `
 .sba-root .rating-question { font-size: 1rem; font-weight: 600; color: #495057; margin-bottom: 14px; }
 .sba-root .feedback-section { display: flex; flex-direction: column; gap: 6px; }
 .sba-root .feedback-label { font-size: 0.85rem; font-weight: 600; color: #495057; }
+/* ── Cold-start wakeup banner ────────────────────────────────────────────── */
+.sba-root .wakeup-banner {
+  margin: 12px 16px 0;
+  background: rgba(255,255,255,0.13);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 14px;
+  padding: 13px 18px;
+  display: flex; align-items: center; gap: 13px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  animation: sba-fadeIn 0.4s ease;
+}
+.sba-root .wakeup-spinner {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.22);
+  border-top-color: rgba(255,255,255,0.92);
+  border-radius: 50%;
+  animation: sba-spin 0.75s linear infinite;
+}
+.sba-root .wakeup-content { flex: 1; min-width: 0; }
+.sba-root .wakeup-title {
+  display: block; font-size: 0.88rem; font-weight: 700; color: white; line-height: 1.3;
+}
+.sba-root .wakeup-subtitle {
+  display: block; font-size: 0.76rem; color: rgba(255,255,255,0.65); margin-top: 2px;
+}
+.sba-root .wakeup-elapsed { font-variant-numeric: tabular-nums; opacity: 0.75; }
+.sba-root .wakeup-retry {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.28);
+  color: white; padding: 7px 14px; border-radius: 9px;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.18s; font-family: inherit;
+}
+.sba-root .wakeup-retry:hover  { background: rgba(255,255,255,0.28); }
+.sba-root .wakeup-retry:active { background: rgba(255,255,255,0.12); }
 `;
 
 function StyleInjector() {
@@ -1571,17 +1608,52 @@ function CompanySelectionPage({ onCompanySelect, onDemoMode }: {
   const [loading, setLoading] = useState(true);
   const [serverStatus, setServerStatus] = useState("checking");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [wakeupStart, setWakeupStart] = useState<number | null>(null);
+  const [wakeupSecs, setWakeupSecs] = useState(0);
+  const prevStatusRef = useRef("checking");
 
+  // Health poll — every 5 s so cold-start (~30 s) feels snappy
   useEffect(() => {
-    loadCompanies();
     const check = () =>
       fetch(API + "/health")
-        .then((r) => setServerStatus(r.ok ? "online" : "offline"))
-        .catch(() => setServerStatus("offline"));
+        .then((r) => {
+          const next = r.ok ? "online" : "offline";
+          // Auto-reload companies when server comes back online
+          if (prevStatusRef.current === "offline" && next === "online") {
+            loadCompanies();
+          }
+          prevStatusRef.current = next;
+          setServerStatus(next);
+        })
+        .catch(() => {
+          prevStatusRef.current = "offline";
+          setServerStatus("offline");
+        });
+    loadCompanies();
     check();
-    const id = setInterval(check, 30000);
+    const id = setInterval(check, 5000);
     return () => clearInterval(id);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Track when server went offline for elapsed-time counter
+  useEffect(() => {
+    if (serverStatus === "offline" && wakeupStart === null) {
+      setWakeupStart(Date.now());
+      setWakeupSecs(0);
+    } else if (serverStatus === "online") {
+      setWakeupStart(null);
+      setWakeupSecs(0);
+    }
+  }, [serverStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Elapsed-time ticker
+  useEffect(() => {
+    if (wakeupStart === null) return;
+    const tid = setInterval(() => {
+      setWakeupSecs(Math.floor((Date.now() - wakeupStart) / 1000));
+    }, 1000);
+    return () => clearInterval(tid);
+  }, [wakeupStart]);
 
   const loadCompanies = () => {
     setLoading(true);
@@ -1597,6 +1669,29 @@ function CompanySelectionPage({ onCompanySelect, onDemoMode }: {
 
   return (
     <div className="company-selection-page">
+      {/* Cold-start wakeup banner — shown while Render free tier is waking up */}
+      {wakeupStart !== null && (
+        <div className="wakeup-banner">
+          <div className="wakeup-spinner" />
+          <div className="wakeup-content">
+            <strong className="wakeup-title">Waking up AI Agent server…</strong>
+            <span className="wakeup-subtitle">
+              Render free tier takes ~30 s to start.{" "}
+              <span className="wakeup-elapsed">({wakeupSecs}s elapsed)</span>
+            </span>
+          </div>
+          <button
+            className="wakeup-retry"
+            onClick={() => {
+              fetch(API + "/health")
+                .then((r) => { if (r.ok) { setServerStatus("online"); loadCompanies(); } })
+                .catch(() => {});
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
       <header className="header">
         <div className="header-content">
           <div className="logo">
