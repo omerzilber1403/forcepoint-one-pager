@@ -5,7 +5,7 @@ import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Badge } from "@/components/ui/badge";
 import { ProjectModal } from "@/components/ui/project-modal";
-import { TerminalUI } from "@/components/ui/terminal-ui";
+import { MultiClientTerminal } from "@/components/ui/multi-client-terminal";
 import { SalesBotApp } from "@/components/sales-bot-demo";
 import { PROJECTS } from "@/lib/data";
 import type { Project } from "@/types";
@@ -51,9 +51,7 @@ function WorldCupDetail({ project }: { project: Project }) {
       </div>
 
       {/* Terminal */}
-      <div className="flex-1" style={{ minHeight: "380px" }}>
-        <TerminalUI />
-      </div>
+      <MultiClientTerminal />
     </div>
   );
 }

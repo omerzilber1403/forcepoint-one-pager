@@ -4,7 +4,7 @@ import {
   Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight,
 } from "lucide-react";
 import { ProjectModal } from "@/components/ui/project-modal";
-import { TerminalUI } from "@/components/ui/terminal-ui";
+import { MultiClientTerminal } from "@/components/ui/multi-client-terminal";
 
 /* ── Forcepoint brand tokens ─────────────────────────────────────────────── */
 const FP = {
@@ -433,9 +433,7 @@ export function ForcepointShowcase() {
             </span>{" "}
             with AI assistance (Cursor, Claude, Copilot).
           </p>
-          <div className="flex-1" style={{ minHeight: "380px" }}>
-            <TerminalUI />
-          </div>
+          <MultiClientTerminal />
         </div>
       </ProjectModal>
     </section>
