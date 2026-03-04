@@ -14,26 +14,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://omer-zilbershtein.vercel.app"),
-  title: "Omer Zilbershtein — AI Automation | Forcepoint",
+  title: "Omer Zilbershtein — Software Engineer Student | Forcepoint",
   description:
-    "Student building AI agents, FastAPI services, and workflow automations. Applying for the Student – AI Automation role at Forcepoint.",
+    "BGU CS student & AI freelancer applying for the Software Engineer Student role at Forcepoint. I identify high-friction workflows and ship measurable AI automations — FastAPI, LangGraph, security-first.",
   keywords: [
     "AI automation", "LangGraph", "FastAPI", "Forcepoint",
     "Python", "AI agent", "Omer Zilbershtein", "security-first",
+    "prompt engineering", "n8n", "Cursor", "workflow automation",
   ],
   authors: [{ name: "Omer Zilbershtein" }],
   openGraph: {
-    title: "Omer Zilbershtein — AI Automation",
-    description: "AI agent builder. Sales Bot (LangGraph + FastAPI), DJ Controller (C++ + Streamlit). Security-first mindset.",
+    title: "Omer Zilbershtein — Software Engineer Student | Forcepoint",
+    description: "AI automation builder. Sales Bot (5.6× faster, LangGraph + FastAPI), C++ World Cup Simulator. Security-first mindset.",
     url: "https://omer-zilbershtein.vercel.app",
     siteName: "Omer Zilbershtein Portfolio",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Omer Zilbershtein — AI Automation Portfolio" }],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Omer Zilbershtein — Software Engineer Student Portfolio" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Omer Zilbershtein — AI Automation",
-    description: "AI agent builder targeting the Student – AI Automation role at Forcepoint.",
+    title: "Omer Zilbershtein — Software Engineer Student | Forcepoint",
+    description: "AI automation builder applying for Software Engineer Student at Forcepoint. Before/after metrics, security-first.",
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },

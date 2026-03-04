@@ -2,14 +2,14 @@ import type { Project, SkillGroup, NavLink } from "@/types";
 
 export const OWNER = {
   name: "Omer Zilbershtein",
-  role: "Student — AI Automation",
+  role: "Software Engineer Student",
   email: "omerzilber1403@gmail.com",
   phone: "+972-54-6970612",
   github: "https://github.com/omerzilber1403",
   linkedin: "https://www.linkedin.com/in/omer-zilbershtein",
   cvPdf: "/cv/Omer_Zilbershtein_CV.pdf",
   targetCompany: "Forcepoint",
-  targetRole: "Student – AI Automation",
+  targetRole: "Software Engineer- Student",
 } as const;
 
 export const HERO_TAGLINES = [

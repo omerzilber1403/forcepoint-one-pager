@@ -28,7 +28,7 @@ export function DataPrivacy() {
 
         {/* Label */}
         <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">
-          Aligned with Forcepoint&apos;s Mission
+          How I Keep AI Tools Safe
         </p>
 
         {/* Heading */}
@@ -37,7 +37,8 @@ export function DataPrivacy() {
         </h2>
 
         <p className="text-text-secondary mb-10 max-w-xl mx-auto">
-          I don&apos;t bolt security on after the fact. It&apos;s part of how I think when I write the first function.
+          When I work with AI tools, safety isn&apos;t added after the fact — it&apos;s
+          built into the workflow from the first prompt.
         </p>
 
         {/* Points list */}

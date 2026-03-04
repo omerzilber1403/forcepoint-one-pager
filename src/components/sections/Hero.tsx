@@ -9,7 +9,7 @@ import { SplineScene } from "@/components/ui/spline-scene";
 import { OWNER } from "@/lib/data";
 import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 
-const HERO_ROTATING_WORDS = ["Intelligent", "Secure", "Data-Aware", "Policy-Driven", "Scalable"];
+const HERO_ROTATING_WORDS = ["Intelligent", "Secure", "Privacy-Aware", "Policy-Driven", "Automation-First"];
 const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HlFTv7Soj/scene.splinecode";
 
 export function Hero() {
@@ -35,7 +35,7 @@ export function Hero() {
                 background: "rgba(99,102,241,0.06)",
               }}
             >
-              Applying — Student AI Automation @ Forcepoint
+              Applying — Software Engineer Student @ Forcepoint
             </div>
 
             {/* Name with sparkles */}
@@ -61,8 +61,9 @@ export function Hero() {
 
             {/* Bio blurb */}
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
-              IDF Navy developer turned AI freelancer. BGU Software Engineering student.
-              Shipping GenAI agents and simulators that work under real pressure.
+              IDF Navy developer — now BGU CS student &amp; AI freelancer.
+              I identify high-friction workflows and ship automations with
+              measurable before/after impact. FastAPI, LangGraph, always security-first.
             </p>
 
             {/* CTA row */}
