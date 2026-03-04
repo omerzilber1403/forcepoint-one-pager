@@ -8,6 +8,7 @@ interface CardSpotlightProps {
   className?: string;
   radius?: number;
   color?: string;
+  onClick?: () => void;
 }
 
 export function CardSpotlight({
@@ -15,6 +16,7 @@ export function CardSpotlight({
   className,
   radius = 350,
   color = "rgba(99,102,241,0.12)",
+  onClick,
 }: CardSpotlightProps) {
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -54,8 +56,10 @@ export function CardSpotlight({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onClick}
       className={cn(
         "relative overflow-hidden rounded-2xl border p-8 transition-colors duration-300",
+        onClick && "cursor-pointer",
         className
       )}
       style={{

@@ -1,6 +1,7 @@
 "use client";
 
 import { CardSpotlight } from "@/components/ui/card-spotlight";
+import { FadeIn } from "@/components/ui/fade-in";
 import { CV } from "@/data/portfolio";
 import type { WorkExperience, EducationExperience } from "@/types";
 import { Code, Shield, GraduationCap } from "lucide-react";
@@ -24,6 +25,7 @@ export function Skills() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
+        <FadeIn>
         <div className="mb-12 text-center">
           <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">
             Experience
@@ -35,14 +37,15 @@ export function Skills() {
             From Navy simulators to AI freelance work — shipped and in production.
           </p>
         </div>
+        </FadeIn>
 
         {/* Experience cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {CV.experience.map((exp) => {
+          {CV.experience.map((exp, idx) => {
             const Icon = ICON_MAP[exp.icon];
             return (
+              <FadeIn key={exp.id} delay={idx * 0.12}>
               <CardSpotlight
-                key={exp.id}
                 color={`${exp.accentColor}14`}
                 radius={300}
                 className="flex flex-col"
@@ -119,6 +122,7 @@ export function Skills() {
                   </div>
                 ) : null}
               </CardSpotlight>
+              </FadeIn>
             );
           })}
         </div>

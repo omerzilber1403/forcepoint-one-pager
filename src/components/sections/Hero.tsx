@@ -6,6 +6,7 @@ import { FlipWords } from "@/components/ui/flip-words";
 import { Sparkles } from "@/components/ui/sparkles";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { SplineScene } from "@/components/ui/spline-scene";
+import { FadeIn } from "@/components/ui/fade-in";
 import { OWNER } from "@/lib/data";
 import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 
@@ -27,6 +28,7 @@ export function Hero() {
           {/* LEFT: text column */}
           <div className="flex flex-col justify-center">
             {/* Role badge */}
+            <FadeIn delay={0}>
             <div
               className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-mono uppercase tracking-widest w-fit"
               style={{
@@ -37,6 +39,7 @@ export function Hero() {
             >
               Applying — Software Engineer Student @ Forcepoint
             </div>
+            </FadeIn>
 
             {/* Name with sparkles */}
             <Sparkles particleColor="#6366f1" particleDensity={50} className="block mb-2">
@@ -49,6 +52,7 @@ export function Hero() {
             </Sparkles>
 
             {/* Flip tagline */}
+            <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
               I build{" "}
               <FlipWords
@@ -58,15 +62,19 @@ export function Hero() {
               />
               {" "}systems.
             </div>
+            </FadeIn>
 
             {/* Bio blurb */}
+            <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
               IDF Navy developer — now BGU CS student &amp; AI freelancer.
               I identify high-friction workflows and ship automations with
               measurable before/after impact. FastAPI, LangGraph, always security-first.
             </p>
+            </FadeIn>
 
             {/* CTA row */}
+            <FadeIn delay={0.35}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
                 href="#projects"
@@ -105,9 +113,8 @@ export function Hero() {
                 <Github className="w-4 h-4" /> GitHub
               </a>
             </div>
+            </FadeIn>
           </div>
-
-          {/* RIGHT: Spline 3D — desktop only */}
           <div className="hidden lg:flex items-center justify-center">
             <CardSpotlight
               className="w-full h-[520px] p-0 overflow-hidden"

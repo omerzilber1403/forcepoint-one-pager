@@ -1,6 +1,7 @@
 "use client";
 
 import { GlowingStarsBackground } from "@/components/ui/glowing-stars";
+import { FadeIn } from "@/components/ui/fade-in";
 import { DATA_PRIVACY_POINTS } from "@/lib/data";
 import { ShieldCheck, CheckCircle } from "lucide-react";
 
@@ -17,6 +18,7 @@ export function DataPrivacy() {
       {/* Content */}
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 text-center">
         {/* Icon */}
+        <FadeIn>
         <div className="flex justify-center mb-6">
           <div
             className="flex items-center justify-center w-14 h-14 rounded-2xl border"
@@ -25,7 +27,9 @@ export function DataPrivacy() {
             <ShieldCheck className="w-7 h-7" style={{ color: "#818cf8" }} />
           </div>
         </div>
+        </FadeIn>
 
+        <FadeIn delay={0.1}>
         {/* Label */}
         <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">
           How I Keep AI Tools Safe
@@ -40,11 +44,13 @@ export function DataPrivacy() {
           When I work with AI tools, safety isn&apos;t added after the fact — it&apos;s
           built into the workflow from the first prompt.
         </p>
+        </FadeIn>
 
         {/* Points list */}
-        <ul className="text-left space-y-4 max-w-xl mx-auto">
+        <div className="text-left space-y-4 max-w-xl mx-auto">
           {DATA_PRIVACY_POINTS.map((point, idx) => (
-            <li key={idx} className="flex items-start gap-3">
+            <FadeIn key={idx} delay={0.2 + idx * 0.08}>
+            <div className="flex items-start gap-3">
               <CheckCircle
                 className="w-5 h-5 flex-shrink-0 mt-0.5"
                 style={{ color: "#6366f1" }}
@@ -52,9 +58,10 @@ export function DataPrivacy() {
               <span className="text-text-secondary text-sm leading-relaxed">
                 {point}
               </span>
-            </li>
+            </div>
+            </FadeIn>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );
