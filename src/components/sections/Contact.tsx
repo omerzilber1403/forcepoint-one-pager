@@ -23,8 +23,7 @@ export function Contact() {
           </h2>
 
           <p className="text-text-secondary max-w-lg mx-auto mb-10">
-            Open to the {OWNER.targetRole} role at {OWNER.targetCompany}.
-            Fast reply guaranteed.
+            Open to the Software Engineer- Student role at Forcepoint. Fast reply guaranteed.
           </p>
 
           {/* Contact links */}
@@ -61,7 +60,7 @@ export function Contact() {
           {/* Divider */}
           <div className="border-t pt-8" style={{ borderColor: "#1e1e2e" }}>
             <p className="text-xs text-text-muted">
-              © 2025 {OWNER.name} — Built with Next.js + Aceternity UI + Tailwind CSS
+              © 2025 Omer Zilbershtein — Built with Next.js + Aceternity UI + Tailwind CSS
             </p>
           </div>
         </div>

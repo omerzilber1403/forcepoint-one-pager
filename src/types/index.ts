@@ -46,6 +46,9 @@ export interface EducationExperience {
   metric?: string;
   highlights: string[];
   certifications?: string[];
+  description?: string;
+  specialization?: string;
+  topics?: string[];
 }
 
 export type ExperienceEntry = WorkExperience | EducationExperience;

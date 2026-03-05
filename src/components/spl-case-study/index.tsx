@@ -77,27 +77,27 @@ const SECTIONS: StorySectionData[] = [
   {
     stepId:   "boot",
     badge:    "01 / Architecture",
-    headline: "A Three-Language Pipeline",
+    headline: "A Three-Tier Stack",
     btnLabel: "Boot the System",
     body: (
       <div className="spl-body">
         <p>
-          The system is a three-tier architecture where each language owns a distinct protocol
-          boundary. At the top sits a Java server supporting two I/O models — Thread-Per-Client{" "}
-          <code>(TPC)</code>, where each connection owns a dedicated OS thread blocking on
-          socket reads, and <code>Reactor</code>, where a single selector loop dispatches I/O
-          readiness events to a bounded thread pool. The Reactor model is the course&apos;s
-          central design lesson: handlers must <em>never</em> block, or the selector loop
-          stalls every other active connection.
+          <strong style={{ color: "#cbd5e1" }}>Java Server (top tier):</strong>{" "}
+          Implemented in Java, supporting both <code>Thread-Per-Client (TPC)</code> —
+          each connection owns a dedicated OS thread blocking on socket reads — and a
+          non-blocking <code>Reactor</code> model, where a selector loop dispatches
+          I/O-readiness events to a bounded thread pool.
         </p>
         <p>
-          Below it, a Python process exposes a raw TCP socket on <code>:7778</code> and owns
-          the SQLite persistence layer — INSERT and SELECT operations for user registration,
-          login timestamps, and event logs. This keeps the Java server fully stateless with
-          respect to disk. The C++17 client is the most mechanically demanding tier: it
-          implements the full STOMP 1.2 client-side state machine, including subscription
-          tracking, in-memory event aggregation, and the two-thread concurrency model
-          described in the next section.
+          <strong style={{ color: "#cbd5e1" }}>Python DB bridge (middle tier):</strong>{" "}
+          A Python server bridging via raw TCP on port <code>7778</code>, executing SQL
+          queries on a <code>SQLite</code> database. Handles user registration, login
+          records, and persisted event logs — keeping the Java server stateless.
+        </p>
+        <p>
+          <strong style={{ color: "#cbd5e1" }}>C++ Client (bottom tier):</strong>{" "}
+          Implemented in C++, acting as the client-side <code>STOMP 1.2</code> interface
+          for channel subscription, event reporting, and summary generation.
         </p>
       </div>
     ),
@@ -105,29 +105,24 @@ const SECTIONS: StorySectionData[] = [
   {
     stepId:   "login",
     badge:    "02 / Concurrency",
-    headline: "Two Threads, One Socket, Zero Data Races",
+    headline: "Two-Thread Client Model",
     btnLabel: "Connect Clients",
     body: (
       <div className="spl-body">
         <p>
-          The C++ client spawns exactly two POSIX threads at login: a <em>keyboard thread</em>{" "}
-          that reads <code>stdin</code> and writes STOMP frames to the socket, and a{" "}
-          <em>socket thread</em> that reads incoming frames and dispatches them to handlers.
-          The socket file descriptor is owned by the socket thread — the keyboard thread never
-          reads from it. This ownership discipline eliminates the need for a read-side mutex
-          entirely.
+          <strong style={{ color: "#cbd5e1" }}>Dedicated threads:</strong>{" "}
+          The C++ client runs two concurrent threads at login to prevent UI blocking
+          during network I/O — one for input, one for the live socket stream.
         </p>
         <p>
-          Shared mutable state is limited to three fields: the subscription map, a connection
-          boolean, and the receipt confirmation buffer. All three are guarded by a single{" "}
-          <code>std::mutex</code>. <code>std::lock_guard</code> governs every acquisition,
-          ensuring the lock is released on every control-flow path — including exceptions.
+          <strong style={{ color: "#cbd5e1" }}>Keyboard thread:</strong>{" "}
+          Exclusively reads commands from <code>stdin</code> and writes outgoing STOMP
+          frames to the socket. Never reads from the socket — ownership is strict.
         </p>
         <p>
-          The socket lifecycle is RAII-managed: the <code>StompClient</code> destructor calls{" "}
-          <code>close(sockfd)</code> unconditionally, eliminating an entire class of descriptor
-          leaks that appear when developers rely on explicit error-path cleanup. The guarantee
-          cannot be bypassed by the caller.
+          <strong style={{ color: "#cbd5e1" }}>Socket thread:</strong>{" "}
+          Exclusively listens on the socket and dispatches incoming frames to registered
+          handlers. Owns the read side of the connection from login to teardown.
         </p>
       </div>
     ),
@@ -135,34 +130,27 @@ const SECTIONS: StorySectionData[] = [
   {
     stepId:   "pubsub",
     badge:    "03 / Protocol",
-    headline: "Implementing STOMP 1.2 from the RFC",
+    headline: "STOMP 1.2 from Scratch",
     btnLabel: "Subscribe & Report",
     body: (
       <div className="spl-body">
         <p>
-          STOMP 1.2 has a deceptively simple wire format: command on the first line,
-          colon-delimited headers, a blank line delimiter, an optional body, and a null byte{" "}
-          <code>(\0)</code> terminator. A correct parser must handle the{" "}
-          <code>content-length</code> header (which overrides null-byte scanning), multi-value
-          headers, and frame bodies that may themselves contain newlines. The C++ parser reads
-          the socket byte-by-byte, accumulating frames into an <code>std::string</code> buffer
-          until the terminator is found.
+          <strong style={{ color: "#cbd5e1" }}>Full lifecycle:</strong>{" "}
+          Implements the complete STOMP frame set —{" "}
+          <code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>SEND</code>,{" "}
+          <code>MESSAGE</code>, <code>DISCONNECT</code>, <code>RECEIPT</code>,{" "}
+          <code>ERROR</code> — across both client and server.
         </p>
         <p>
-          On the server, <code>ConnectionsImpl&lt;String&gt;</code> maintains a thread-safe
-          map from connection ID to <code>ConnectionHandler</code>. When a <code>SEND</code>{" "}
-          frame arrives, <code>send(channel, msg)</code> iterates every subscriber under a
-          read lock and calls <code>handler.send()</code> for each. In Reactor mode, this call
-          must be non-blocking: it writes to a per-connection output queue and registers the
-          connection as write-ready on the selector — the actual flush happens on the next
-          I/O dispatch cycle.
+          <strong style={{ color: "#cbd5e1" }}>Client-generated IDs:</strong>{" "}
+          Subscription IDs and receipt IDs are generated uniquely by the client and
+          tracked locally. The server echoes them back in <code>MESSAGE</code> and{" "}
+          <code>RECEIPT</code> frames for O(1) client-side lookup.
         </p>
         <p>
-          Subscription IDs are assigned by the client, not the server. The client generates a
-          monotonically increasing integer, stores the <code>(channel→subId)</code> mapping
-          locally, and receives the same ID back in every <code>MESSAGE</code> frame as the{" "}
-          <code>subscription</code> header. This enables O(1) lookup from incoming message to
-          local subscription record without any server-side coordination.
+          <strong style={{ color: "#cbd5e1" }}>Frame parsing:</strong>{" "}
+          Reads the raw socket stream, parses <code>header:value</code> pairs line by
+          line, and extracts the body until the null-char (<code>\0</code>) terminator.
         </p>
       </div>
     ),
@@ -170,66 +158,53 @@ const SECTIONS: StorySectionData[] = [
   {
     stepId:   "summary",
     badge:    "04 / Data Structures",
-    headline: "The State the Server Never Sees",
+    headline: "Client-Side Aggregation",
     btnLabel: "Generate Summary",
     body: (
       <div className="spl-body">
         <p>
-          The <code>summary</code> command exposes a data structure decision made entirely on
-          the client: <code>map&lt;string, map&lt;string, vector&lt;Event&gt;&gt;&gt;</code>.
-          Outer key = channel name, inner key = reporting user, vector = events in time order.
-          This three-level structure provides per-reporter isolation with O(log n) lookup at
-          every level — <code>std::map</code> uses a red-black tree, giving O(log n) insert
-          and guaranteed lexicographic key ordering on iteration.
+          <strong style={{ color: "#cbd5e1" }}>Event tracking:</strong>{" "}
+          Parses JSON event files and stores game events in a nested map keyed by
+          channel name and reporting user. The server only persists raw frames — all
+          aggregation logic lives entirely on the client.
         </p>
         <p>
-          Lexicographic ordering is not cosmetic. The output spec requires stats alphabetically:
-          <code>active</code>, <code>before_halftime</code>, <code>goals</code>,{" "}
-          <code>possession</code>… Because <code>std::map</code> iterates in key order by
-          default, the correct format falls out without a post-sort step — the data structure
-          encodes the ordering contract. Event ordering is handled by a secondary sort on the{" "}
-          <code>vector&lt;Event&gt;</code> by the <code>time</code> field.
+          <strong style={{ color: "#cbd5e1" }}>Chronological ordering:</strong>{" "}
+          Events are stored and printed ordered by occurrence time. A secondary sort
+          on the event list by the <code>time</code> field produces the final output.
         </p>
         <p>
-          The aggregation pass is O(n) over events after the O(n log n) sort. Stats are
-          accumulative — later values overwrite earlier ones in a flat{" "}
-          <code>map&lt;string, string&gt;</code>. The server is fully stateless with respect to
-          this computation: it persists raw SEND frames and delegates all aggregation logic to
-          the requesting client.
+          <strong style={{ color: "#cbd5e1" }}>Lexicographical stats:</strong>{" "}
+          Stats are aggregated locally and printed in lexicographical order by stat
+          name — the data structure guarantees order without a post-sort step.
         </p>
       </div>
     ),
   },
   {
     stepId:   "logout",
-    badge:    "05 / Graceful Shutdown",
-    headline: "Closing Without Losing a Frame",
+    badge:    "05 / Lifecycle",
+    headline: "Graceful Shutdown",
     btnLabel: "Graceful Logout",
     body: (
       <div className="spl-body">
         <p>
-          Closing a TCP socket before the peer has processed all queued data silently discards
-          bytes still in the kernel send buffer — a bug that only surfaces under load. STOMP
-          1.2 defines a DISCONNECT handshake to prevent this: the client sends{" "}
-          <code>DISCONNECT</code> with a <code>receipt</code> header and must not close the
-          socket until it receives the matching <code>RECEIPT</code> frame.
+          <strong style={{ color: "#cbd5e1" }}>DISCONNECT frame:</strong>{" "}
+          Client sends a <code>DISCONNECT</code> frame with a unique receipt ID before
+          closing. Closing the socket without this handshake risks silently dropping
+          bytes still queued in the kernel send buffer.
         </p>
         <p>
-          The implementation uses <code>std::condition_variable</code> to coordinate the two
-          threads. The keyboard thread calls{" "}
-          <code>cv.wait(lock, [&amp;]&#123; return receiptReceived; &#125;)</code> after
-          sending <code>DISCONNECT</code>. The socket thread, on receiving the matching{" "}
-          <code>RECEIPT</code>, sets <code>receiptReceived = true</code> under the lock and
-          calls <code>cv.notify_one()</code>. The keyboard thread wakes, calls{" "}
-          <code>close(sockfd)</code>, and exits. The socket thread&apos;s next{" "}
-          <code>recv()</code> returns 0 (EOF) and it exits cleanly.
+          <strong style={{ color: "#cbd5e1" }}>Server acknowledgment:</strong>{" "}
+          Client strictly waits for the matching <code>RECEIPT</code> frame before
+          calling <code>close(sockfd)</code>. The keyboard thread blocks on a
+          condition variable until the socket thread signals receipt confirmed.
         </p>
         <p>
-          Both threads reach their return statement through normal control flow — no{" "}
-          <code>sleep()</code>, no polling, no forced termination. The STOMP 1.2 RFC specifies
-          that RECEIPT is cumulative: it acknowledges <em>all</em> preceding frames, not just
-          the DISCONNECT itself. This is the only protocol mechanism that provides that
-          guarantee.
+          <strong style={{ color: "#cbd5e1" }}>Zero message loss:</strong>{" "}
+          Per the STOMP 1.2 RFC, a <code>RECEIPT</code> is cumulative — it acknowledges
+          all preceding frames. This handshake guarantees every <code>SEND</code>
+          before the <code>DISCONNECT</code> was processed. No data is silently dropped.
         </p>
       </div>
     ),
@@ -313,7 +288,7 @@ const SCOPED_CSS = `
   flex: 1;
   position: sticky; top: 4.5rem;
   display: flex; flex-direction: column; gap: 0.75rem;
-  max-height: calc(100vh - 6rem); overflow-y: auto;
+  height: calc(100vh - 6rem); overflow: hidden;
 }
 
 /* ── Story section card ─────────────────────────────────────────────────── */
@@ -381,6 +356,7 @@ const SCOPED_CSS = `
 
 /* ── Terminal panel ─────────────────────────────────────────────────────── */
 .spl-panel {
+  flex: 1; display: flex; flex-direction: column; min-height: 0;
   border-radius: 0.75rem; overflow: hidden;
   border: 1px solid rgba(76,199,184,0.25);
   background: rgba(6,59,88,0.55);
@@ -405,11 +381,11 @@ const SCOPED_CSS = `
 
 /* ── Panel output area ──────────────────────────────────────────────────── */
 .spl-panel-output {
-  overflow-y: auto; padding: 0.75rem;
+  flex: 1; min-height: 0;
+  overflow-y: auto; padding: 0.75rem 0.75rem 1.1rem;
   font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
   font-size: 0.68rem; line-height: 1.55;
   background: rgba(4,19,30,1);
-  min-height: 90px;
 }
 .spl-line {
   display: flex; align-items: flex-start; min-height: 1.1rem;
@@ -446,11 +422,35 @@ const SCOPED_CSS = `
 }
 .spl-legend-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0; }
 
+/* ── Project context cards ──────────────────────────────────────────────── */
+.spl-context {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem; margin-bottom: 2.5rem;
+}
+.spl-context-card {
+  border-radius: 0.75rem; padding: 1rem 1.1rem;
+  border: 1px solid rgba(76,199,184,0.14);
+  background: rgba(6,59,88,0.28);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.spl-context-card-label {
+  font-size: 0.6rem; font-family: monospace; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: #4cc7b8; margin-bottom: 0.45rem;
+}
+.spl-context-card-body {
+  font-size: 0.8rem; color: #94a3b8; line-height: 1.7;
+}
+.spl-context-card-body strong { color: #cbd5e1; font-weight: 600; }
+@media (max-width: 767px) { .spl-context { grid-template-columns: 1fr; } }
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .spl-split     { flex-direction: column; }
   .spl-story     { flex: none; width: 100%; }
-  .spl-terminal  { position: static; max-height: none; }
+  .spl-terminal  { position: static; height: auto; overflow: visible; }
+  .spl-panel     { flex: none; }
+  .spl-panel-output { max-height: 220px; min-height: 90px; }
 }
 @media (min-width: 768px) {
   .spl-tabs      { display: none; }
@@ -466,7 +466,7 @@ function StyleInjector() {
 
 /* ─── TerminalPanel ──────────────────────────────────────────────────────── */
 function TerminalPanel({
-  title, subtitle, lines, bottomRef, maxHeight = "195px",
+  title, subtitle, lines, bottomRef, maxHeight,
 }: {
   title:     string;
   subtitle:  string;
@@ -483,7 +483,7 @@ function TerminalPanel({
         <span className="spl-panel-title">{title}</span>
         <span className="spl-panel-sub">{subtitle}</span>
       </div>
-      <div className="spl-panel-output" style={{ maxHeight }}>
+      <div className="spl-panel-output" style={maxHeight ? { maxHeight } : undefined}>
         {lines.map((line, idx) => {
           const isFrame = line.type === "frame-in" || line.type === "frame-err";
           if (isFrame) {
@@ -526,12 +526,6 @@ function StorySection({
   onTrigger: () => void;
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isActive && sectionRef.current) {
-      sectionRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  }, [isActive]);
 
   return (
     <div
@@ -579,9 +573,9 @@ export default function SPLCaseStudy() {
   const tosRef     = useRef<ReturnType<typeof setTimeout>[]>([]);
   const eventsRef  = useRef<typeof AF_EVENTS>([]);
 
-  useEffect(() => { messiBot.current?.scrollIntoView({ behavior: "smooth" }); },   [messiLines]);
-  useEffect(() => { ronaldoBot.current?.scrollIntoView({ behavior: "smooth" }); }, [ronaldoLines]);
-  useEffect(() => { serverBot.current?.scrollIntoView({ behavior: "smooth" }); },  [serverLines]);
+  useEffect(() => { const p = messiBot.current?.parentElement;   if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [messiLines]);
+  useEffect(() => { const p = ronaldoBot.current?.parentElement; if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [ronaldoLines]);
+  useEffect(() => { const p = serverBot.current?.parentElement;  if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [serverLines]);
   useEffect(() => () => { tosRef.current.forEach(clearTimeout); }, []);
 
   /* ── Playback engine ────────────────────────────────────────────────────── */
@@ -888,7 +882,7 @@ export default function SPLCaseStudy() {
   const demoVisible   = activeTab === "demo";
 
   return (
-    <section className="spl-root">
+    <section id="spl" className="spl-root">
       <StyleInjector />
       <div aria-hidden className="spl-bg-orb" />
 
@@ -903,10 +897,46 @@ export default function SPLCaseStudy() {
             A <span className="spl-title-em">Distributed</span> STOMP System
           </h2>
           <p className="spl-subtitle">
-            Java Reactor server · Python SQLite bridge · C++17 multithreaded client ·
-            Custom STOMP 1.2 protocol over TCP. Five engineering decisions that shaped
-            the implementation — click any button to watch the live protocol exchange.
+            Java Reactor server · Python SQLite bridge · C++ multithreaded client · Custom STOMP 1.2 protocol over TCP. Five engineering decisions that shaped the implementation — click any button to watch the live protocol exchange.
           </p>
+          <p className="spl-subtitle" style={{ fontSize: "0.78rem", color: "#64748b", marginTop: "0.35rem" }}>
+            Simulated demo — interactions reflect the real protocol flow.
+          </p>
+        </div>
+
+        {/* Project context */}
+        <div className="spl-context">
+          <div className="spl-context-card">
+            <div className="spl-context-card-label">What it does</div>
+            <div className="spl-context-card-body">
+              A <strong>real-time pub/sub event system</strong> for football matches.
+              Reporters upload game event JSON files to a named channel
+              (e.g. <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}>argentina_france</code>).
+              Every subscribed client instantly receives a MESSAGE frame per event —
+              scores, kickoffs, substitutions — as they are published.
+            </div>
+          </div>
+          <div className="spl-context-card">
+            <div className="spl-context-card-label">Who uses it</div>
+            <div className="spl-context-card-body">
+              Two user roles share the same server.
+              A <strong>reporter</strong> connects, subscribes to a channel,
+              and uploads an event file. A <strong>subscriber</strong> connects
+              and subscribes to receive live updates. Any client can call
+              <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}> summary</code> to
+              get aggregated stats for any reporter on any channel.
+            </div>
+          </div>
+          <div className="spl-context-card">
+            <div className="spl-context-card-label">Why STOMP</div>
+            <div className="spl-context-card-body">
+              STOMP 1.2 provides <strong>channel-based pub/sub over raw TCP</strong> with
+              a standardized text frame format — CONNECT, SUBSCRIBE, SEND, MESSAGE,
+              DISCONNECT. Its <strong>RECEIPT handshake</strong> guarantees all frames
+              are processed before a client disconnects, making clean teardown reliable
+              without application-level polling.
+            </div>
+          </div>
         </div>
 
         {/* Mobile tabs */}
@@ -921,7 +951,7 @@ export default function SPLCaseStudy() {
             className={`spl-tab${activeTab === "demo" ? " spl-tab--active" : " spl-tab--inactive"}`}
             onClick={() => setActiveTab("demo")}
           >
-            ▶ Live Demo
+            ⚡ Live Terminal
           </button>
         </div>
 
@@ -953,38 +983,21 @@ export default function SPLCaseStudy() {
               subtitle="@stomp-client  [keyboard-thread + socket-thread]"
               lines={messiLines}
               bottomRef={messiBot}
-              maxHeight="185px"
             />
             <TerminalPanel
               title="bash — ronaldo"
               subtitle="@stomp-client  [keyboard-thread + socket-thread]"
               lines={ronaldoLines}
               bottomRef={ronaldoBot}
-              maxHeight="185px"
             />
             <TerminalPanel
               title="bash — StompServer"
               subtitle=":7777 (JavaReactor)  |  Python SQL :7778"
               lines={serverLines}
               bottomRef={serverBot}
-              maxHeight="160px"
             />
 
-            {/* Legend */}
-            <div className="spl-legend">
-              {[
-                { color: LINE_COLORS["frame-in"],  label: "STOMP frame (out/in)" },
-                { color: LINE_COLORS.info,         label: "Thread annotation" },
-                { color: LINE_COLORS.sql,          label: "Python SQL layer" },
-                { color: LINE_COLORS.success,      label: "Confirmed" },
-                { color: LINE_COLORS.error,        label: "Error frame" },
-              ].map(({ color, label }) => (
-                <div key={label} className="spl-legend-item">
-                  <span className="spl-legend-dot" style={{ background: color }} />
-                  {label}
-                </div>
-              ))}
-            </div>
+            {/* Legend removed */}
           </div>
         </div>
       </div>

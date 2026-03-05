@@ -80,7 +80,7 @@ export const SKILLS_ROW_2 = [
 export const DATA_PRIVACY_POINTS = [
   "API keys stored in .env files and excluded via .gitignore — never committed to source control",
   "All AI agent testing uses fully synthetic data — no real user PII is ever processed or stored",
-  "Strict LangGraph flow logic keeps the Sales Bot on-topic: nodes validate intent at each step to prevent prompt injection and limit hallucination surface",
+  "Security and correctness are not afterthoughts — every component is built with rigorous testing, strict input validation, and disciplined engineering: from prompt engineering guardrails to typed APIs, the same methodical mindset applies across the stack.",
 ];
 
 export const NAV_LINKS: NavLink[] = [

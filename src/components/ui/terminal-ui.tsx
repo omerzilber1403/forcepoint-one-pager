@@ -62,7 +62,8 @@ export function TerminalUI() {
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const p = bottomRef.current?.parentElement;
+    if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; });
   }, [lines]);
 
   function clearAllTimeouts() {

@@ -25,7 +25,7 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-6rem)]">
 
           {/* LEFT: text column */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center items-center text-center">
             {/* Role badge — glass */}
             <FadeIn delay={0}>
             <div
@@ -77,7 +77,7 @@ export function Hero() {
 
             {/* CTA row */}
             <FadeIn delay={0.35}>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               {/* Primary CTA — solid accent */}
               <a
                 href="#projects"
@@ -137,6 +137,7 @@ export function Hero() {
             </div>
             </FadeIn>
           </div>
+
           <div className="hidden lg:flex items-center justify-center">
             <CardSpotlight
               className="w-full h-[520px] p-0 overflow-hidden"

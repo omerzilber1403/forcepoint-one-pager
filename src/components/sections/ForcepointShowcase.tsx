@@ -1,10 +1,7 @@
 "use client";
-import { useState } from "react";
 import {
   Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight,
 } from "lucide-react";
-import { ProjectModal } from "@/components/ui/project-modal";
-import { MultiClientTerminal } from "@/components/ui/multi-client-terminal";
 
 /* ── Forcepoint brand tokens ─────────────────────────────────────────────── */
 const FP = {
@@ -65,21 +62,6 @@ function FpPill({
   );
 }
 
-/* ── FP Alignment callout ────────────────────────────────────────────────── */
-function FpAlignment({ text }: { text: string }) {
-  return (
-    <div
-      className="rounded-r-lg pl-3 py-2 border-l-2 text-xs italic"
-      style={{ borderColor: FP.teal, color: "rgba(76,199,184,0.75)" }}
-    >
-      <span className="font-semibold not-italic" style={{ color: FP.teal }}>
-        FP alignment:{" "}
-      </span>
-      {text}
-    </div>
-  );
-}
-
 /* ── Sales Bot card ──────────────────────────────────────────────────────── */
 function SalesBotCard() {
   return (
@@ -126,33 +108,51 @@ function SalesBotCard() {
         style={{ background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.07)" }}
       >
         <div className="text-center">
-          <div className="text-xs font-mono text-slate-500 mb-0.5">manual call</div>
-          <div className="text-lg font-bold font-mono text-slate-500 line-through">~45 min</div>
+          <div className="text-xs font-mono text-slate-500 mb-0.5">standard approach</div>
+          <div className="text-sm font-bold font-mono text-slate-500 line-through">Generic cold call</div>
         </div>
         <div className="flex items-center gap-0.5">
           <ChevronRight className="fp-arr  w-4 h-4" style={{ color: FP.teal }} />
           <ChevronRight className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
         </div>
         <div className="text-center">
-          <div className="text-xs font-mono text-slate-500 mb-0.5">AI agent</div>
-          <div className="text-lg font-bold font-mono fp-glow-text" style={{ color: FP.teal }}>
-            ~8 min
+          <div className="text-xs font-mono text-slate-500 mb-0.5">with AI agent</div>
+          <div className="text-sm font-bold font-mono fp-glow-text" style={{ color: FP.teal }}>
+            Prepared lead
           </div>
         </div>
         <span
           className="ml-auto rounded-full px-2.5 py-0.5 text-xs font-mono font-semibold"
           style={{ background: FP.tealGlass, color: FP.teal, border: `1px solid ${FP.tealBorder}` }}
         >
-          5.6× faster
+          Personalized
         </span>
       </div>
 
       {/* Description */}
       <p className="text-sm text-slate-400 leading-relaxed">
-        Graph-based agent (LangGraph) that autonomously filters leads and handles initial
-        inquiries using a company-specific Rulebook. Multi-tenant architecture — zero
-        restart required for config swaps. Full audit trail of every graph node decision.
+        Graph-based agent (LangGraph) with multi-tenant architecture — each company&apos;s products, objection playbook, ICP definition, and competitive map live in a single DB row, hot-swappable with zero restart required.
       </p>
+
+      {/* Forcepoint callout */}
+      <div
+        className="rounded-xl px-4 py-3 border"
+        style={{
+          background: "rgba(76,199,184,0.06)",
+          borderColor: "rgba(76,199,184,0.22)",
+        }}
+      >
+        <p className="text-xs leading-relaxed" style={{ color: "#94a3b8" }}>
+          <span style={{ color: "#4cc7b8", fontWeight: 600 }}>
+            ✦ Forcepoint&apos;s real data is live in the demo.
+          </span>{" "}
+          Product catalog, DLP objection playbook, and competitive positioning (Netskope, Zscaler, Purview, Symantec) were scraped from{" "}
+          <span style={{ fontFamily: "monospace", color: "#cbd5e1" }}>forcepoint.com</span>{" "}
+          using{" "}
+          <span style={{ color: "#4cc7b8", fontWeight: 600 }}>Antigravity</span>{" "}
+          and loaded as a single tenant. Try it below.
+        </p>
+      </div>
 
       {/* Tech pills */}
       <div className="flex flex-col gap-2">
@@ -165,18 +165,30 @@ function SalesBotCard() {
           <FpPill>Python</FpPill>
           <FpPill>SQLite</FpPill>
           <FpPill>React</FpPill>
-          <FpPill>SQLAlchemy</FpPill>
         </div>
       </div>
 
-      {/* FP alignment */}
-      <FpAlignment text="Mirrors Forcepoint's DLP philosophy: route sensitive content through policy-aware pipelines, not ad-hoc logic." />
+      {/* Navigate to project section */}
+      <div className="mt-auto pt-1">
+        <button
+          onClick={() => document.getElementById("salesbot")?.scrollIntoView({ behavior: "smooth" })}
+          className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-85 active:opacity-70"
+          style={{
+            background: FP.teal,
+            color: FP.navy,
+            boxShadow: `0 4px 18px rgba(76,199,184,0.35)`,
+          }}
+        >
+          <Zap className="w-3.5 h-3.5" />
+          Try the Forcepoint Bot ↓
+        </button>
+      </div>
     </div>
   );
 }
 
 /* ── STOMP / World Cup card ──────────────────────────────────────────────── */
-function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
+function StompCard() {
   return (
     <div
       className="fp-a2 relative flex flex-col rounded-2xl border p-5 gap-4 h-full"
@@ -214,6 +226,11 @@ function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
       <h3 className="font-bold text-white text-lg leading-tight">
         Multi-Protocol Event System (STOMP)
       </h3>
+
+      {/* Project description */}
+      <p className="text-sm text-slate-400 leading-relaxed">
+        Real-time pub/sub system for live football match events — reporters upload event JSON to named channels; all subscribers receive instant MESSAGE frames. Built with a Java Reactor server, Python SQLite bridge, and a two-threaded C++ client implementing the STOMP 1.2 protocol from scratch over raw TCP.
+      </p>
 
       {/* ─── VELOCITY BLOCK ─── */}
       <div className="flex items-stretch gap-2 w-full">
@@ -264,15 +281,12 @@ function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
       {/* What AI solved */}
       <ul className="flex flex-col gap-1.5">
         {[
-          "C++17 multi-threading & thread-safety solved with AI pair programming",
+          "C++ multi-threading & thread-safety solved with AI pair programming",
           "Java Reactor pattern generated & reviewed with Claude in hours",
           "STOMP protocol client–server integration debugged via AI",
         ].map((item) => (
           <li key={item} className="flex items-start gap-2 text-xs text-slate-400">
-            <ChevronRight
-              className="w-3.5 h-3.5 flex-shrink-0 mt-px"
-              style={{ color: FP.teal }}
-            />
+            <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
             {item}
           </li>
         ))}
@@ -282,7 +296,7 @@ function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap gap-1.5">
           <FpPill tier="core">Java Reactor</FpPill>
-          <FpPill tier="core">C++17</FpPill>
+          <FpPill tier="core">C++</FpPill>
           <FpPill tier="core">STOMP Protocol</FpPill>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -292,13 +306,10 @@ function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
         </div>
       </div>
 
-      {/* FP alignment */}
-      <FpAlignment text="Systems C++ and Java depth — the foundation to instrument and modernize legacy security tooling with AI." />
-
-      {/* Live demo CTA */}
+      {/* Navigate to SPL case study */}
       <div className="mt-auto pt-1">
         <button
-          onClick={onLiveDemo}
+          onClick={() => document.getElementById("spl")?.scrollIntoView({ behavior: "smooth" })}
           className="w-full flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-85 active:opacity-70"
           style={{
             background: FP.teal,
@@ -306,8 +317,8 @@ function StompCard({ onLiveDemo }: { onLiveDemo: () => void }) {
             boxShadow: `0 4px 18px rgba(76,199,184,0.35)`,
           }}
         >
-          <Zap className="w-3.5 h-3.5" />
-          Live Terminal Demo
+          <Bot className="w-3.5 h-3.5" />
+          Explore Live Case Study ↓
         </button>
       </div>
     </div>
@@ -347,10 +358,9 @@ function SecurityPanel({
 
 /* ── Main export ─────────────────────────────────────────────────────────── */
 export function ForcepointShowcase() {
-  const [showDemo, setShowDemo] = useState(false);
-
   return (
     <section
+      id="projects"
       className="relative py-24 px-4 overflow-hidden"
       style={{
         background:
@@ -387,15 +397,14 @@ export function ForcepointShowcase() {
             <span style={{ color: FP.teal }}>Data Security Roles</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
-            AI automation velocity paired with low-level systems engineering — the exact
-            combination Forcepoint needs to build and ship AI-native security tooling fast.
+            AI automation velocity paired with low-level systems engineering — the exact combination Forcepoint needs to build and ship AI-native security tooling fast.
           </p>
         </div>
 
         {/* ── Project cards ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 items-start">
           <SalesBotCard />
-          <StompCard onLiveDemo={() => setShowDemo(true)} />
+          <StompCard />
         </div>
 
         {/* ── Security strip ── */}
@@ -417,25 +426,6 @@ export function ForcepointShowcase() {
           />
         </div>
       </div>
-
-      {/* ── World Cup Live Terminal Modal ── */}
-      <ProjectModal
-        open={showDemo}
-        onClose={() => setShowDemo(false)}
-        title="Multi-Protocol Event System — Live Terminal"
-      >
-        <div className="flex flex-col gap-5" style={{ minHeight: "480px" }}>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Java Reactor / TPC server · Python SQL layer · C++17 multi-threaded client — all
-            communicating over a custom STOMP protocol. Built in{" "}
-            <span style={{ color: FP.teal }} className="font-semibold">
-              2 days
-            </span>{" "}
-            with AI assistance (Cursor, Claude, Copilot).
-          </p>
-          <MultiClientTerminal />
-        </div>
-      </ProjectModal>
     </section>
   );
 }

@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ForcepointShowcase } from "@/components/sections/ForcepointShowcase";
+import AgentShowcase from "@/components/agent-showcase";
 import SPLCaseStudy from "@/components/spl-case-study";
 import { Skills } from "@/components/sections/Skills";
 import { DataPrivacy } from "@/components/sections/DataPrivacy";
@@ -12,6 +13,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <ForcepointShowcase />
+      <AgentShowcase />
       <SPLCaseStudy />
       <Skills />
       <DataPrivacy />

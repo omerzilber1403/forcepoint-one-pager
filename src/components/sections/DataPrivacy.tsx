@@ -55,8 +55,7 @@ export function DataPrivacy() {
           </h2>
 
           <p className="text-text-secondary mb-10 max-w-xl mx-auto">
-            When I work with AI tools, safety isn&apos;t added after the fact — it&apos;s
-            built into the workflow from the first prompt.
+            When I work with AI tools, safety isn&apos;t added after the fact — it&apos;s built into the workflow from the first prompt.
           </p>
           </FadeIn>
 

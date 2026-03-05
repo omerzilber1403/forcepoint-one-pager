@@ -1,0 +1,882 @@
+"use client";
+
+import React, { useState, useEffect, useRef, useCallback } from "react";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_SALES_BOT_API || "http://localhost:8080";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type StepId = "multitenant" | "routing" | "handoff" | "learning" | "forcepoint";
+
+interface ChatMessage {
+  id: number;
+  role: "user" | "bot" | "system";
+  content: string;
+  executionPath?: string[];
+  handoff?: boolean;
+  isError?: boolean;
+}
+
+interface DemoCompanyMeta {
+  domain: string;
+  label: string;
+  type: "B2C" | "B2B";
+  id?: number;
+}
+
+interface StorySectionData {
+  stepId: StepId;
+  badge: string;
+  headline: string;
+  body: React.ReactNode;
+  btnLabel: string;
+  demoMessage: string;
+  targetDomain?: string;
+  btnLabel2?: string;
+  demoMessage2?: string;
+}
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const DEMO_COMPANIES: DemoCompanyMeta[] = [
+  { domain: "geula-surf.co.il", label: "גאולה גלישה", type: "B2C" },
+  { domain: "scaleit.co.il", label: "SCALE IT", type: "B2B" },
+  { domain: "forcepoint.com", label: "Forcepoint", type: "B2B" },
+];
+
+// ─── Story Sections ───────────────────────────────────────────────────────────
+
+function makeSections(): StorySectionData[] {
+  return [
+    {
+      stepId: "multitenant",
+      badge: "01 / Architecture",
+      headline: "One Graph, Every Company",
+      demoMessage: "ספר לי על השירותים שלך",
+      targetDomain: "geula-surf.co.il",
+      btnLabel: "Ask About Products →",
+      body: (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>Company-as-Config:</strong>{" "}
+            Every company&apos;s identity — products with prices, pain points,
+            brand voice, ICP definition, handoff rules, and custom fields to
+            collect — lives in a single <code>Company</code> DB row as JSON
+            columns. No code change is needed to onboard a new tenant.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Stateless graph, stateful DB:
+            </strong>{" "}
+            <code>create_sales_graph(company_data)</code> closes over the
+            company dict per-request. The LangGraph graph is re-instantiated
+            fresh on every call — the DB row is the tenant, and the graph holds
+            zero state between sessions.
+          </p>
+        </div>
+      ),
+    },
+    {
+      stepId: "routing",
+      badge: "02 / Graph Routing",
+      headline: "B2C or B2B — the Graph Decides",
+      demoMessage: "מה העסק שלכם עושה?",
+      targetDomain: "scaleit.co.il",
+      btnLabel: "Switch to B2B →",
+      body: (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              First-class routing node:
+            </strong>{" "}
+            After building customer context, the graph reads{" "}
+            <code>company_data[&quot;business_type&quot;]</code> and routes to
+            either <code>b2c_sales_agent</code> or <code>b2b_sales_agent</code>.
+            These aren&apos;t conditional flags inside one node — they are two
+            distinct graph nodes with separate system prompt blocks.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Different worlds, same API:
+            </strong>{" "}
+            B2C gets a warm, informal Hebrew prompt — surfing level, group size,
+            preferred date. B2B gets a professional consultant prompt — company
+            size, current CRM, decision maker, timeline. Click to switch to
+            SCALE IT and send the same question.
+          </p>
+        </div>
+      ),
+    },
+    {
+      stepId: "handoff",
+      badge: "03 / Handoff Guard",
+      headline: "Two-Stage Escalation",
+      demoMessage: "אני רוצה לדבר עם נציג אנושי",
+      btnLabel: "Trigger Handoff →",
+      body: (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Stage 1 — keyword blocklist:
+            </strong>{" "}
+            An explicit human-request list (מנהל, נציג, תלונה, תפסיק…) triggers
+            handoff instantly with zero LLM cost. Straightforward sales
+            questions (price, availability, how-it-works) are explicitly
+            excluded to prevent false positives.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Stage 2 — LLM binary classification:
+            </strong>{" "}
+            Only ambiguous messages that pass stage 1 get a second LLM call: a
+            single-shot binary prompt asking כן/לא whether the user wants a
+            human. The <code>execution_path</code> in each response shows which
+            stage fired. Send the demo message to see both stages in action.
+          </p>
+        </div>
+      ),
+    },
+    {
+      stepId: "learning",
+      badge: "04 / Learning Loop",
+      headline: "Ratings Rewrite the Prompt",
+      demoMessage: "מה המחיר ומה כולל בדיוק?",
+      btnLabel: "Ask a Pricing Question →",
+      body: (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Feedback → prompt mutation:
+            </strong>{" "}
+            After each bot reply, users rate 1–5 stars with optional free text.
+            Ratings persist to <code>data/ratings.json</code>. Before each new
+            request, <code>get_company_learning_instructions()</code> reads the
+            file, categorizes low-rated topics (pricing / tone / content /
+            handoff), and appends tailored override instructions at the bottom
+            of the system prompt.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              No retraining required:
+            </strong>{" "}
+            Negative patterns accumulate and change the bot&apos;s behaviour for
+            that company in the next session — purely through prompt
+            engineering. The full conversation history is replayed into the
+            graph on every turn, giving the LLM complete prior context.
+          </p>
+        </div>
+      ),
+    },
+    {
+      stepId: "forcepoint",
+      badge: "✦ Live: Forcepoint",
+      headline: "Your Company. One DB Row.",
+      demoMessage:
+        "Our security team is overwhelmed by DLP false positives from our current tool and we're evaluating alternatives — what makes Forcepoint different?",
+      targetDomain: "forcepoint.com",
+      btnLabel: "Talk to the Forcepoint Bot →",
+      btnLabel2: "Ask for a Product Link →",
+      demoMessage2:
+        "Can I get a link to your cloud security product — like the CASB or DLP page?",
+      body: (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>Your data is already loaded.</strong>{" "}
+            Forcepoint&apos;s product lines, ICP definition, objection playbook, competitive
+            positioning against Netskope / Zscaler / Purview / Symantec, and case studies were
+            scraped from <code>forcepoint.com</code> using{" "}
+            <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> and seeded as a single
+            DB tenant — the same zero-code pipeline every company goes through.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>Try it now.</strong>{" "}
+            Ask about DLP false positives, GenAI data risk, FedRAMP compliance, or how
+            Forcepoint stacks up against Netskope — this is what a configured Forcepoint
+            sales agent actually sounds like. Hit the button to open with the first real question.
+          </p>
+        </div>
+      ),
+    },
+  ];
+}
+
+// ─── Scoped CSS ───────────────────────────────────────────────────────────────
+
+const SCOPED_CSS = `
+/* ── Layout ─────────────────────────────────────────────────── */
+.bot-root  { font-family: system-ui, sans-serif; color: #e2e8f0; position: relative; overflow: visible; }
+.bot-inner { max-width: 72rem; margin: 0 auto; padding: 5rem 1.5rem 6rem; position: relative; }
+
+/* ── Header ─────────────────────────────────────────────────── */
+.bot-header      { text-align: center; margin-bottom: 3.5rem; }
+.bot-header-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  border-radius: 9999px; border: 1px solid rgba(76,199,184,0.28);
+  background: rgba(76,199,184,0.12); color: #4cc7b8;
+  font-size: 0.72rem; font-family: monospace; font-weight: 600;
+  padding: 0.3rem 0.9rem; margin-bottom: 1.2rem;
+}
+.bot-header-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #4cc7b8;
+  animation: bot-pulse 2.4s ease-in-out infinite;
+}
+.bot-title     { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+.bot-title-em  { color: #4cc7b8; }
+.bot-subtitle  { font-size: 0.9rem; color: #94a3b8; max-width: 38rem; margin: 0 auto; line-height: 1.7; }
+@keyframes bot-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── Mobile tabs ─────────────────────────────────────────────── */
+.bot-tabs {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-radius: 0.75rem; overflow: hidden;
+  border: 1px solid rgba(76,199,184,0.25); margin-bottom: 1.5rem;
+}
+.bot-tab           { padding: 0.625rem; font-family: monospace; font-size: 0.8rem; border: none; cursor: pointer; }
+.bot-tab--active   { background: #4cc7b8; color: #063b58; font-weight: 700; }
+.bot-tab--inactive { background: rgba(6,59,88,0.6); color: #94a3b8; }
+
+/* ── Split pane ──────────────────────────────────────────────── */
+.bot-split     { display: flex; gap: 2rem; align-items: flex-start; }
+.bot-story     { flex: 0 0 48%; display: flex; flex-direction: column; gap: 1.75rem; }
+.bot-demo-pane {
+  flex: 1; position: sticky; top: 4.5rem;
+  height: calc(100vh - 6rem);
+  display: flex; flex-direction: column;
+  border-radius: 1rem; overflow: hidden;
+  border: 1px solid rgba(76,199,184,0.25);
+  background: rgba(6,59,88,0.35);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+}
+
+/* ── Story cards ─────────────────────────────────────────────── */
+.bot-section {
+  border-radius: 1rem; padding: 1.4rem 1.5rem;
+  border: 1px solid rgba(76,199,184,0.10);
+  background: rgba(6,59,88,0.25);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+}
+.bot-section--active {
+  border-left: 3px solid #4cc7b8;
+  border-color: rgba(76,199,184,0.38);
+  background: rgba(6,59,88,0.40);
+  box-shadow: 0 0 24px rgba(76,199,184,0.08), inset 0 0 18px rgba(251,146,60,0.03);
+}
+.bot-step-badge {
+  display: inline-block; font-size: 0.63rem; font-family: monospace; font-weight: 700;
+  padding: 0.18rem 0.55rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.04em;
+  background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.28);
+  margin-bottom: 0.75rem;
+}
+.bot-headline { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem; }
+.bot-body     { font-size: 0.84rem; color: #94a3b8; line-height: 1.8; display: flex; flex-direction: column; gap: 0.6rem; }
+.bot-body p   { margin: 0; }
+.bot-body code {
+  font-family: ui-monospace, monospace; font-size: 0.78rem;
+  padding: 0.1rem 0.35rem; border-radius: 4px;
+  background: rgba(76,199,184,0.10); color: #4cc7b8;
+}
+
+/* ── Trigger button ──────────────────────────────────────────── */
+.bot-trigger-btn {
+  margin-top: 1rem; padding: 0.48rem 1.1rem; border-radius: 9999px;
+  border: 1px solid #4cc7b8; background: transparent; color: #4cc7b8;
+  font-size: 0.78rem; font-family: monospace; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.bot-trigger-btn:hover:not(:disabled)  { background: #4cc7b8; color: #063b58; box-shadow: 0 4px 16px rgba(76,199,184,0.35); transform: translateY(-1px); }
+.bot-trigger-btn:disabled              { opacity: 0.45; cursor: not-allowed; }
+.bot-trigger-btn--active               { background: rgba(76,199,184,0.15); box-shadow: 0 0 0 1px #4cc7b8 inset; }
+
+/* ── Chat panel header ───────────────────────────────────────── */
+.bot-demo-header {
+  flex: none; padding: 0.75rem 1rem;
+  background: rgba(6,59,88,0.85);
+  border-bottom: 1px solid rgba(76,199,184,0.15);
+}
+.bot-demo-header-row   { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.bot-demo-title        { font-size: 0.72rem; font-family: monospace; font-weight: 700; color: #4cc7b8; text-transform: uppercase; letter-spacing: 0.06em; }
+.bot-status-row        { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; color: #475569; font-family: monospace; }
+.bot-status-dot        { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.bot-company-tabs      { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.bot-company-pill {
+  border-radius: 9999px; border: 1px solid rgba(76,199,184,0.28);
+  background: transparent; color: #94a3b8;
+  font-size: 0.68rem; font-family: monospace; font-weight: 600;
+  padding: 0.22rem 0.7rem; cursor: pointer; transition: all 0.2s ease;
+}
+.bot-company-pill:hover:not(.bot-company-pill--active) { border-color: #4cc7b8; color: #4cc7b8; }
+.bot-company-pill--active { background: rgba(76,199,184,0.18); color: #4cc7b8; border-color: #4cc7b8; }
+.bot-type-badge { font-size: 0.56rem; font-weight: 700; padding: 0.1rem 0.35rem; border-radius: 3px; margin-left: 0.3rem; }
+.bot-type-b2c   { background: rgba(16,185,129,0.15); color: #34d399; }
+.bot-type-b2b   { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+/* ── Message area ────────────────────────────────────────────── */
+.bot-messages {
+  flex: 1; overflow-y: auto; padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.75rem;
+  min-height: 0;
+}
+.bot-msg           { display: flex; flex-direction: column; max-width: 82%; }
+.bot-msg--user     { align-self: flex-end;   align-items: flex-end; }
+.bot-msg--bot      { align-self: flex-start; }
+.bot-msg--system   { align-self: center; max-width: 100%; }
+.bot-bubble        { border-radius: 1rem; padding: 0.6rem 0.9rem; font-size: 0.82rem; line-height: 1.6; word-break: break-word; direction: rtl; text-align: right; }
+.bot-bubble--user  { background: #4cc7b8; color: #063b58; border-radius: 1rem 1rem 0.25rem 1rem; font-weight: 500; }
+.bot-bubble--bot   { background: rgba(6,59,88,0.75); color: #e2e8f0; border: 1px solid rgba(76,199,184,0.18); border-radius: 0.25rem 1rem 1rem 1rem; }
+.bot-bubble--system {
+  background: rgba(251,146,60,0.07); color: #fb923c; border: 1px solid rgba(251,146,60,0.2);
+  font-size: 0.7rem; font-family: monospace; border-radius: 0.5rem; padding: 0.4rem 0.75rem;
+}
+.bot-meta          { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.3rem; flex-wrap: wrap; }
+.bot-exec-path {
+  font-size: 0.6rem; color: #475569; font-family: monospace;
+  padding: 0.12rem 0.45rem; border-radius: 4px;
+  background: rgba(6,59,88,0.6); border: 1px solid rgba(76,199,184,0.1);
+}
+.bot-handoff-badge {
+  font-size: 0.6rem; font-weight: 700; color: #f87171;
+  border: 1px solid rgba(248,113,113,0.3); background: rgba(248,113,113,0.08);
+  border-radius: 4px; padding: 0.1rem 0.4rem;
+}
+.bot-typing-row    { display: flex; gap: 0.35rem; align-items: center; padding: 0.6rem 0.9rem; }
+.bot-dot           { width: 0.38rem; height: 0.38rem; border-radius: 50%; background: #4cc7b8; animation: bot-bounce 1.1s ease-in-out infinite; }
+.bot-dot:nth-child(2) { animation-delay: 0.18s; }
+.bot-dot:nth-child(3) { animation-delay: 0.36s; }
+@keyframes bot-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+/* ── Input bar ───────────────────────────────────────────────── */
+.bot-input-bar {
+  flex: none; padding: 0.65rem 0.75rem;
+  border-top: 1px solid rgba(76,199,184,0.15);
+  background: rgba(4,19,30,0.85); display: flex; gap: 0.5rem; align-items: flex-end;
+}
+.bot-input {
+  flex: 1; background: rgba(6,59,88,0.55); border: 1px solid rgba(76,199,184,0.22);
+  border-radius: 0.6rem; color: #e2e8f0; font-size: 0.85rem;
+  padding: 0.5rem 0.75rem; outline: none; resize: none;
+  min-height: 38px; max-height: 100px; font-family: inherit; line-height: 1.5;
+  direction: rtl; text-align: right;
+}
+.bot-input:focus        { border-color: rgba(76,199,184,0.55); }
+.bot-input::placeholder { color: #475569; }
+.bot-send {
+  border-radius: 0.6rem; border: none; background: #4cc7b8; color: #063b58;
+  font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; cursor: pointer;
+  transition: all 0.2s; flex-shrink: 0; height: 38px;
+}
+.bot-send:hover:not(:disabled) { background: #38b2a4; box-shadow: 0 4px 14px rgba(76,199,184,0.4); }
+.bot-send:disabled              { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Offline / checking states ───────────────────────────────── */
+.bot-offline {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.9rem; padding: 2rem; text-align: center;
+}
+.bot-offline-icon  { font-size: 2.5rem; opacity: 0.5; }
+.bot-offline-title { font-size: 0.85rem; font-weight: 600; color: #64748b; }
+.bot-offline-cmd {
+  font-family: monospace; font-size: 0.72rem; color: #4cc7b8;
+  background: rgba(6,59,88,0.6); border: 1px solid rgba(76,199,184,0.2);
+  border-radius: 0.5rem; padding: 0.5rem 0.9rem;
+}
+.bot-checking { flex: 1; display: flex; align-items: center; justify-content: center; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .bot-split     { flex-direction: column; }
+  .bot-demo-pane { position: static; height: 500px; }
+}
+@media (min-width: 768px) {
+  .bot-tabs                     { display: none; }
+  .bot-story, .bot-demo-pane    { display: flex !important; }
+}
+`;
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StyleInjector() {
+  return <style dangerouslySetInnerHTML={{ __html: SCOPED_CSS }} />;
+}
+
+function StorySection({
+  section,
+  isActive,
+  isSending,
+  onTrigger,
+  onTrigger2,
+}: {
+  section: StorySectionData;
+  isActive: boolean;
+  isSending: boolean;
+  onTrigger: () => void;
+  onTrigger2?: () => void;
+}) {
+  return (
+    <div className={`bot-section${isActive ? " bot-section--active" : ""}`}>
+      <div className="bot-step-badge">{section.badge}</div>
+      <h3 className="bot-headline">{section.headline}</h3>
+      {section.body}
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        <button
+          className={`bot-trigger-btn${isActive ? " bot-trigger-btn--active" : ""}`}
+          onClick={onTrigger}
+          disabled={isSending}
+        >
+          {section.btnLabel}
+        </button>
+        {section.btnLabel2 && onTrigger2 && (
+          <button
+            className="bot-trigger-btn"
+            onClick={onTrigger2}
+            disabled={isSending}
+          >
+            {section.btnLabel2}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export default function AgentShowcase() {
+  const [activeStep, setActiveStep] = useState<StepId | null>(null);
+  const [activeTab, setActiveTab] = useState<"story" | "demo">("story");
+
+  // Companies & selection
+  const [companies, setCompanies] = useState<DemoCompanyMeta[]>(DEMO_COMPANIES);
+  const [selectedDomain, setSelectedDomain] = useState("geula-surf.co.il");
+
+  // Chat state
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [sending, setSending] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<
+    "checking" | "online" | "offline"
+  >("checking");
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Stable per-company session IDs (reset only on page refresh)
+  const sessionIds = useRef<Record<string, string>>({});
+  const getSessionId = (domain: string) => {
+    if (!sessionIds.current[domain]) {
+      sessionIds.current[domain] = `portfolio_${domain}_${Date.now()}`;
+    }
+    return sessionIds.current[domain];
+  };
+
+  const selectedCompany =
+    companies.find((c) => c.domain === selectedDomain) ?? companies[0];
+
+  // ── Backend health check ─────────────────────────────────────
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const r = await fetch(`${API_URL}/health`, {
+          signal: AbortSignal.timeout(4000),
+        });
+        setBackendStatus(r.ok ? "online" : "offline");
+      } catch {
+        setBackendStatus("offline");
+      }
+    };
+    check();
+    const iv = setInterval(check, 30_000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // ── Fetch company IDs once backend is confirmed online ───────
+  useEffect(() => {
+    if (backendStatus !== "online") return;
+    fetch(`${API_URL}/api/v1/admin/companies`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((list: Array<{ id: number; domain: string }>) => {
+        setCompanies((prev) =>
+          prev.map((c) => {
+            const match = list.find((x) => x.domain === c.domain);
+            return match ? { ...c, id: match.id } : c;
+          })
+        );
+      })
+      .catch(() => {});
+  }, [backendStatus]);
+
+  // ── Auto-scroll messages (scroll container only, not the page) ──
+  useEffect(() => {
+    const container = messagesEndRef.current?.parentElement;
+    if (container) requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
+  }, [messages, sending]);
+
+  // ── Core: send message ───────────────────────────────────────
+  // override lets handleTrigger pass a pre-resolved companyId+domain
+  // so a company switch mid-render doesn't cause a stale-closure bug.
+  const sendMessage = useCallback(
+    async (
+      text: string,
+      override?: { companyId: number; domain: string }
+    ) => {
+      if (!text.trim() || sending) return;
+
+      const companyId = override?.companyId ?? selectedCompany.id;
+      const domain    = override?.domain    ?? selectedDomain;
+
+      if (!companyId) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            role: "system",
+            content: "Backend not reachable — start the server to continue.",
+          },
+        ]);
+        return;
+      }
+
+      const userMsg: ChatMessage = {
+        id: Date.now(),
+        role: "user",
+        content: text,
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setSending(true);
+
+      try {
+        const resp = await fetch(`${API_URL}/api/v1/agent/reply`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            company_id: companyId,
+            user_id: "1",
+            session_id: getSessionId(domain),
+            message: text,
+            channel: "demo",
+          }),
+        });
+
+        if (resp.ok) {
+          const data = await resp.json();
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: Date.now() + 1,
+              role: "bot",
+              content: data.text,
+              executionPath: data.execution_path,
+              handoff: data.handoff,
+            },
+          ]);
+        } else {
+          throw new Error("non-ok");
+        }
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now() + 1,
+            role: "bot",
+            content: "שגיאה בחיבור לשרת — נסה שוב.",
+            isError: true,
+          },
+        ]);
+      } finally {
+        setSending(false);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sending, selectedCompany, selectedDomain]
+  );
+
+  // ── Switch company ───────────────────────────────────────────
+  const switchCompany = useCallback(
+    (domain: string) => {
+      if (domain === selectedDomain) return;
+      const next = companies.find((c) => c.domain === domain);
+      if (!next) return;
+      setSelectedDomain(domain);
+      setMessages([
+        {
+          id: Date.now(),
+          role: "system",
+          content: `עוברים ל-${next.label} (${next.type}) — שיחה חדשה`,
+        },
+      ]);
+    },
+    [selectedDomain, companies]
+  );
+
+  // ── Story section trigger ────────────────────────────────────
+  const handleTrigger = useCallback(
+    (section: StorySectionData, messageOverride?: string) => {
+      setActiveStep(section.stepId);
+      // On mobile, flip to demo tab automatically
+      if (activeTab === "story") setActiveTab("demo");
+
+      // Resolve the target company NOW — before any state changes —
+      // so the sendMessage call below gets the correct id even if
+      // React hasn't re-rendered with the new selectedDomain yet.
+      const targetDomain = section.targetDomain ?? selectedDomain;
+      const targetCompany = companies.find((c) => c.domain === targetDomain);
+      const override =
+        targetCompany?.id
+          ? { companyId: targetCompany.id, domain: targetDomain }
+          : undefined;
+
+      const switchDelay =
+        section.targetDomain && section.targetDomain !== selectedDomain
+          ? 450
+          : 0;
+
+      if (section.targetDomain && section.targetDomain !== selectedDomain) {
+        switchCompany(section.targetDomain);
+      }
+
+      const msg = messageOverride ?? section.demoMessage;
+      setTimeout(() => {
+        sendMessage(msg, override);
+      }, switchDelay + 200);
+    },
+    [activeTab, selectedDomain, companies, switchCompany, sendMessage]
+  );
+
+  const SECTIONS = makeSections();
+  const storyVisible = activeTab === "story";
+  const demoVisible = activeTab === "demo";
+
+  return (
+    <section id="salesbot" className="bot-root">
+      <StyleInjector />
+
+      <div className="bot-inner">
+        {/* ── Section header ── */}
+        <div className="bot-header">
+          <div className="bot-header-badge">
+            <span className="bot-header-dot" />
+            LangGraph · Multi-Tenant · Forcepoint Live
+          </div>
+          <h2 className="bot-title">
+            AI Sales Agent —{" "}
+            <span className="bot-title-em">Live Demo</span>
+          </h2>
+          <p className="bot-subtitle">
+            A LangGraph-powered multi-tenant sales agent with B2C/B2B routing, two-stage handoff detection, and a feedback-driven learning loop. Forcepoint&apos;s real product data is seeded as a live tenant — click any section to send a demo message to the real backend. Try it in <strong style={{ color: "#4cc7b8" }}>Hebrew</strong> or <strong style={{ color: "#4cc7b8" }}>English</strong> — the agent detects language automatically.
+          </p>
+        </div>
+
+        {/* ── Mobile tabs ── */}
+        <div className="bot-tabs">
+          <button
+            className={`bot-tab${storyVisible ? " bot-tab--active" : " bot-tab--inactive"}`}
+            onClick={() => setActiveTab("story")}
+          >
+            📖 Engineering Story
+          </button>
+          <button
+            className={`bot-tab${demoVisible ? " bot-tab--active" : " bot-tab--inactive"}`}
+            onClick={() => setActiveTab("demo")}
+          >
+            💬 Live Demo
+          </button>
+        </div>
+
+        {/* ── Split pane ── */}
+        <div className="bot-split">
+          {/* Left — story sections */}
+          <div
+            className="bot-story"
+            style={{ display: storyVisible ? undefined : "none" }}
+          >
+            {SECTIONS.map((s) => (
+              <StorySection
+                key={s.stepId}
+                section={s}
+                isActive={activeStep === s.stepId}
+                isSending={sending}
+                onTrigger={() => handleTrigger(s)}
+                onTrigger2={
+                  s.btnLabel2 && s.demoMessage2
+                    ? () => handleTrigger(s, s.demoMessage2)
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+
+          {/* Right — live chat demo */}
+          <div
+            className="bot-demo-pane"
+            style={{ display: demoVisible ? undefined : "none" }}
+          >
+            {/* Header: company selector + status */}
+            <div className="bot-demo-header">
+              <div className="bot-demo-header-row">
+                <span className="bot-demo-title">Live Agent Demo</span>
+                <span className="bot-status-row">
+                  <span
+                    className="bot-status-dot"
+                    style={{
+                      background:
+                        backendStatus === "online"
+                          ? "#4ade80"
+                          : backendStatus === "offline"
+                            ? "#f87171"
+                            : "#fb923c",
+                    }}
+                  />
+                  {backendStatus === "online"
+                    ? "Backend online"
+                    : backendStatus === "offline"
+                      ? "Backend offline"
+                      : "Connecting…"}
+                </span>
+              </div>
+              <div className="bot-company-tabs">
+                {companies.map((c) => (
+                  <button
+                    key={c.domain}
+                    className={`bot-company-pill${selectedDomain === c.domain ? " bot-company-pill--active" : ""}`}
+                    onClick={() => switchCompany(c.domain)}
+                  >
+                    {c.label}
+                    <span
+                      className={`bot-type-badge ${c.type === "B2C" ? "bot-type-b2c" : "bot-type-b2b"}`}
+                    >
+                      {c.type}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Body: checking / offline / chat */}
+            {backendStatus === "checking" ? (
+              <div className="bot-checking">
+                <div className="bot-typing-row">
+                  <div className="bot-dot" />
+                  <div className="bot-dot" />
+                  <div className="bot-dot" />
+                </div>
+              </div>
+            ) : backendStatus === "offline" ? (
+              <div className="bot-offline">
+                <div className="bot-offline-icon">🔌</div>
+                <div className="bot-offline-title">
+                  Backend not running
+                </div>
+                <div className="bot-offline-cmd">
+                  uvicorn backend.main:app --reload
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.7rem",
+                    color: "#334155",
+                    fontFamily: "monospace",
+                  }}
+                >
+                  Run from the agent-sales-bot directory
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Messages */}
+                <div className="bot-messages">
+                  {messages.length === 0 && (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        color: "#334155",
+                        fontSize: "0.78rem",
+                        marginTop: "2rem",
+                        fontFamily: "monospace",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      Click a story section to send a demo message,
+                      <br />
+                      or type below to chat freely.
+                    </div>
+                  )}
+
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`bot-msg bot-msg--${msg.role}`}
+                    >
+                      <div className={`bot-bubble bot-bubble--${msg.role}`}>
+                        {msg.content}
+                      </div>
+                      {msg.role === "bot" && (
+                        <div className="bot-meta">
+                          {msg.executionPath &&
+                            msg.executionPath.length > 0 && (
+                              <span className="bot-exec-path">
+                                {msg.executionPath.join(" → ")}
+                              </span>
+                            )}
+                          {msg.handoff && (
+                            <span className="bot-handoff-badge">
+                              HANDOFF
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {sending && (
+                    <div className="bot-msg bot-msg--bot">
+                      <div className="bot-bubble bot-bubble--bot">
+                        <div
+                          className="bot-typing-row"
+                          style={{ padding: 0, margin: "2px 0" }}
+                        >
+                          <div className="bot-dot" />
+                          <div className="bot-dot" />
+                          <div className="bot-dot" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input */}
+                <div className="bot-input-bar">
+                  <textarea
+                    className="bot-input"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage(inputValue);
+                        setInputValue("");
+                      }
+                    }}
+                    placeholder="כתוב הודעה… (Enter לשליחה)"
+                    disabled={sending}
+                    rows={1}
+                  />
+                  <button
+                    className="bot-send"
+                    onClick={() => {
+                      sendMessage(inputValue);
+                      setInputValue("");
+                    }}
+                    disabled={!inputValue.trim() || sending}
+                  >
+                    שלח
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

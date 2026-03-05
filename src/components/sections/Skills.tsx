@@ -5,7 +5,6 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { CV } from "@/data/portfolio";
 import type { WorkExperience, EducationExperience } from "@/types";
 import { Code, Shield, GraduationCap } from "lucide-react";
-
 const ICON_MAP = {
   Code: Code,
   Shield: Shield,
@@ -95,7 +94,7 @@ export function Skills() {
                   ))}
                 </ul>
 
-                {/* Stack badges (WorkExperience) or cert chip (EducationExperience) */}
+                {/* Stack badges (WorkExperience) or cert chip / education extras (EducationExperience) */}
                 {isWork(exp) ? (
                   <div className="flex flex-wrap gap-1.5 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
                     {exp.stack.map((tech) => (
@@ -124,7 +123,23 @@ export function Skills() {
                       </span>
                     ))}
                   </div>
-                ) : null}
+                ) : (
+                  <div className="flex flex-wrap gap-1.5 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                    {exp.topics?.map((topic) => (
+                      <span
+                        key={topic}
+                        className="px-2 py-0.5 rounded-md text-xs font-mono"
+                        style={{
+                          background: "rgba(255, 255, 255, 0.06)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          color: "#94a3b8",
+                        }}
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </CardSpotlight>
               </FadeIn>
             );

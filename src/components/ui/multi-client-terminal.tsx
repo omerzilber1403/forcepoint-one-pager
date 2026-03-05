@@ -223,9 +223,9 @@ export function MultiClientTerminal() {
   const tosRef    = useRef<ReturnType<typeof setTimeout>[]>([]);
   const eventsRef = useRef<GameEvent[]>([]);
 
-  useEffect(() => { messiBot.current?.scrollIntoView({ behavior: "smooth" }); }, [messiLines]);
-  useEffect(() => { ronaldoBot.current?.scrollIntoView({ behavior: "smooth" }); }, [ronaldoLines]);
-  useEffect(() => { serverBot.current?.scrollIntoView({ behavior: "smooth" }); }, [serverLines]);
+  useEffect(() => { const p = messiBot.current?.parentElement;   if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [messiLines]);
+  useEffect(() => { const p = ronaldoBot.current?.parentElement; if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [ronaldoLines]);
+  useEffect(() => { const p = serverBot.current?.parentElement;  if (p) requestAnimationFrame(() => { p.scrollTop = p.scrollHeight; }); }, [serverLines]);
   useEffect(() => () => { tosRef.current.forEach(clearTimeout); }, []);
 
   /* ── Playback engine ─────────────────────────────────────────────────────── */

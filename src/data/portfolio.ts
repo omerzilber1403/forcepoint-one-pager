@@ -51,15 +51,19 @@ export const CV: {
     } satisfies WorkExperience,
     {
       id: "bgu",
-      role: "B.Sc. Software Engineering",
+      role: "B.Sc. Computer Science",
       organization: "Ben-Gurion University of the Negev",
       period: "2024 – 2027",
       icon: "GraduationCap" as const,
       accentColor: "#a78bfa",
+      metric: "Data Science Specialization",
       highlights: [
+        "Currently a CS student at Ben-Gurion University (4th semester), specializing in Data Science.",
         "Data Structures: 98 | Introduction to CS: 92",
         "Systems Programming (SPL): 87 | Probability: 93",
       ],
+      specialization: "Data Science",
+      topics: ["Multi-Threading Design", "Reactor Pattern", "Network Architecture", "SQL", "C++", "Java"],
     } satisfies EducationExperience,
   ],
 };
