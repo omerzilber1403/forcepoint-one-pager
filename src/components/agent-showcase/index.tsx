@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const API_URL =
   process.env.NEXT_PUBLIC_SALES_BOT_API || "http://localhost:8080";
@@ -325,6 +327,9 @@ const SCOPED_CSS = `
 .bot-bubble        { border-radius: 1rem; padding: 0.6rem 0.9rem; font-size: 0.82rem; line-height: 1.6; word-break: break-word; direction: rtl; text-align: right; }
 .bot-bubble--user  { background: #4cc7b8; color: #063b58; border-radius: 1rem 1rem 0.25rem 1rem; font-weight: 500; }
 .bot-bubble--bot   { background: rgba(6,59,88,0.75); color: #e2e8f0; border: 1px solid rgba(76,199,184,0.18); border-radius: 0.25rem 1rem 1rem 1rem; }
+.bot-bubble--bot p            { margin: 0 0 0.45rem 0; line-height: 1.65; }
+.bot-bubble--bot p:last-child { margin-bottom: 0; }
+.bot-bubble--bot strong       { color: #4cc7b8; font-weight: 600; }
 .bot-bubble--system {
   background: rgba(251,146,60,0.07); color: #fb923c; border: 1px solid rgba(251,146,60,0.2);
   font-size: 0.7rem; font-family: monospace; border-radius: 0.5rem; padding: 0.4rem 0.75rem;
@@ -806,7 +811,13 @@ export default function AgentShowcase() {
                       className={`bot-msg bot-msg--${msg.role}`}
                     >
                       <div className={`bot-bubble bot-bubble--${msg.role}`}>
-                        {msg.content}
+                        {msg.role === "bot" ? (
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {msg.content}
+                          </ReactMarkdown>
+                        ) : (
+                          msg.content
+                        )}
                       </div>
                       {msg.role === "bot" && (
                         <div className="bot-meta">
