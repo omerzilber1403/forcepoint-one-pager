@@ -176,9 +176,9 @@ function makeSections(): StorySectionData[] {
         "Our security team is overwhelmed by DLP false positives from our current tool and we're evaluating alternatives — what makes Forcepoint different?",
       targetDomain: "forcepoint.com",
       btnLabel: "Talk to the Forcepoint Bot →",
-      btnLabel2: "Ask for a Product Link →",
+      btnLabel2: "דבר עם הבוט בעברית →",
       demoMessage2:
-        "Can I get a link to your cloud security product — like the CASB or DLP page?",
+        "הצוות שלנו מוצף בהתראות שגויות מכלי ה-DLP הנוכחי שלנו ואנחנו בוחנים חלופות — מה מייחד את Forcepoint?",
       body: (
         <div className="bot-body">
           <p>

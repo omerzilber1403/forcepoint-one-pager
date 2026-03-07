@@ -2,10 +2,9 @@
 
 import { FadeIn } from "@/components/ui/fade-in";
 import { FlipWords } from "@/components/ui/flip-words";
-import { SplineScene } from "@/components/ui/spline-scene";
 import { Sparkles } from "@/components/ui/sparkles";
 import { OWNER } from "@/lib/data";
-import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
+import { Github, Linkedin, ArrowDown, Download, ArrowRight } from "lucide-react";
 
 const HERO_ROTATING_WORDS = [
   "Intelligent",
@@ -14,10 +13,8 @@ const HERO_ROTATING_WORDS = [
   "Policy-Driven",
   "Automation-First",
 ];
-const SPLINE_SCENE_URL =
-  "https://prod.spline.design/kZDDjO5HlFTv7Soj/scene.splinecode";
 
-/* ── Ghost button — shared style helper ───────────────────────── */
+/* ── Ghost button ─────────────────────────────────────────────── */
 function GhostBtn({
   href,
   download,
@@ -68,6 +65,216 @@ function GhostBtn({
   );
 }
 
+/* ── Architecture diagram (replaces Spline) ───────────────────── */
+function ArchDiagram() {
+  const nodes = [
+    {
+      label: "LangGraph Agent",
+      sub: "B2C · B2B routing · Handoff guard",
+      accent: "#4F46E5",
+      bg: "#EEF2FF",
+      border: "#C7D2FE",
+      textAccent: "#4338CA",
+    },
+    {
+      label: "FastAPI Backend",
+      sub: "REST :8080 · Multi-tenant config",
+      accent: "#7C3AED",
+      bg: "#F5F3FF",
+      border: "#DDD6FE",
+      textAccent: "#6D28D9",
+    },
+    {
+      label: "SQLite · Multi-tenant DB",
+      sub: "One JSON row per tenant · Zero restart",
+      accent: "#0369A1",
+      bg: "#F0F9FF",
+      border: "#BAE6FD",
+      textAccent: "#0284C7",
+    },
+  ];
+
+  const stats = [
+    { value: "3", label: "Production systems" },
+    { value: "2+", label: "Live demos" },
+    { value: "₪500K", label: "Savings impact" },
+  ];
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        borderRadius: "1.25rem",
+        overflow: "hidden",
+        border: "1px solid #E7E5E4",
+        boxShadow: "0 20px 60px -12px rgba(28,25,23,0.10)",
+        background: "#FFFFFF",
+        padding: "1.75rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.9rem",
+      }}
+    >
+      {/* Header label */}
+      <div
+        style={{
+          fontSize: "0.65rem",
+          fontFamily: "monospace",
+          fontWeight: 600,
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+          color: "#A8A29E",
+          marginBottom: "0.25rem",
+        }}
+      >
+        System Architecture
+      </div>
+
+      {/* Node stack */}
+      {nodes.map((node, i) => (
+        <div key={node.label} style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+          <div
+            style={{
+              background: node.bg,
+              border: `1px solid ${node.border}`,
+              borderRadius: "0.875rem",
+              padding: "0.875rem 1.125rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.875rem",
+            }}
+          >
+            {/* Accent dot */}
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: node.accent,
+                flexShrink: 0,
+              }}
+            />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  color: "#1C1917",
+                  marginBottom: "0.2rem",
+                }}
+              >
+                {node.label}
+              </div>
+              <div
+                style={{
+                  fontSize: "0.72rem",
+                  fontFamily: "monospace",
+                  color: node.textAccent,
+                  opacity: 0.85,
+                }}
+              >
+                {node.sub}
+              </div>
+            </div>
+          </div>
+          {/* Connector arrow */}
+          {i < nodes.length - 1 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "0.25rem 0",
+              }}
+            >
+              <ArrowRight
+                size={12}
+                style={{
+                  color: "#C7D2FE",
+                  transform: "rotate(90deg)",
+                }}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+
+      {/* Stats row */}
+      <div
+        style={{
+          borderTop: "1px solid #F5F5F4",
+          paddingTop: "1rem",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "0.5rem",
+          textAlign: "center",
+        }}
+      >
+        {stats.map((s) => (
+          <div key={s.label}>
+            <div
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: 800,
+                fontFamily: "monospace",
+                color: "#4F46E5",
+                lineHeight: 1.2,
+              }}
+            >
+              {s.value}
+            </div>
+            <div
+              style={{
+                fontSize: "0.6rem",
+                fontFamily: "monospace",
+                color: "#A8A29E",
+                textTransform: "uppercase",
+                letterSpacing: "0.06em",
+                marginTop: "0.2rem",
+              }}
+            >
+              {s.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Forcepoint live indicator */}
+      <div
+        style={{
+          background: "#EEF2FF",
+          border: "1px solid #C7D2FE",
+          borderRadius: "0.75rem",
+          padding: "0.6rem 0.875rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.6rem",
+        }}
+      >
+        <span
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            background: "#4F46E5",
+            flexShrink: 0,
+            animation: "lhero-pulse 2.4s ease-in-out infinite",
+          }}
+        />
+        <span
+          style={{
+            fontSize: "0.72rem",
+            fontFamily: "monospace",
+            color: "#4338CA",
+            fontWeight: 600,
+          }}
+        >
+          Forcepoint tenant live in demo ↓
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main ─────────────────────────────────────────────────────── */
 export default function LightHero() {
   return (
@@ -82,14 +289,26 @@ export default function LightHero() {
         background: "#FAFAF9",
       }}
     >
-      {/* Indigo radial bloom — top-right, per UX plan */}
+      {/* Indigo radial bloom — top-right */}
       <div
         aria-hidden
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(ellipse at 80% 0%, rgba(238,242,255,0.85) 0%, transparent 55%)",
+            "radial-gradient(ellipse at 82% 0%, rgba(238,242,255,0.92) 0%, transparent 52%)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+      {/* Warm amber bloom — bottom-left */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(ellipse at 8% 100%, rgba(254,243,199,0.55) 0%, transparent 48%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -151,7 +370,7 @@ export default function LightHero() {
               </div>
             </FadeIn>
 
-            {/* Name — editorial large, stone-900 */}
+            {/* Name — elevated editorial */}
             <FadeIn delay={0.07}>
               <Sparkles
                 particleColor="#6366f1"
@@ -160,11 +379,11 @@ export default function LightHero() {
               >
                 <h1
                   style={{
-                    fontSize: "clamp(2.8rem, 7vw, 5.5rem)",
+                    fontSize: "clamp(3rem, 8vw, 6.5rem)",
                     fontWeight: 900,
                     color: "#1C1917",
-                    lineHeight: 1.05,
-                    letterSpacing: "-0.03em",
+                    lineHeight: 1.0,
+                    letterSpacing: "-0.035em",
                     margin: 0,
                   }}
                 >
@@ -185,7 +404,6 @@ export default function LightHero() {
                 }}
               >
                 I build{" "}
-                {/* Wrap FlipWords in a colored span so indigo propagates */}
                 <span style={{ color: "#4F46E5" }}>
                   <FlipWords
                     words={HERO_ROTATING_WORDS}
@@ -283,7 +501,7 @@ export default function LightHero() {
             </FadeIn>
           </div>
 
-          {/* ── RIGHT: Spline in a light card ─────────────── */}
+          {/* ── RIGHT: Architecture diagram ────────────────── */}
           <div
             className="lhero-right"
             style={{
@@ -292,22 +510,26 @@ export default function LightHero() {
               justifyContent: "center",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                height: 520,
-                borderRadius: "1.25rem",
-                overflow: "hidden",
-                border: "1px solid #E7E5E4",
-                boxShadow: "0 20px 60px -12px rgba(28,25,23,0.10)",
-                background: "#FFFFFF",
-              }}
-            >
-              <SplineScene scene={SPLINE_SCENE_URL} className="w-full h-full" />
-            </div>
+            <FadeIn delay={0.2}>
+              <ArchDiagram />
+            </FadeIn>
           </div>
         </div>
       </div>
+
+      {/* Bottom section separator */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: "linear-gradient(to right, transparent, #E7E5E4, transparent)",
+          zIndex: 2,
+        }}
+      />
 
       <style>{`
         @keyframes lhero-pulse {
