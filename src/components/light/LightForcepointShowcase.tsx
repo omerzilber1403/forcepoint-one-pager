@@ -119,7 +119,7 @@ function SalesBotCard() {
 
       <div style={{ marginTop: "auto", paddingTop: "0.25rem" }}>
         <button className="lfp-cta" onClick={() => document.getElementById("salesbot")?.scrollIntoView({ behavior: "smooth" })}>
-          <Zap size={14} /> Try the Forcepoint Bot ↓
+          <Zap size={14} /> Try the Forcepoint Bot ↑
         </button>
       </div>
     </div>

@@ -180,7 +180,7 @@ function SalesBotCard() {
           }}
         >
           <Zap className="w-3.5 h-3.5" />
-          Try the Forcepoint Bot ↓
+          Try the Forcepoint Bot ↑
         </button>
       </div>
     </div>

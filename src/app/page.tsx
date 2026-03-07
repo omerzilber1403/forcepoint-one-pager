@@ -17,8 +17,8 @@ export default function Home() {
     <main>
       <Navbar />
       <Hero />
-      <ForcepointShowcase />
       <AgentShowcase />
+      <ForcepointShowcase />
       <SPLCaseStudy />
       <Skills />
       <DataPrivacy />
