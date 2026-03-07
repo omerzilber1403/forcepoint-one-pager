@@ -1,3 +1,4 @@
+"use client";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ForcepointShowcase } from "@/components/sections/ForcepointShowcase";
