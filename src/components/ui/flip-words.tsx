@@ -12,15 +12,14 @@ interface FlipWordsProps {
 
 export function FlipWords({ words, duration = 3000, className }: FlipWordsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
+    // Advance the index every `duration` ms. AnimatePresence handles the
+    // enter/exit animation automatically via key={currentIndex} — no extra
+    // "isAnimating" state is needed, and that state was causing 2 unnecessary
+    // React re-renders per word cycle with no visual effect.
     const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % words.length);
-        setIsAnimating(false);
-      }, 300);
+      setCurrentIndex((prev) => (prev + 1) % words.length);
     }, duration);
 
     return () => clearInterval(interval);

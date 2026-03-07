@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export function BackgroundBeams({ className }: { className?: string }) {
@@ -30,7 +30,7 @@ export function BackgroundBeams({ className }: { className?: string }) {
           </filter>
         </defs>
 
-        {/* Central glow */}
+        {/* Central glow — single filter pass */}
         <ellipse
           cx="400"
           cy="400"
@@ -40,47 +40,48 @@ export function BackgroundBeams({ className }: { className?: string }) {
           filter="url(#beam-blur)"
         />
 
-        {/* Beam lines radiating outward */}
-        {[...Array(12)].map((_, i) => {
-          const angle = (i * 360) / 12;
-          const rad = (angle * Math.PI) / 180;
-          const x2 = Math.round((400 + Math.cos(rad) * 600) * 1000) / 1000;
-          const y2 = Math.round((400 + Math.sin(rad) * 600) * 1000) / 1000;
-          return (
-            <line
-              key={i}
-              x1="400"
-              y1="400"
-              x2={x2}
-              y2={y2}
-              stroke="#6366f1"
-              strokeWidth="0.5"
-              strokeOpacity={0.06 + (i % 3) * 0.03}
-              filter="url(#beam-blur)"
-            />
-          );
-        })}
+        {/* All beam lines share one group-level filter pass instead of 20
+            individual filter operations. Visual result is identical for
+            decorative lines; render cost drops from O(n) to O(1) filter ops. */}
+        <g filter="url(#beam-blur)">
+          {[...Array(12)].map((_, i) => {
+            const angle = (i * 360) / 12;
+            const rad = (angle * Math.PI) / 180;
+            const x2 = Math.round((400 + Math.cos(rad) * 600) * 1000) / 1000;
+            const y2 = Math.round((400 + Math.sin(rad) * 600) * 1000) / 1000;
+            return (
+              <line
+                key={i}
+                x1="400"
+                y1="400"
+                x2={x2}
+                y2={y2}
+                stroke="#6366f1"
+                strokeWidth="0.5"
+                strokeOpacity={0.06 + (i % 3) * 0.03}
+              />
+            );
+          })}
 
-        {/* Secondary beam layer — cyan tint */}
-        {[...Array(8)].map((_, i) => {
-          const angle = (i * 360) / 8 + 22.5;
-          const rad = (angle * Math.PI) / 180;
-          const x2 = Math.round((400 + Math.cos(rad) * 500) * 1000) / 1000;
-          const y2 = Math.round((400 + Math.sin(rad) * 500) * 1000) / 1000;
-          return (
-            <line
-              key={`cyan-${i}`}
-              x1="400"
-              y1="400"
-              x2={x2}
-              y2={y2}
-              stroke="#22d3ee"
-              strokeWidth="0.3"
-              strokeOpacity={0.04}
-              filter="url(#beam-blur)"
-            />
-          );
-        })}
+          {[...Array(8)].map((_, i) => {
+            const angle = (i * 360) / 8 + 22.5;
+            const rad = (angle * Math.PI) / 180;
+            const x2 = Math.round((400 + Math.cos(rad) * 500) * 1000) / 1000;
+            const y2 = Math.round((400 + Math.sin(rad) * 500) * 1000) / 1000;
+            return (
+              <line
+                key={`cyan-${i}`}
+                x1="400"
+                y1="400"
+                x2={x2}
+                y2={y2}
+                stroke="#22d3ee"
+                strokeWidth="0.3"
+                strokeOpacity={0.04}
+              />
+            );
+          })}
+        </g>
       </svg>
 
       {/* Animated pulsing core */}

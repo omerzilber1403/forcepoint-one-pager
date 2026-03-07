@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface SparklesProps {
@@ -38,6 +38,10 @@ export function SparklesCore({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const frameRef = useRef<number>(0);
+  // Tracks whether the canvas is in the viewport. Draw calls are skipped
+  // (but the rAF loop stays alive) when the element is off-screen, keeping
+  // the main thread free during scroll without needing complex restart logic.
+  const visibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -51,6 +55,13 @@ export function SparklesCore({
     };
     resize();
     window.addEventListener("resize", resize);
+
+    // Pause drawing when element scrolls out of view
+    const observer = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { rootMargin: "100px" }
+    );
+    observer.observe(canvas);
 
     const createParticle = (): Particle => ({
       x: Math.random() * canvas.width,
@@ -74,6 +85,13 @@ export function SparklesCore({
     const b = parseInt(hex.substring(4, 6), 16);
 
     const draw = () => {
+      // Skip all canvas work when off-screen — keeps the main thread free
+      // for scroll handling without losing the ability to resume seamlessly.
+      if (!visibleRef.current) {
+        frameRef.current = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particlesRef.current.forEach((p, i) => {
@@ -102,6 +120,7 @@ export function SparklesCore({
     return () => {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(frameRef.current);
+      observer.disconnect();
     };
   }, [minSize, maxSize, speed, particleColor, particleDensity]);
 
