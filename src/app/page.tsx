@@ -33,8 +33,8 @@ export default function Home() {
     <main>
       <Navbar lang={lang} onLangChange={handleLangChange} />
       <Hero lang={lang} />
-      <AgentShowcase />
       <ForcepointShowcase />
+      <AgentShowcase />
       <SPLCaseStudy />
       <Skills />
       <DataPrivacy />
