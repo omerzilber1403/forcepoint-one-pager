@@ -71,7 +71,10 @@ h1, h2, h3, h4 {
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  /* filter: blur(100px) removed — was causing expensive GPU filter passes on
+     every scroll frame across ALL routes (fixed in layout.tsx = global).
+     The radial-gradient background already provides the soft-edge glow effect;
+     the blur was visually redundant and the primary source of scroll jank. */
   will-change: transform;
 }
 
