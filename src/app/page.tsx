@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ForcepointShowcase } from "@/components/sections/ForcepointShowcase";
@@ -12,11 +13,26 @@ import { Contact } from "@/components/sections/Contact";
 const AgentShowcase = dynamic(() => import("@/components/agent-showcase"), { ssr: false });
 const SPLCaseStudy   = dynamic(() => import("@/components/spl-case-study"),  { ssr: false });
 
+type Lang = "en" | "he";
+
 export default function Home() {
+  const [lang, setLang] = useState<Lang>("en");
+
+  // Restore persisted language preference (survives theme-route navigation)
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-lang") as Lang | null;
+    if (saved === "en" || saved === "he") setLang(saved);
+  }, []);
+
+  const handleLangChange = (l: Lang) => {
+    setLang(l);
+    localStorage.setItem("portfolio-lang", l);
+  };
+
   return (
     <main>
-      <Navbar />
-      <Hero />
+      <Navbar lang={lang} onLangChange={handleLangChange} />
+      <Hero lang={lang} />
       <AgentShowcase />
       <ForcepointShowcase />
       <SPLCaseStudy />

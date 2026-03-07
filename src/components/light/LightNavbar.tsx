@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { OWNER, NAV_LINKS } from "@/lib/data";
-import { Github, Download } from "lucide-react";
+import { Github, Download, Moon } from "lucide-react";
+
+const HE_NAV_LABELS: Record<string, string> = {
+  "#projects": "פרויקטים",
+  "#skills":   "כישורים",
+  "#security": "אבטחת מידע",
+  "#contact":  "צור קשר",
+};
+
+type Lang = "en" | "he";
 
 export default function LightNavbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [lang, setLang] = useState<Lang>("en");
+  const isHe = lang === "he";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -13,8 +24,48 @@ export default function LightNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Sync with persisted preference
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio-lang") as Lang | null;
+    if (saved === "en" || saved === "he") setLang(saved);
+  }, []);
+
+  const handleLangChange = () => {
+    const next: Lang = isHe ? "en" : "he";
+    setLang(next);
+    localStorage.setItem("portfolio-lang", next);
+  };
+
+  const btnStyle: CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.35rem",
+    borderRadius: "9999px",
+    border: "1px solid #D6D3D1",
+    padding: "0.35rem 0.8rem",
+    fontSize: "0.78rem",
+    fontWeight: 500,
+    color: "#57534E",
+    textDecoration: "none",
+    background: "transparent",
+    transition: "all 0.15s ease",
+    cursor: "pointer",
+  };
+
+  const handleBtnEnter = (e: React.MouseEvent<HTMLElement>) => {
+    (e.currentTarget as HTMLElement).style.borderColor = "#A8A29E";
+    (e.currentTarget as HTMLElement).style.background = "#F5F5F4";
+    (e.currentTarget as HTMLElement).style.color = "#1C1917";
+  };
+  const handleBtnLeave = (e: React.MouseEvent<HTMLElement>) => {
+    (e.currentTarget as HTMLElement).style.borderColor = "#D6D3D1";
+    (e.currentTarget as HTMLElement).style.background = "transparent";
+    (e.currentTarget as HTMLElement).style.color = "#57534E";
+  };
+
   return (
     <header
+      dir={isHe ? "rtl" : undefined}
       style={{
         position: "fixed",
         top: 0,
@@ -54,7 +105,7 @@ export default function LightNavbar() {
           onMouseEnter={(e) => (e.currentTarget.style.color = "#4F46E5")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#1C1917")}
         >
-          {OWNER.name}
+          {isHe ? "עומר זילברשטיין" : OWNER.name}
         </a>
 
         {/* Nav links — hide on mobile */}
@@ -76,52 +127,49 @@ export default function LightNavbar() {
               onMouseEnter={(e) => (e.currentTarget.style.color = "#1C1917")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "#57534E")}
             >
-              {link.label}
+              {isHe ? (HE_NAV_LABELS[link.href] ?? link.label) : link.label}
             </a>
           ))}
         </nav>
 
-        {/* CTA buttons */}
+        {/* CTA + toggles */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {/* Language toggle */}
+          <button
+            onClick={handleLangChange}
+            style={{ ...btnStyle, padding: "0.3rem 0.65rem", fontFamily: "monospace", fontWeight: 700 }}
+            onMouseEnter={handleBtnEnter}
+            onMouseLeave={handleBtnLeave}
+            aria-label="Toggle language"
+          >
+            {isHe ? "EN" : "HE"}
+          </button>
+
+          {/* Theme toggle — navigate back to dark mode */}
+          <a
+            href="/"
+            style={{ ...btnStyle, padding: "0.35rem 0.6rem" }}
+            onMouseEnter={handleBtnEnter}
+            onMouseLeave={handleBtnLeave}
+            aria-label="Switch to dark mode"
+          >
+            <Moon size={14} />
+          </a>
+
+          {/* CV + GitHub */}
           {[
-            { href: OWNER.cvPdf, download: true, icon: <Download size={13} />, label: "CV" },
-            {
-              href: OWNER.github,
-              target: "_blank",
-              icon: <Github size={15} />,
-              label: "GitHub",
-            },
+            { href: OWNER.cvPdf, download: true, icon: <Download size={13} />, label: isHe ? "קורות חיים" : "CV" },
+            { href: OWNER.github, target: "_blank", icon: <Github size={15} />, label: "GitHub" },
           ].map((btn) => (
             <a
               key={btn.label}
               href={btn.href}
               download={btn.download ? true : undefined}
-              target={btn.target}
-              rel={btn.target ? "noopener noreferrer" : undefined}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                borderRadius: "9999px",
-                border: "1px solid #D6D3D1",
-                padding: "0.35rem 0.8rem",
-                fontSize: "0.78rem",
-                fontWeight: 500,
-                color: "#57534E",
-                textDecoration: "none",
-                background: "transparent",
-                transition: "all 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#A8A29E";
-                e.currentTarget.style.background = "#F5F5F4";
-                e.currentTarget.style.color = "#1C1917";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#D6D3D1";
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#57534E";
-              }}
+              target={"target" in btn ? btn.target : undefined}
+              rel={"target" in btn ? "noopener noreferrer" : undefined}
+              style={btnStyle}
+              onMouseEnter={handleBtnEnter}
+              onMouseLeave={handleBtnLeave}
             >
               {btn.icon} {btn.label}
             </a>

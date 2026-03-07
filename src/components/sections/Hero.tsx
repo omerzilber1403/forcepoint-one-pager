@@ -13,7 +13,13 @@ import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 const HERO_ROTATING_WORDS = ["Intelligent", "Secure", "Privacy-Aware", "Policy-Driven", "Automation-First"];
 const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HlFTv7Soj/scene.splinecode";
 
-export function Hero() {
+interface HeroProps {
+  lang?: "en" | "he";
+}
+
+export function Hero({ lang = "en" }: HeroProps) {
+  const isHe = lang === "he";
+
   return (
     <section
       id="hero"
@@ -25,7 +31,10 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-6rem)]">
 
           {/* LEFT: text column */}
-          <div className="flex flex-col justify-center items-center text-center">
+          <div
+            dir={isHe ? "rtl" : undefined}
+            className="flex flex-col justify-center items-center text-center"
+          >
             {/* Role badge — glass */}
             <FadeIn delay={0}>
             <div
@@ -39,39 +48,53 @@ export function Hero() {
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
             >
-              Applying — Software Engineer Student @ Forcepoint
+              {isHe
+                ? "מועמד — סטודנט להנדסת תוכנה @ Forcepoint"
+                : "Applying — Software Engineer Student @ Forcepoint"}
             </div>
             </FadeIn>
 
-            {/* Name with sparkles */}
-            <Sparkles particleColor="#6366f1" particleDensity={50} className="block mb-2">
+            {/* Name with sparkles — key forces re-animation on lang switch */}
+            <Sparkles key={lang} particleColor="#6366f1" particleDensity={50} className="block mb-2">
               <TextGenerateEffect
-                words={OWNER.name}
+                words={isHe ? "עומר זילברשטיין" : OWNER.name}
                 filter={true}
                 duration={0.6}
                 className="text-5xl sm:text-6xl lg:text-7xl font-black text-text-primary leading-none"
               />
             </Sparkles>
 
-            {/* Flip tagline */}
+            {/* Flip tagline / static HE tagline */}
             <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
-              I build{" "}
-              <FlipWords
-                words={HERO_ROTATING_WORDS}
-                duration={3000}
-                className="text-accent font-bold"
-              />
-              {" "}systems.
+              {isHe ? (
+                <>
+                  אני בונה מערכות{" "}
+                  <span className="inline-block relative text-accent font-bold">
+                    מונחות-מדיניות
+                  </span>{" "}
+                  (Policy-Driven).
+                </>
+              ) : (
+                <>
+                  I build{" "}
+                  <FlipWords
+                    words={HERO_ROTATING_WORDS}
+                    duration={3000}
+                    className="text-accent font-bold"
+                  />
+                  {" "}systems.
+                </>
+              )}
             </div>
             </FadeIn>
 
             {/* Bio blurb */}
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
-              IDF Navy developer — now BGU CS student &amp; AI freelancer.
-              I identify high-friction workflows and ship automations with
-              measurable before/after impact. FastAPI, LangGraph, always security-first.
+              {isHe
+                ? "מפתח יוצא חיל הים — כיום סטודנט למדעי המחשב בבן גוריון ופרילנסר בתחום ה-AI. אני מאתר תהליכי עבודה עתירי-חיכוך ומפתח אוטומציות בעלות אימפקט מדיד. מתמחה ב-FastAPI, LangGraph, ותמיד בגישת Security-First."
+                : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>
 
@@ -84,7 +107,7 @@ export function Hero() {
                 className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
                 style={{ background: "#6366f1", color: "#fff" }}
               >
-                View My Work <ArrowDown className="w-4 h-4" />
+                {isHe ? "צפה בעבודות שלי" : "View My Work"} <ArrowDown className="w-4 h-4" />
               </a>
 
               {/* Secondary CTAs — glass */}
@@ -100,7 +123,8 @@ export function Hero() {
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
                 }}
               >
-                <Download className="w-4 h-4" /> Download CV
+                <Download className="w-4 h-4" />
+                {isHe ? "הורד קורות חיים" : "Download CV"}
               </a>
 
               <a
