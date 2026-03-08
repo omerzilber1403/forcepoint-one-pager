@@ -46,7 +46,7 @@ export function Hero({ lang = "en" }: HeroProps) {
               }}
             >
               {isHe
-                ? "מועמד — סטודנט להנדסת תוכנה @ Forcepoint"
+                ? "מועמד למשרת סטודנט להנדסת תוכנה @ Forcepoint"
                 : "Applying — Software Engineer Student @ Forcepoint"}
             </div>
             </FadeIn>
@@ -65,12 +65,7 @@ export function Hero({ lang = "en" }: HeroProps) {
             <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
               {isHe ? (
-                <>
-                  אני בונה מערכות חכמות. אבטחת מידע מעל הכל{" "}
-                  <span className="inline-block relative text-accent font-bold">
-                    (Security-First).
-                  </span>
-                </>
+                <>אני מפתח מערכות חכמות, בדגש על אבטחת מידע וחווית משתמש.</>
               ) : (
                 <>
                   I build{" "}
@@ -89,7 +84,7 @@ export function Hero({ lang = "en" }: HeroProps) {
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
               {isHe
-                ? "בוגר יחידה טכנולוגית בחיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד. אני מתמחה בבניית מערכות AI (כמו FastAPI ו-LangGraph) ששמות את אבטחת המידע בחזית, ומשלב יכולות פיתוח Low-Level עם מהירות עבודה של AI."
+                ? "בוגר יחידה טכנולוגית בחיל הים, כיום סטודנט למדעי המחשב בבן גוריון ומפתח AI עצמאי. אני מתמקד באיתור צווארי בקבוק ובניית אוטומציות שמייצרות אימפקט אמיתי בשטח. ההתמחות שלי היא פיתוח מערכות AI מאובטחות (FastAPI, LangGraph), תוך שילוב של הבנת Low-Level מעמיקה עם קצב הפיתוח המהיר שמאפשר ה-AI."
                 : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>
@@ -103,7 +98,7 @@ export function Hero({ lang = "en" }: HeroProps) {
                 className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
                 style={{ background: "#6366f1", color: "#fff" }}
               >
-                {isHe ? "צפה בעבודות שלי" : "View My Work"} <ArrowDown className="w-4 h-4" />
+                {isHe ? "לפרויקטים שלי" : "View My Work"} <ArrowDown className="w-4 h-4" />
               </a>
 
               {/* Secondary CTAs — glass */}
@@ -120,7 +115,7 @@ export function Hero({ lang = "en" }: HeroProps) {
                 }}
               >
                 <Download className="w-4 h-4" />
-                {isHe ? "הורד קורות חיים" : "Download CV"}
+                {isHe ? "קורות חיים" : "Download CV"}
               </a>
 
               <a

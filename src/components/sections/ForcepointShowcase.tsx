@@ -92,7 +92,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           style={{ background: FP.tealGlass, borderColor: FP.tealBorder, color: FP.teal }}
         >
           <Zap className="w-3 h-3" />
-          {isHe ? "אוטומציה עם AI" : "AI Automation"}
+          {isHe ? "אוטומציית AI" : "AI Automation"}
         </span>
         <a
           href="https://github.com/omerzilber1403/agent-sales-bot"
@@ -108,7 +108,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       </div>
 
       <h3 className="font-bold text-white text-lg leading-tight">
-        {isHe ? "סוכן AI חכם להסמכת לידים" : "Intelligent Sales & Lead Agent"}
+        {isHe ? "סוכן AI חכם לסינון והסמכת לידים (Lead Qualification)" : "Intelligent Sales & Lead Agent"}
       </h3>
 
       <div
@@ -117,10 +117,10 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       >
         <div className="text-center">
           <div className="text-xs font-mono text-slate-500 mb-0.5">
-            {isHe ? "גישה סטנדרטית" : "standard approach"}
+            {isHe ? "הגישה הישנה" : "standard approach"}
           </div>
           <div className="text-sm font-bold font-mono text-slate-500 line-through">
-            {isHe ? "שיחה קרה גנרית" : "Generic cold call"}
+            {isHe ? "פניות קרות וגנריות" : "Generic cold call"}
           </div>
         </div>
         <div className="flex items-center gap-0.5">
@@ -138,10 +138,10 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         </div>
         <div className="text-center">
           <div className="text-xs font-mono text-slate-500 mb-0.5">
-            {isHe ? "עם סוכן AI" : "with AI agent"}
+            {isHe ? "עם סוכן ה-AI" : "with AI agent"}
           </div>
           <div className="text-sm font-bold font-mono fp-glow-text" style={{ color: FP.teal }}>
-            {isHe ? "ליד מוכן" : "Prepared lead"}
+            {isHe ? "ליד חם ומוכן" : "Prepared lead"}
           </div>
         </div>
         <span
@@ -154,7 +154,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
 
       <p className="text-sm text-slate-400 leading-relaxed">
         {isHe
-          ? "סוכן מבוסס-גרף (LangGraph) בארכיטקטורה מרובת-סביבות. הנתונים של כל חברה — קטלוג מוצרים, פלייבוק התנגדויות, פרופיל לקוח (ICP) ומיצוב תחרותי — יושבים בשורת DB בודדת. החלפת סביבות מתבצעת באופן דינמי וללא זמן השבתה (Zero Downtime)."
+          ? "סוכן LangGraph חכם הבנוי בארכיטקטורה מרובת-סביבות עבודה. כל הנתונים של חברה ספציפית — קטלוג, טיפול בהתנגדויות, פרופיל לקוח ומתחרים — נשלפים ישירות משורת מסד נתונים בודדת. המעבר בין סביבות עבודה מתבצע בצורה חלקה, בלי להוריד את השרת (Zero Downtime)."
           : "Graph-based agent (LangGraph) with multi-tenant architecture — each company\u2019s products, objection playbook, ICP definition, and competitive map live in a single DB row, hot-swappable with zero restart required."}
       </p>
 
@@ -164,15 +164,15 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       >
         <p className="text-xs leading-relaxed" style={{ color: "#94a3b8" }}>
           <span style={{ color: "#4cc7b8", fontWeight: 600 }}>
-            {isHe ? "✦ הנתונים האמיתיים של Forcepoint מוזנים בדמו:" : "\u2718 Forcepoint\u2019s real data is live in the demo."}
+            {isHe ? "✦ הדמו כאן רץ על הנתונים האמיתיים של Forcepoint:" : "\u2718 Forcepoint\u2019s real data is live in the demo."}
           </span>{" "}
           {isHe
-            ? "קטלוג המוצרים, הטיפול בהתנגדויות DLP והמיצוב מול המתחרים (Netskope, Zscaler, Purview, Symantec) נשאבו אוטומטית מ-"
+            ? "קטלוג המוצרים, פלייבוק ההתנגדויות של ה-DLP והמיצוב התחרותי נשאבו אוטומטית "
             : "Product catalog, DLP objection playbook, and competitive positioning (Netskope, Zscaler, Purview, Symantec) were scraped from "}
-          <span style={{ fontFamily: "monospace", color: "#cbd5e1" }}>forcepoint.com</span>
-          {isHe ? " עם " : " using "}
+          <span style={{ fontFamily: "monospace", color: "#cbd5e1" }}>{isHe ? "מהאתר הרשמי" : "forcepoint.com"}</span>
+          {isHe ? " בעזרת " : " using "}
           <span style={{ color: "#4cc7b8", fontWeight: 600 }}>Antigravity</span>
-          {isHe ? " והוגדרו כסביבת עבודה עצמאית. נסו את זה למטה." : " and loaded as a single tenant. Try it below."}
+          {isHe ? ", והוגדרו כסביבת עבודה נפרדת. מוזמנים לנסות את זה למטה." : " and loaded as a single tenant. Try it below."}
         </p>
       </div>
 
@@ -196,7 +196,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           style={{ background: FP.teal, color: FP.navy, boxShadow: `0 4px 18px rgba(76,199,184,0.35)` }}
         >
           <Zap className="w-3.5 h-3.5" />
-          {isHe ? "נסה את בוט Forcepoint \u2193" : "Try the Forcepoint Bot \u2191"}
+          {isHe ? "לדמו של בוט Forcepoint \u2193" : "Try the Forcepoint Bot \u2191"}
         </button>
       </div>
     </div>
@@ -209,9 +209,9 @@ function StompCard({ lang }: { lang: Lang }) {
 
   const aiBullets = isHe
     ? [
-        "פתרון אתגרי Multi-threading ו-Thread-safety ב-C++ באמצעות AI Pair Programming.",
-        "תבנית Reactor ב-Java נבנתה וקודדה יחד עם Claude תוך שעות.",
-        "דיבוג אינטגרציית Client-Server ברמת הפרוטוקול בשילוב מודלי שפה.",
+        "צליחת אתגרי Multi-threading ו-Thread-safety מורכבים ב-C++ בעזרת AI Pair Programming.",
+        "בנייה וקידוד של תבנית Reactor ב-Java יחד עם Claude, בתוך שעות ספורות.",
+        "דיבוג של אינטגרציית Client-Server ממש ברמת הפרוטוקול, בליווי צמוד של מודלי שפה.",
       ]
     : [
         "C++ multi-threading & thread-safety solved with AI pair programming",
@@ -238,7 +238,7 @@ function StompCard({ lang }: { lang: Lang }) {
           style={{ background: FP.tealGlass, borderColor: FP.tealBorder, color: FP.teal }}
         >
           <Bot className="w-3 h-3" />
-          {isHe ? "פיתוח Low-Level מואץ באמצעות AI" : "AI-Accelerated Engineering"}
+          {isHe ? "פיתוח Low-Level בקצב של AI" : "AI-Accelerated Engineering"}
         </span>
         <a
           href="https://github.com/omerzilber1403/assignment3-world-cup"
@@ -259,7 +259,7 @@ function StompCard({ lang }: { lang: Lang }) {
 
       <p className="text-sm text-slate-400 leading-relaxed">
         {isHe
-          ? "מערכת Pub/Sub בזמן אמת לאירועי ספורט. כתבים משדרים קבצי JSON לערוצים, ומנויים מקבלים תשדורות MESSAGE מיידיות. נבנה עם שרת Java Reactor, גישור Python-SQLite, וקליינט C++ (מבוסס שני Threads) המממש את פרוטוקול STOMP 1.2 מאפס מעל TCP גולמי."
+          ? "מערכת Pub/Sub בזמן אמת לאירועי ספורט. הכתבים משדרים קבצי JSON לערוצים, והמנויים מקבלים עדכונים מיידיים. המערכת מבוססת על שרת Java Reactor, גשר ב-Python ל-SQLite, וקליינט C++ שמממש את פרוטוקול STOMP 1.2 לגמרי מאפס, ישירות מעל TCP גולמי."
           : "Real-time pub/sub system for live football match events \u2014 reporters upload event JSON to named channels; all subscribers receive instant MESSAGE frames. Built with a Java Reactor server, Python SQLite bridge, and a two-threaded C++ client implementing the STOMP 1.2 protocol from scratch over raw TCP."}
       </p>
 
@@ -272,10 +272,10 @@ function StompCard({ lang }: { lang: Lang }) {
             {isHe ? "ללא AI" : "Without AI"}
           </div>
           <div className="text-xl font-bold font-mono text-red-300/60 line-through">
-            {isHe ? "~3\u20134 שבועות" : "~3\u20134 weeks"}
+            {isHe ? "כ-3-4 שבועות" : "~3\u20134 weeks"}
           </div>
           <div className="text-xs text-red-300/45">
-            {isHe ? "ממוצע תעשייתי" : "industry average"}
+            {isHe ? "קצב פיתוח רגיל" : "industry average"}
           </div>
         </div>
 
@@ -301,7 +301,7 @@ function StompCard({ lang }: { lang: Lang }) {
             {isHe ? "מהירות AI" : "AI Velocity"}
           </div>
           <div className="text-xl font-bold font-mono fp-glow-text" style={{ color: FP.teal }}>
-            {isHe ? "2 ימים" : "2 days"}
+            {isHe ? "יומיים בלבד" : "2 days"}
           </div>
           <div className="text-xs" style={{ color: `${FP.teal}70` }}>
             Cursor \u00b7 Claude \u00b7 Copilot
@@ -341,7 +341,7 @@ function StompCard({ lang }: { lang: Lang }) {
           style={{ background: FP.teal, color: FP.navy, boxShadow: `0 4px 18px rgba(76,199,184,0.35)` }}
         >
           <Bot className="w-3.5 h-3.5" />
-          {isHe ? "חקור מקרה בוחן חי \u2193" : "Explore Live Case Study \u2193"}
+          {isHe ? "לצפייה במקרה הבוחן \u2193" : "Explore Live Case Study \u2193"}
         </button>
       </div>
     </div>
@@ -377,8 +377,8 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
 
   const securityPanels = isHe
     ? [
-        { icon: <Shield className="w-4 h-4" />, label: "הגנת פרטיות (Zero-PII)", desc: "כל הקוד והלוגים עוברים סניטציה מלאה לפני שליחה ל-LLM. נתוני משתמשים אמיתיים לעולם לא מגיעים למודל." },
-        { icon: <KeyRound className="w-4 h-4" />, label: "בקרת הרשאות קפדנית", desc: "ניהול מחמיר של .env ו-.gitignore. מפתחות API של AI לעולם אינם עולים ל-Source Control." },
+        { icon: <Shield className="w-4 h-4" />, label: "אפס חשיפת נתונים (Zero-PII)", desc: "כל הקוד והלוגים עוברים סינון (Sanitization) קפדני לפני פנייה ל-LLM. נתונים אמיתיים של משתמשים נשארים מחוץ למודל." },
+        { icon: <KeyRound className="w-4 h-4" />, label: "ניהול הרשאות מחמיר", desc: "הפרדה מוחלטת באמצעות .env ו-.gitignore. מפתחות API של AI לעולם אינם עולים ל-Source Control." },
         { icon: <Bot className="w-4 h-4" />, label: "סוכני AI מבודדים (Sandboxed)", desc: "סוכני ה-LangGraph רצים תחת System Prompts נוקשים למניעת הזיות (Hallucinations) ודליפת נתונים." },
       ]
     : [
@@ -414,21 +414,21 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
             style={{ background: FP.tealGlass, borderColor: FP.tealBorder, color: FP.teal }}
           >
             <Shield className="w-3.5 h-3.5" />
-            {isHe ? "פיתוח המותאם לסטנדרט של Forcepoint" : "Forcepoint-Ready Engineering"}
+            {isHe ? "פיתוח בסטנדרט של Forcepoint" : "Forcepoint-Ready Engineering"}
           </span>
           <h2
             className="text-3xl sm:text-4xl font-bold text-white mb-3"
             style={{ fontFamily: "var(--font-display, system-ui)" }}
           >
             {isHe ? (
-              <>נבנה לתפקידי <span style={{ color: FP.teal }}>אבטחת נתונים</span></>
+              <>בנוי לאתגרי <span style={{ color: FP.teal }}>אבטחת נתונים</span></>
             ) : (
               <>Built for <span style={{ color: FP.teal }}>Data Security Roles</span></>
             )}
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
             {isHe
-              ? "שילוב מדויק בין מהירות פיתוח להבנת מערכות Low-Level"
+              ? "השילוב המדויק בין קצב פיתוח מהיר להבנת Low-Level של המערכת."
               : "AI automation velocity paired with low-level systems engineering \u2014 the exact combination Forcepoint needs to build and ship AI-native security tooling fast."}
           </p>
         </div>
