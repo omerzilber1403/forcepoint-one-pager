@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
 import { ForcepointShowcase } from "@/components/sections/ForcepointShowcase";
@@ -17,12 +17,6 @@ type Lang = "en" | "he";
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("en");
-
-  // Restore persisted language preference (survives theme-route navigation)
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio-lang") as Lang | null;
-    if (saved === "en" || saved === "he") setLang(saved);
-  }, []);
 
   const handleLangChange = (l: Lang) => {
     setLang(l);

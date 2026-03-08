@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import LightNavbar from "@/components/light/LightNavbar";
 import LightHero from "@/components/light/LightHero";
@@ -23,12 +23,6 @@ type Lang = "en" | "he";
 
 export default function LightPageContent() {
   const [lang, setLang] = useState<Lang>("en");
-
-  // Restore persisted language preference (survives theme-route navigation)
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio-lang") as Lang | null;
-    if (saved === "en" || saved === "he") setLang(saved);
-  }, []);
 
   const handleLangChange = (l: Lang) => {
     setLang(l);
