@@ -4,7 +4,7 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { FlipWords } from "@/components/ui/flip-words";
 import { Sparkles } from "@/components/ui/sparkles";
 import { OWNER } from "@/lib/data";
-import { Github, Linkedin, ArrowDown, Download, ArrowRight } from "lucide-react";
+import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 
 const HERO_ROTATING_WORDS = [
   "Intelligent",
@@ -68,252 +68,6 @@ function GhostBtn({
       {icon}
       {label}
     </a>
-  );
-}
-
-/* ── Architecture diagram (replaces Spline) ───────────────────── */
-function ArchDiagram({ lang = "en" }: { lang?: Lang }) {
-  const isHe = lang === "he";
-
-  const nodes = isHe
-    ? [
-        {
-          label: "סוכן LangGraph",
-          sub: "ניתוב B2C · B2B · שמירת העברה",
-          accent: "#4F46E5",
-          bg: "#EEF2FF",
-          border: "#C7D2FE",
-          textAccent: "#4338CA",
-        },
-        {
-          label: "שרת FastAPI",
-          sub: "REST :8080 · הגדרה רב-לקוחית",
-          accent: "#7C3AED",
-          bg: "#F5F3FF",
-          border: "#DDD6FE",
-          textAccent: "#6D28D9",
-        },
-        {
-          label: "SQLite · בסיס נתונים רב-לקוחי",
-          sub: "שורת JSON אחת ללקוח · אפס אתחולים",
-          accent: "#0369A1",
-          bg: "#F0F9FF",
-          border: "#BAE6FD",
-          textAccent: "#0284C7",
-        },
-      ]
-    : [
-        {
-          label: "LangGraph Agent",
-          sub: "B2C · B2B routing · Handoff guard",
-          accent: "#4F46E5",
-          bg: "#EEF2FF",
-          border: "#C7D2FE",
-          textAccent: "#4338CA",
-        },
-        {
-          label: "FastAPI Backend",
-          sub: "REST :8080 · Multi-tenant config",
-          accent: "#7C3AED",
-          bg: "#F5F3FF",
-          border: "#DDD6FE",
-          textAccent: "#6D28D9",
-        },
-        {
-          label: "SQLite · Multi-tenant DB",
-          sub: "One JSON row per tenant · Zero restart",
-          accent: "#0369A1",
-          bg: "#F0F9FF",
-          border: "#BAE6FD",
-          textAccent: "#0284C7",
-        },
-      ];
-
-  const stats = isHe
-    ? [
-        { value: "3", label: "מערכות ייצור" },
-        { value: "2+", label: "הדגמות חיות" },
-        { value: "₪500K", label: "חיסכון מוכח" },
-      ]
-    : [
-        { value: "3", label: "Production systems" },
-        { value: "2+", label: "Live demos" },
-        { value: "₪500K", label: "Savings impact" },
-      ];
-
-  return (
-    <div
-      dir={isHe ? "rtl" : undefined}
-      style={{
-        width: "100%",
-        borderRadius: "1.25rem",
-        overflow: "hidden",
-        border: "1px solid #E7E5E4",
-        boxShadow: "0 20px 60px -12px rgba(28,25,23,0.10)",
-        background: "#FFFFFF",
-        padding: "1.75rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.9rem",
-      }}
-    >
-      {/* Header label */}
-      <div
-        style={{
-          fontSize: "0.65rem",
-          fontFamily: "monospace",
-          fontWeight: 600,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          color: "#A8A29E",
-          marginBottom: "0.25rem",
-        }}
-      >
-        {isHe ? "ארכיטקטורת המערכת" : "System Architecture"}
-      </div>
-
-      {/* Node stack */}
-      {nodes.map((node, i) => (
-        <div key={node.label} style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-          <div
-            style={{
-              background: node.bg,
-              border: `1px solid ${node.border}`,
-              borderRadius: "0.875rem",
-              padding: "0.875rem 1.125rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.875rem",
-            }}
-          >
-            {/* Accent dot */}
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: node.accent,
-                flexShrink: 0,
-              }}
-            />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: "0.875rem",
-                  color: "#1C1917",
-                  marginBottom: "0.2rem",
-                }}
-              >
-                {node.label}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.72rem",
-                  fontFamily: "monospace",
-                  color: node.textAccent,
-                  opacity: 0.85,
-                }}
-              >
-                {node.sub}
-              </div>
-            </div>
-          </div>
-          {/* Connector arrow */}
-          {i < nodes.length - 1 && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "0.25rem 0",
-              }}
-            >
-              <ArrowRight
-                size={12}
-                style={{
-                  color: "#C7D2FE",
-                  transform: "rotate(90deg)",
-                }}
-              />
-            </div>
-          )}
-        </div>
-      ))}
-
-      {/* Stats row */}
-      <div
-        style={{
-          borderTop: "1px solid #F5F5F4",
-          paddingTop: "1rem",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          gap: "0.5rem",
-          textAlign: "center",
-        }}
-      >
-        {stats.map((s) => (
-          <div key={s.label}>
-            <div
-              style={{
-                fontSize: "1.1rem",
-                fontWeight: 800,
-                fontFamily: "monospace",
-                color: "#4F46E5",
-                lineHeight: 1.2,
-              }}
-            >
-              {s.value}
-            </div>
-            <div
-              style={{
-                fontSize: "0.6rem",
-                fontFamily: "monospace",
-                color: "#A8A29E",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginTop: "0.2rem",
-              }}
-            >
-              {s.label}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Forcepoint live indicator */}
-      <div
-        style={{
-          background: "#EEF2FF",
-          border: "1px solid #C7D2FE",
-          borderRadius: "0.75rem",
-          padding: "0.6rem 0.875rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.6rem",
-        }}
-      >
-        <span
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            background: "#4F46E5",
-            flexShrink: 0,
-            animation: "lhero-pulse 2.4s ease-in-out infinite",
-          }}
-        />
-        <span
-          style={{
-            fontSize: "0.72rem",
-            fontFamily: "monospace",
-            color: "#4338CA",
-            fontWeight: 600,
-          }}
-        >
-          {isHe ? "טנאנט Forcepoint חי בהדגמה ↓" : "Forcepoint tenant live in demo ↓"}
-        </span>
-      </div>
-    </div>
   );
 }
 
@@ -558,19 +312,6 @@ export default function LightHero({ lang = "en" }: LightHeroProps) {
             </FadeIn>
           </div>
 
-          {/* ── RIGHT: Architecture diagram ────────────────── */}
-          <div
-            className="lhero-right"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <FadeIn delay={0.2}>
-              <ArchDiagram lang={lang} />
-            </FadeIn>
-          </div>
         </div>
       </div>
 
@@ -594,15 +335,11 @@ export default function LightHero({ lang = "en" }: LightHeroProps) {
           50%       { opacity: 0.4; }
         }
         .lhero-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4rem;
+          display: flex;
+          flex-direction: column;
           align-items: center;
+          justify-content: center;
           min-height: calc(100vh - 10rem);
-        }
-        @media (max-width: 1023px) {
-          .lhero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-          .lhero-right { display: none; }
         }
       `}</style>
     </section>
