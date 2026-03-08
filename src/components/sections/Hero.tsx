@@ -4,14 +4,11 @@ import { BackgroundBeams } from "@/components/ui/background-beams";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { FlipWords } from "@/components/ui/flip-words";
 import { Sparkles } from "@/components/ui/sparkles";
-import { CardSpotlight } from "@/components/ui/card-spotlight";
-import { SplineScene } from "@/components/ui/spline-scene";
 import { FadeIn } from "@/components/ui/fade-in";
 import { OWNER } from "@/lib/data";
 import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 
 const HERO_ROTATING_WORDS = ["Intelligent", "Secure", "Privacy-Aware", "Policy-Driven", "Automation-First"];
-const SPLINE_SCENE_URL = "https://prod.spline.design/kZDDjO5HlFTv7Soj/scene.splinecode";
 
 interface HeroProps {
   lang?: "en" | "he";
@@ -28,7 +25,7 @@ export function Hero({ lang = "en" }: HeroProps) {
       <BackgroundBeams className="z-0 opacity-30" />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[calc(100vh-6rem)]">
+        <div className="flex flex-col items-center min-h-[calc(100vh-6rem)] justify-center">
 
           {/* LEFT: text column */}
           <div
@@ -160,16 +157,6 @@ export function Hero({ lang = "en" }: HeroProps) {
               </a>
             </div>
             </FadeIn>
-          </div>
-
-          <div className="hidden lg:flex items-center justify-center">
-            <CardSpotlight
-              className="w-full h-[520px] p-0 overflow-hidden"
-              color="rgba(99,102,241,0.07)"
-              radius={400}
-            >
-              <SplineScene scene={SPLINE_SCENE_URL} className="w-full h-full" />
-            </CardSpotlight>
           </div>
 
         </div>
