@@ -49,16 +49,34 @@ const DEMO_COMPANIES: DemoCompanyMeta[] = [
 
 // ─── Story Sections ───────────────────────────────────────────────────────────
 
-function makeSections(): StorySectionData[] {
+function makeSections(isHe: boolean): StorySectionData[] {
   return [
     {
       stepId: "multitenant",
-      badge: "01 / Architecture",
-      headline: "One Graph, Every Company",
+      badge: isHe ? "01 / ארכיטקטורה" : "01 / Architecture",
+      headline: isHe ? "גרף אחד, לכל חברה" : "One Graph, Every Company",
       demoMessage: "ספר לי על השירותים שלך",
       targetDomain: "geula-surf.co.il",
-      btnLabel: "Ask About Products →",
-      body: (
+      btnLabel: isHe ? "שאל על המוצרים ←" : "Ask About Products →",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>Company-as-Config:</strong>{" "}
+            הזהות של כל חברה — קטלוג מוצרים ותמחור, כאבי לקוח, Tone of Voice,
+            הגדרת ICP, חוקי Handoff ושדות מידע לאיסוף — נשמרת תחת שורת DB אחת
+            כעמודות JSON. אין צורך לשנות שורת קוד אחת כדי להוסיף Tenant חדש.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              גרף Stateless, מסד נתונים Stateful:
+            </strong>{" "}
+            הפונקציה <code>create_sales_graph(company_data)</code> משתמשת
+            ב-Closure על אובייקט החברה בכל קריאה. הגרף של LangGraph מיוצר מחדש
+            בכל בקשה — שורת ה-DB היא ה-Tenant, והגרף אינו שומר שום State בין
+            הסשנים.
+          </p>
+        </div>
+      ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>Company-as-Config:</strong>{" "}
@@ -81,12 +99,30 @@ function makeSections(): StorySectionData[] {
     },
     {
       stepId: "routing",
-      badge: "02 / Graph Routing",
-      headline: "B2C or B2B — the Graph Decides",
+      badge: isHe ? "02 / ניתוב בגרף (Graph Routing)" : "02 / Graph Routing",
+      headline: isHe ? "ה-Graph מחליט: B2C או B2B" : "B2C or B2B — the Graph Decides",
       demoMessage: "מה העסק שלכם עושה?",
       targetDomain: "scaleit.co.il",
-      btnLabel: "Switch to B2B →",
-      body: (
+      btnLabel: isHe ? "החלפה למצב B2B ←" : "Switch to B2B →",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>First-class routing node:</strong>{" "}
+            לאחר בניית הקונטקסט של הלקוח, הגרף קורא את{" "}
+            <code>company_data[&quot;business_type&quot;]</code> ומנתב
+            ל-<code>b2c_sales_agent</code> או ל-<code>b2b_sales_agent</code>.
+            אלו לא סתם תנאי If-Else בתוך Node אחד — מדובר בשני צמתים נפרדים
+            לחלוטין בגרף, שלכל אחד מהם בלוק System Prompt עצמאי.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>עולמות שונים, אותו API:</strong>{" "}
+            משתמשי B2C מקבלים Prompt חם וזורם בעברית — רמת גלישה, גודל קבוצה,
+            תאריך מועדף. משתמשי B2B מקבלים Prompt מקצועי וייעוצי — גודל החברה,
+            מערכת CRM נוכחית, מקבל ההחלטות, לוחות זמנים. לחצו כדי להחליף
+            ל-SCALE IT ולשלוח את אותה שאלה בדיוק.
+          </p>
+        </div>
+      ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
@@ -112,11 +148,31 @@ function makeSections(): StorySectionData[] {
     },
     {
       stepId: "handoff",
-      badge: "03 / Handoff Guard",
-      headline: "Two-Stage Escalation",
+      badge: isHe ? "03 / מנגנון העברה לנציג (Handoff Guard)" : "03 / Handoff Guard",
+      headline: isHe ? "אסקלציה (Escalation) בשני שלבים" : "Two-Stage Escalation",
       demoMessage: "אני רוצה לדבר עם נציג אנושי",
-      btnLabel: "Trigger Handoff →",
-      body: (
+      btnLabel: isHe ? "הפעלת מנגנון Handoff ←" : "Trigger Handoff →",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              שלב 1 — רשימה שחורה (Keyword Blocklist):
+            </strong>{" "}
+            רשימה מפורשת של בקשות למענה אנושי (מנהל, נציג, תלונה, תפסיק…)
+            מפעילה Handoff מיידי — באפס עלות LLM. שאלות מכירה לגיטימיות (מחיר,
+            זמינות, איך זה עובד) מוחרגות במפורש כדי למנוע False Positives.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              שלב 2 — סיווג בינארי באמצעות LLM:
+            </strong>{" "}
+            רק הודעות לא ברורות שעוברות את שלב 1 מקבלות קריאה שנייה ל-LLM:
+            פרומפט בינארי (Single-shot) ששואל כן/לא האם המשתמש רוצה נציג אנושי.
+            שדה ה-<code>execution_path</code> בכל תגובה מראה איזה שלב הופעל.
+            שלחו הודעת דמו כדי לראות את שני השלבים בפעולה.
+          </p>
+        </div>
+      ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
@@ -141,11 +197,32 @@ function makeSections(): StorySectionData[] {
     },
     {
       stepId: "learning",
-      badge: "04 / Learning Loop",
-      headline: "Ratings Rewrite the Prompt",
+      badge: isHe ? "04 / לולאת למידה (Learning Loop)" : "04 / Learning Loop",
+      headline: isHe ? "הפידבקים משכתבים את הפרומפט" : "Ratings Rewrite the Prompt",
       demoMessage: "מה המחיר ומה כולל בדיוק?",
-      btnLabel: "Ask a Pricing Question →",
-      body: (
+      btnLabel: isHe ? "שאל שאלת תמחור ←" : "Ask a Pricing Question →",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>Feedback → prompt mutation:</strong>{" "}
+            אחרי כל תשובה של הבוט, המשתמשים מדרגים 1–5 כוכבים עם אופציה לטקסט
+            חופשי. הדירוגים נשמרים ל-<code>data/ratings.json</code>. לפני כל
+            בקשה חדשה,{" "}
+            <code>get_company_learning_instructions()</code> קוראת את הקובץ,
+            מסווגת נושאים עם דירוג נמוך (תמחור / טון / תוכן / Handoff), ומוסיפה
+            הוראות דריסה (Overrides) מותאמות אישית בתחתית ה-System Prompt.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              ללא צורך באימון מחדש (No Retraining Required):
+            </strong>{" "}
+            דפוסים שליליים מצטברים ומשנים את התנהגות הבוט עבור אותה חברה בסשן
+            הבא — אך ורק באמצעות Prompt Engineering. היסטוריית השיחה המלאה
+            מנוגנת מחדש לתוך הגרף בכל פנייה, מה שמעניק ל-LLM קונטקסט מקדים
+            מלא.
+          </p>
+        </div>
+      ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
@@ -172,16 +249,38 @@ function makeSections(): StorySectionData[] {
     },
     {
       stepId: "forcepoint",
-      badge: "✦ Live: Forcepoint",
-      headline: "Your Company. One DB Row.",
-      demoMessage:
-        "Our security team is overwhelmed by DLP false positives from our current tool and we're evaluating alternatives — what makes Forcepoint different?",
+      badge: isHe ? "✦ לייב (Live): דמו Forcepoint" : "✦ Live: Forcepoint",
+      headline: isHe ? "החברה שלכם. שורת DB אחת." : "Your Company. One DB Row.",
+      demoMessage: isHe
+        ? "הצוות שלנו מוצף בהתראות שגויות מכלי ה-DLP הנוכחי שלנו ואנחנו בוחנים חלופות — מה מייחד את Forcepoint?"
+        : "Our security team is overwhelmed by DLP false positives from our current tool and we're evaluating alternatives — what makes Forcepoint different?",
       targetDomain: "forcepoint.com",
-      btnLabel: "Talk to the Forcepoint Bot →",
-      btnLabel2: "דבר עם הבוט בעברית →",
-      demoMessage2:
-        "הצוות שלנו מוצף בהתראות שגויות מכלי ה-DLP הנוכחי שלנו ואנחנו בוחנים חלופות — מה מייחד את Forcepoint?",
-      body: (
+      btnLabel: isHe ? "דבר עם הבוט בעברית ←" : "Talk to the Forcepoint Bot →",
+      btnLabel2: isHe
+        ? undefined
+        : "דבר עם הבוט בעברית →",
+      demoMessage2: isHe
+        ? undefined
+        : "הצוות שלנו מוצף בהתראות שגויות מכלי ה-DLP הנוכחי שלנו ואנחנו בוחנים חלופות — מה מייחד את Forcepoint?",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>הנתונים שלכם כבר בפנים.</strong>{" "}
+            קווי המוצרים של Forcepoint, הגדרת ה-ICP, ספר הטיפול בהתנגדויות,
+            המיצוב התחרותי (מול Netskope, Zscaler, Purview, Symantec) ומקרי
+            בוחן — כולם נשאבו מ-<code>forcepoint.com</code> באמצעות{" "}
+            <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> והוזנו
+            כ-Tenant בודד במערכת — אותו Zero-code pipeline שעוברת כל חברה.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>נסו את זה עכשיו.</strong>{" "}
+            שאלו על False Positives ב-DLP, סיכוני נתונים ב-GenAI, תאימות
+            ל-FedRAMP, או איך Forcepoint עומדת מול Netskope — ככה בדיוק נשמע
+            סוכן מכירות שהוגדר במיוחד עבור Forcepoint. לחצו על הכפתור כדי
+            להתחיל את השיחה עם השאלה האמיתית הראשונה.
+          </p>
+        </div>
+      ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>Your data is already loaded.</strong>{" "}
@@ -264,6 +363,10 @@ const SCOPED_CSS = `
   border-color: rgba(76,199,184,0.38);
   background: rgba(6,59,88,0.40);
   box-shadow: 0 0 24px rgba(76,199,184,0.08), inset 0 0 18px rgba(251,146,60,0.03);
+}
+[dir="rtl"] .bot-section--active {
+  border-left: unset;
+  border-right: 3px solid #4cc7b8;
 }
 .bot-step-badge {
   display: inline-block; font-size: 0.63rem; font-family: monospace; font-weight: 700;
@@ -448,17 +551,23 @@ function StorySection({
   section,
   isActive,
   isSending,
+  isHe,
   onTrigger,
   onTrigger2,
 }: {
   section: StorySectionData;
   isActive: boolean;
   isSending: boolean;
+  isHe: boolean;
   onTrigger: () => void;
   onTrigger2?: () => void;
 }) {
   return (
-    <div className={`bot-section${isActive ? " bot-section--active" : ""}`}>
+    <div
+      className={`bot-section${isActive ? " bot-section--active" : ""}`}
+      dir={isHe ? "rtl" : undefined}
+      style={{ fontFamily: isHe ? "var(--font-heebo)" : undefined }}
+    >
       <div className="bot-step-badge">{section.badge}</div>
       <h3 className="bot-headline">{section.headline}</h3>
       {section.body}
@@ -531,6 +640,8 @@ export default function AgentShowcase() {
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  const isHe = lang === "he";
 
   // ── Backend warm-up: poll every 5 s for up to 60 s ───────────
   const startWarmup = useCallback(() => {
@@ -723,7 +834,7 @@ export default function AgentShowcase() {
     [activeTab, selectedDomain, companies, switchCompany, sendMessage]
   );
 
-  const SECTIONS = makeSections();
+  const SECTIONS = makeSections(isHe);
   const storyVisible = activeTab === "story";
   const demoVisible = activeTab === "demo";
 
@@ -733,17 +844,54 @@ export default function AgentShowcase() {
 
       <div className="bot-inner">
         {/* ── Section header ── */}
-        <div className="bot-header">
+        <div
+          className="bot-header"
+          dir={isHe ? "rtl" : undefined}
+          style={{ fontFamily: isHe ? "var(--font-heebo)" : undefined }}
+        >
           <div className="bot-header-badge">
             <span className="bot-header-dot" />
-            LangGraph · Multi-Tenant · Forcepoint Live
+            {isHe
+              ? "LangGraph · ארכיטקטורת Multi-Tenant · דמו חי ל-Forcepoint"
+              : "LangGraph · Multi-Tenant · Forcepoint Live"}
           </div>
           <h2 className="bot-title">
-            AI Sales Agent —{" "}
-            <span className="bot-title-em">Live Demo</span>
+            {isHe ? (
+              <>
+                סוכן מכירות AI —{" "}
+                <span className="bot-title-em">דמו חי (Live Demo)</span>
+              </>
+            ) : (
+              <>
+                AI Sales Agent —{" "}
+                <span className="bot-title-em">Live Demo</span>
+              </>
+            )}
           </h2>
           <p className="bot-subtitle">
-            A LangGraph-powered multi-tenant sales agent with B2C/B2B routing, two-stage handoff detection, and a feedback-driven learning loop. Forcepoint&apos;s real product data is seeded as a live tenant — click any section to send a demo message to the real backend. Try it in <strong style={{ color: "#4cc7b8" }}>Hebrew</strong> or <strong style={{ color: "#4cc7b8" }}>English</strong> — the agent detects language automatically.
+            {isHe ? (
+              <>
+                סוכן מכירות מבוסס LangGraph בארכיטקטורת Multi-Tenant, הכולל
+                ניתוב B2B/B2C, מנגנון Handoff (העברה לנציג) דו-שלבי, ולולאת
+                למידה מבוססת-פידבק. הנתונים האמיתיים של Forcepoint מוזנים
+                פנימה כ-Tenant פעיל — לחצו על כל אחד מהחלקים כדי לשלוח הודעת
+                דמו ל-Backend האמיתי. נסו{" "}
+                <strong style={{ color: "#4cc7b8" }}>בעברית</strong> או{" "}
+                <strong style={{ color: "#4cc7b8" }}>באנגלית</strong> — הבוט
+                מזהה את השפה אוטומטית.
+              </>
+            ) : (
+              <>
+                A LangGraph-powered multi-tenant sales agent with B2C/B2B
+                routing, two-stage handoff detection, and a feedback-driven
+                learning loop. Forcepoint&apos;s real product data is seeded as
+                a live tenant — click any section to send a demo message to the
+                real backend. Try it in{" "}
+                <strong style={{ color: "#4cc7b8" }}>Hebrew</strong> or{" "}
+                <strong style={{ color: "#4cc7b8" }}>English</strong> — the
+                agent detects language automatically.
+              </>
+            )}
           </p>
         </div>
 
@@ -753,19 +901,19 @@ export default function AgentShowcase() {
             className={`bot-tab${storyVisible ? " bot-tab--active" : " bot-tab--inactive"}`}
             onClick={() => setActiveTab("story")}
           >
-            📖 Engineering Story
+            {isHe ? "📖 סיפור הנדסי" : "📖 Engineering Story"}
           </button>
           <button
             className={`bot-tab${demoVisible ? " bot-tab--active" : " bot-tab--inactive"}`}
             onClick={() => setActiveTab("demo")}
           >
-            💬 Live Demo
+            {isHe ? "💬 דמו חי" : "💬 Live Demo"}
           </button>
         </div>
 
         {/* ── Split pane ── */}
-        <div className="bot-split">
-          {/* Left — story sections */}
+        <div className="bot-split" dir={isHe ? "rtl" : undefined}>
+          {/* Story sections */}
           <div
             className="bot-story"
             style={{ display: storyVisible ? undefined : "none" }}
@@ -776,6 +924,7 @@ export default function AgentShowcase() {
                 section={s}
                 isActive={activeStep === s.stepId}
                 isSending={sending}
+                isHe={isHe}
                 onTrigger={() => handleTrigger(s)}
                 onTrigger2={
                   s.btnLabel2 && s.demoMessage2
@@ -786,9 +935,10 @@ export default function AgentShowcase() {
             ))}
           </div>
 
-          {/* Right — live chat demo */}
+          {/* Live chat demo */}
           <div
             className="bot-demo-pane"
+            dir="ltr"
             style={{ display: demoVisible ? undefined : "none" }}
           >
             {/* Header: company selector + status */}
@@ -842,7 +992,7 @@ export default function AgentShowcase() {
                   <div className="bot-warmup-bar" />
                 </div>
                 <p className="bot-warmup-text">
-                  {lang === "he" ? (
+                  {isHe ? (
                     <>מעירים את שרתי ה-AI... <em>זה עשוי לקחת כמה שניות</em>, אבל ברגע שזה יעלה — זה יטוס 🚀</>
                   ) : (
                     <>Waking up the AI servers&hellip; <em>This might take a few seconds</em>, but it&apos;ll be lightning fast once it&apos;s ready!</>
@@ -853,15 +1003,15 @@ export default function AgentShowcase() {
               <div className="bot-offline">
                 <div className="bot-offline-icon">⏱️</div>
                 <div className="bot-offline-title">
-                  {lang === "he" ? "השרת לא הגיב בזמן" : "Server didn't respond in time"}
+                  {isHe ? "השרת לא הגיב בזמן" : "Server didn't respond in time"}
                 </div>
                 <p className="bot-offline-msg">
-                  {lang === "he"
+                  {isHe
                     ? "ייתכן שהשרת עמוס. נסה שוב בעוד רגע."
                     : "The server might be under load — give it another try."}
                 </p>
                 <button className="bot-retry-btn" onClick={startWarmup}>
-                  {lang === "he" ? "נסה שוב ↺" : "Retry ↺"}
+                  {isHe ? "נסה שוב ↺" : "Retry ↺"}
                 </button>
               </div>
             ) : (
@@ -879,9 +1029,11 @@ export default function AgentShowcase() {
                         lineHeight: 1.7,
                       }}
                     >
-                      Click a story section to send a demo message,
-                      <br />
-                      or type below to chat freely.
+                      {isHe ? (
+                        <>לחצו על חלק מהסיפור כדי לשלוח הודעת דמו,<br />או הקלידו כאן לשיחה חופשית.</>
+                      ) : (
+                        <>Click a story section to send a demo message,<br />or type below to chat freely.</>
+                      )}
                     </div>
                   )}
 
