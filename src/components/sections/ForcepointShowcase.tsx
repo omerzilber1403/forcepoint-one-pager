@@ -1,6 +1,6 @@
 "use client";
 import {
-  Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight,
+  Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight, ChevronLeft,
 } from "lucide-react";
 
 /* ── Forcepoint brand tokens ─────────────────────────────────────────────── */
@@ -77,6 +77,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         WebkitBackdropFilter: "blur(18px)",
         borderColor: "rgba(76,199,184,0.18)",
         boxShadow: "0 8px 32px rgba(6,59,88,0.35)",
+        fontFamily: isHe ? "var(--font-heebo)" : undefined,
       }}
     >
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -117,8 +118,17 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           </div>
         </div>
         <div className="flex items-center gap-0.5">
-          <ChevronRight className="fp-arr  w-4 h-4" style={{ color: FP.teal }} />
-          <ChevronRight className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
+          {isHe ? (
+            <>
+              <ChevronLeft className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
+              <ChevronLeft className="fp-arr  w-4 h-4" style={{ color: FP.teal }} />
+            </>
+          ) : (
+            <>
+              <ChevronRight className="fp-arr  w-4 h-4" style={{ color: FP.teal }} />
+              <ChevronRight className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
+            </>
+          )}
         </div>
         <div className="text-center">
           <div className="text-xs font-mono text-slate-500 mb-0.5">
@@ -129,7 +139,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           </div>
         </div>
         <span
-          className="ml-auto rounded-full px-2.5 py-0.5 text-xs font-mono font-semibold"
+          className="ms-auto rounded-full px-2.5 py-0.5 text-xs font-mono font-semibold"
           style={{ background: FP.tealGlass, color: FP.teal, border: `1px solid ${FP.tealBorder}` }}
         >
           {isHe ? "מותאם אישית" : "Personalized"}
@@ -180,7 +190,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           style={{ background: FP.teal, color: FP.navy, boxShadow: `0 4px 18px rgba(76,199,184,0.35)` }}
         >
           <Zap className="w-3.5 h-3.5" />
-          {isHe ? "נסה את בוט Forcepoint \u2191" : "Try the Forcepoint Bot \u2191"}
+          {isHe ? "נסה את בוט Forcepoint \u2193" : "Try the Forcepoint Bot \u2191"}
         </button>
       </div>
     </div>
@@ -213,6 +223,7 @@ function StompCard({ lang }: { lang: Lang }) {
         WebkitBackdropFilter: "blur(18px)",
         borderColor: "rgba(76,199,184,0.18)",
         boxShadow: "0 8px 32px rgba(6,59,88,0.35)",
+        fontFamily: isHe ? "var(--font-heebo)" : undefined,
       }}
     >
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -263,8 +274,17 @@ function StompCard({ lang }: { lang: Lang }) {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-1 flex-shrink-0">
-          <ChevronRight className="fp-arr  w-5 h-5" style={{ color: FP.teal }} />
-          <ChevronRight className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5 }} />
+          {isHe ? (
+            <>
+              <ChevronLeft className="fp-arr  w-5 h-5" style={{ color: FP.teal }} />
+              <ChevronLeft className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5 }} />
+            </>
+          ) : (
+            <>
+              <ChevronRight className="fp-arr  w-5 h-5" style={{ color: FP.teal }} />
+              <ChevronRight className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5 }} />
+            </>
+          )}
         </div>
 
         <div
@@ -286,7 +306,11 @@ function StompCard({ lang }: { lang: Lang }) {
       <ul className="flex flex-col gap-1.5">
         {aiBullets.map((item) => (
           <li key={item} className="flex items-start gap-2 text-xs text-slate-400">
-            <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
+            {isHe ? (
+              <ChevronLeft className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
+            ) : (
+              <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
+            )}
             {item}
           </li>
         ))}

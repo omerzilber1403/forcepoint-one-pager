@@ -1,5 +1,5 @@
 "use client";
-import { Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight } from "lucide-react";
+import { Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight, ChevronLeft } from "lucide-react";
 
 type Lang = "en" | "he";
 
@@ -37,7 +37,7 @@ function Pill({ children, core }: { children: React.ReactNode; core?: boolean })
 function SalesBotCard({ lang }: { lang: Lang }) {
   const isHe = lang === "he";
   return (
-    <div className="lfp-card lfp-a1" dir={isHe ? "rtl" : undefined}>
+    <div className="lfp-card lfp-a1" dir={isHe ? "rtl" : undefined} style={{ fontFamily: isHe ? "var(--font-heebo)" : undefined }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.5rem" }}>
         <span className="lfp-pill-core" style={{ gap:"0.4rem", display:"inline-flex", alignItems:"center" }}>
           <Zap size={11} /> {isHe ? "אוטומציה עם AI" : "AI Automation"}
@@ -57,8 +57,17 @@ function SalesBotCard({ lang }: { lang: Lang }) {
           <div style={{ fontSize:"0.85rem", fontWeight:700, fontFamily:"monospace", color:"#A8A29E", textDecoration:"line-through" }}>{isHe ? "שיחה קרה גנרית" : "Generic cold call"}</div>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:"1px" }}>
-          <ChevronRight className="lfp-arr" size={16} style={{ color:"#4F46E5" }} />
-          <ChevronRight className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45 }} />
+          {isHe ? (
+            <>
+              <ChevronLeft className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45 }} />
+              <ChevronLeft className="lfp-arr" size={16} style={{ color:"#4F46E5" }} />
+            </>
+          ) : (
+            <>
+              <ChevronRight className="lfp-arr" size={16} style={{ color:"#4F46E5" }} />
+              <ChevronRight className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45 }} />
+            </>
+          )}
         </div>
         <div style={{ textAlign:"center" }}>
           <div style={{ fontSize:"0.65rem", fontFamily:"monospace", color:"#A8A29E", marginBottom:"0.2rem", textTransform:"uppercase" }}>{isHe ? "עם סוכן AI" : "With AI"}</div>
@@ -87,7 +96,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       </div>
       <div style={{ marginTop:"auto", paddingTop:"0.25rem" }}>
         <button className="lfp-cta" onClick={() => document.getElementById("salesbot")?.scrollIntoView({ behavior:"smooth" })}>
-          <Zap size={14} /> {isHe ? "נסה את בוט Forcepoint ↑" : "Try the Forcepoint Bot ↑"}
+          <Zap size={14} /> {isHe ? "נסה את בוט Forcepoint ↓" : "Try the Forcepoint Bot ↑"}
         </button>
       </div>
     </div>
@@ -100,7 +109,7 @@ function StompCard({ lang }: { lang: Lang }) {
     ? ["Multi-threading ו-thread-safety ב-C++ נפתרו עם תכנות זוגי AI", "תבנית Reactor ב-Java נוצרה ונסקרה עם Claude בשעות", "אינטגרציית client–server של STOMP עם ניפוי שגיאות AI"]
     : ["C++ multi-threading & thread-safety solved with AI pair programming", "Java Reactor pattern generated & reviewed with Claude in hours", "STOMP protocol client–server integration debugged via AI"];
   return (
-    <div className="lfp-card lfp-a2" dir={isHe ? "rtl" : undefined}>
+    <div className="lfp-card lfp-a2" dir={isHe ? "rtl" : undefined} style={{ fontFamily: isHe ? "var(--font-heebo)" : undefined }}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"0.5rem" }}>
         <span className="lfp-pill-core" style={{ gap:"0.4rem", display:"inline-flex", alignItems:"center" }}>
           <Bot size={11} /> {isHe ? "הנדסה מואצת AI" : "AI-Accelerated Engineering"}
@@ -126,8 +135,17 @@ function StompCard({ lang }: { lang: Lang }) {
           <div style={{ fontSize:"0.65rem", color:"#EF4444", opacity:0.5 }}>{isHe ? "ממוצע תעשייתי" : "industry avg"}</div>
         </div>
         <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"2px" }}>
-          <ChevronRight className="lfp-arr" size={18} style={{ color:"#4F46E5" }} />
-          <ChevronRight className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45 }} />
+          {isHe ? (
+            <>
+              <ChevronLeft className="lfp-arr" size={18} style={{ color:"#4F46E5" }} />
+              <ChevronLeft className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45 }} />
+            </>
+          ) : (
+            <>
+              <ChevronRight className="lfp-arr" size={18} style={{ color:"#4F46E5" }} />
+              <ChevronRight className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45 }} />
+            </>
+          )}
         </div>
         <div style={{ flex:1, borderRadius:"0.75rem", padding:"0.75rem", border:"1px solid #C7D2FE", background:"#EEF2FF", textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:"0.25rem" }}>
           <div style={{ fontSize:"0.6rem", fontFamily:"monospace", color:"#4338CA", textTransform:"uppercase" }}>{isHe ? "מהירות AI" : "AI Velocity"}</div>
@@ -138,7 +156,11 @@ function StompCard({ lang }: { lang: Lang }) {
       <ul style={{ listStyle:"none", margin:0, padding:0, display:"flex", flexDirection:"column", gap:"0.5rem" }}>
         {bullets.map(item => (
           <li key={item} style={{ display:"flex", alignItems:"flex-start", gap:"0.5rem", fontSize:"0.8rem", color:"#57534E" }}>
-            <ChevronRight size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px" }} />{item}
+            {isHe ? (
+              <ChevronLeft size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px" }} />
+            ) : (
+              <ChevronRight size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px" }} />
+            )}{item}
           </li>
         ))}
       </ul>
