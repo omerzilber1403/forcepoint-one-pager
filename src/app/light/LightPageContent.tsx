@@ -41,7 +41,7 @@ export default function LightPageContent() {
       <LightHero lang={lang} />
       <LightForcepointShowcase lang={lang} />
 
-      <LightAgentShowcase />
+      <LightAgentShowcase lang={lang} />
       <LightSPLCaseStudy lang={lang} />
       <LightSkills lang={lang} />
       <LightDataPrivacy lang={lang} />

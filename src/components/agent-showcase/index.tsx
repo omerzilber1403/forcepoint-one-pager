@@ -595,7 +595,7 @@ function StorySection({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function AgentShowcase() {
+export default function AgentShowcase({ lang: langProp }: { lang?: "en" | "he" } = {}) {
   const [activeStep, setActiveStep] = useState<StepId | null>(null);
   const [activeTab, setActiveTab] = useState<"story" | "demo">("story");
 
@@ -626,12 +626,16 @@ export default function AgentShowcase() {
   const selectedCompany =
     companies.find((c) => c.domain === selectedDomain) ?? companies[0];
 
-  // ── Language — read from localStorage written by the Navbar ──
-  const [lang, setLang] = useState<"en" | "he">("en");
+  // ── Language — driven by parent prop; localStorage as fallback + cross-tab sync ──
+  const [lang, setLang] = useState<"en" | "he">(langProp ?? "en");
+  // Sync whenever the parent re-renders with a new lang (same-tab Navbar switch)
+  useEffect(() => { if (langProp !== undefined) setLang(langProp); }, [langProp]);
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio-lang");
-    if (saved === "en" || saved === "he") setLang(saved);
-    // Sync whenever the user switches language elsewhere in the page
+    if (langProp === undefined) {
+      const saved = localStorage.getItem("portfolio-lang");
+      if (saved === "en" || saved === "he") setLang(saved);
+    }
+    // Sync whenever the user switches language in a different tab
     const onStorage = (e: StorageEvent) => {
       if (e.key === "portfolio-lang" && (e.newValue === "en" || e.newValue === "he")) {
         setLang(e.newValue);
@@ -639,7 +643,7 @@ export default function AgentShowcase() {
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  }, [langProp]);
 
   const isHe = lang === "he";
 
@@ -859,7 +863,7 @@ export default function AgentShowcase() {
             {isHe ? (
               <>
                 סוכן מכירות AI —{" "}
-                <span className="bot-title-em">דמו חי (Live Demo)</span>
+                <span className="bot-title-em">Live Demo</span>
               </>
             ) : (
               <>

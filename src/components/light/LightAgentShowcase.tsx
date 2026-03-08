@@ -90,11 +90,11 @@ const LIGHT_OVERRIDES = `
 }
 `;
 
-export default function LightAgentShowcase() {
+export default function LightAgentShowcase({ lang }: { lang?: "en" | "he" } = {}) {
   return (
     <div className="light-salesbot">
       <style dangerouslySetInnerHTML={{ __html: LIGHT_OVERRIDES }} />
-      <AgentShowcase />
+      <AgentShowcase lang={lang} />
     </div>
   );
 }

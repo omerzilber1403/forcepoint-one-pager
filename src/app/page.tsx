@@ -35,7 +35,7 @@ export default function Home() {
       <Hero lang={lang} />
       <ForcepointShowcase lang={lang} />
 
-      <AgentShowcase />
+      <AgentShowcase lang={lang} />
       <SPLCaseStudy lang={lang} />
       <Skills lang={lang} />
       <DataPrivacy lang={lang} />
