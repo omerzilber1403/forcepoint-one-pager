@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter, Geist_Mono, Heebo } from "next/font/google";
+import { Space_Grotesk, Inter, Geist_Mono, IBM_Plex_Sans_Hebrew } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -18,10 +18,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const heebo = Heebo({
+const ibmPlexSansHebrew = IBM_Plex_Sans_Hebrew({
   variable: "--font-heebo",
   subsets: ["hebrew", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -60,7 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${spaceGrotesk.variable} ${inter.variable} ${geistMono.variable} ${heebo.variable} antialiased bg-bg text-text-primary overflow-x-hidden`}
+        className={`${spaceGrotesk.variable} ${inter.variable} ${geistMono.variable} ${ibmPlexSansHebrew.variable} antialiased bg-bg text-text-primary overflow-x-hidden`}
       >
         {/* Fixed background orb layer — enables glassmorphism across all sections */}
         <div className="orb-field" aria-hidden="true">
