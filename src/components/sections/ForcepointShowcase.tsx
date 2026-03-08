@@ -421,7 +421,7 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
             style={{ fontFamily: "var(--font-display, system-ui)" }}
           >
             {isHe ? (
-              <>נבנה לתפקידי <span style={{ color: FP.teal }}>אבטחת נתונים (Data Security)</span></>
+              <>נבנה לתפקידי <span style={{ color: FP.teal }}>אבטחת נתונים</span></>
             ) : (
               <>Built for <span style={{ color: FP.teal }}>Data Security Roles</span></>
             )}
