@@ -108,7 +108,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       </div>
 
       <h3 className="font-bold text-white text-lg leading-tight">
-        {isHe ? "סוכן מכירות ולידים חכם" : "Intelligent Sales & Lead Agent"}
+        {isHe ? "סוכן AI חכם להסמכת לידים" : "Intelligent Sales & Lead Agent"}
       </h3>
 
       <div
@@ -154,7 +154,7 @@ function SalesBotCard({ lang }: { lang: Lang }) {
 
       <p className="text-sm text-slate-400 leading-relaxed">
         {isHe
-          ? "סוכן מבוסס גרף (LangGraph) עם ארכיטקטורה רב-לקוחית — המוצרים, ספר ההתנגדויות, הגדרת ICP ומפת המתחרים של כל חברה חיים בשורת DB אחת, הניתנת להחלפה ללא אתחול."
+          ? "סוכן מבוסס-גרף (LangGraph) בארכיטקטורה מרובת-סביבות. הנתונים של כל חברה — קטלוג מוצרים, פלייבוק התנגדויות, פרופיל לקוח (ICP) ומיצוב תחרותי — יושבים בשורת DB בודדת. החלפת סביבות מתבצעת באופן דינמי וללא זמן השבתה (Zero Downtime)."
           : "Graph-based agent (LangGraph) with multi-tenant architecture — each company\u2019s products, objection playbook, ICP definition, and competitive map live in a single DB row, hot-swappable with zero restart required."}
       </p>
 
@@ -164,15 +164,15 @@ function SalesBotCard({ lang }: { lang: Lang }) {
       >
         <p className="text-xs leading-relaxed" style={{ color: "#94a3b8" }}>
           <span style={{ color: "#4cc7b8", fontWeight: 600 }}>
-            {isHe ? "✦ הנתונים האמיתיים של Forcepoint חיים בדמו." : "\u2718 Forcepoint\u2019s real data is live in the demo."}
+            {isHe ? "✦ הנתונים האמיתיים של Forcepoint מוזנים בדמו:" : "\u2718 Forcepoint\u2019s real data is live in the demo."}
           </span>{" "}
           {isHe
-            ? "קטלוג המוצרים, ספר ההתנגדויות ל-DLP ומיצוב תחרותי (Netskope, Zscaler, Purview, Symantec) נצלפו מ-"
+            ? "קטלוג המוצרים, הטיפול בהתנגדויות DLP והמיצוב מול המתחרים (Netskope, Zscaler, Purview, Symantec) נשאבו אוטומטית מ-"
             : "Product catalog, DLP objection playbook, and competitive positioning (Netskope, Zscaler, Purview, Symantec) were scraped from "}
           <span style={{ fontFamily: "monospace", color: "#cbd5e1" }}>forcepoint.com</span>
           {isHe ? " עם " : " using "}
           <span style={{ color: "#4cc7b8", fontWeight: 600 }}>Antigravity</span>
-          {isHe ? " ונטענו כטנאנט אחד. נסה למטה." : " and loaded as a single tenant. Try it below."}
+          {isHe ? " והוגדרו כסביבת עבודה עצמאית. נסו את זה למטה." : " and loaded as a single tenant. Try it below."}
         </p>
       </div>
 
@@ -209,9 +209,9 @@ function StompCard({ lang }: { lang: Lang }) {
 
   const aiBullets = isHe
     ? [
-        "Multi-threading ו-thread-safety ב-C++ נפתרו עם תכנות זוגי AI",
-        "תבנית Reactor ב-Java נוצרה ונסקרה עם Claude בשעות",
-        "אינטגרציית client\u2013server של פרוטוקול STOMP עם ניפוי שגיאות AI",
+        "פתרון אתגרי Multi-threading ו-Thread-safety ב-C++ באמצעות AI Pair Programming.",
+        "תבנית Reactor ב-Java נבנתה וקודדה יחד עם Claude תוך שעות.",
+        "דיבוג אינטגרציית Client-Server ברמת הפרוטוקול בשילוב מודלי שפה.",
       ]
     : [
         "C++ multi-threading & thread-safety solved with AI pair programming",
@@ -238,7 +238,7 @@ function StompCard({ lang }: { lang: Lang }) {
           style={{ background: FP.tealGlass, borderColor: FP.tealBorder, color: FP.teal }}
         >
           <Bot className="w-3 h-3" />
-          {isHe ? "הנדסה מואצת AI" : "AI-Accelerated Engineering"}
+          {isHe ? "פיתוח Low-Level מואץ באמצעות AI" : "AI-Accelerated Engineering"}
         </span>
         <a
           href="https://github.com/omerzilber1403/assignment3-world-cup"
@@ -254,12 +254,12 @@ function StompCard({ lang }: { lang: Lang }) {
       </div>
 
       <h3 className="font-bold text-white text-lg leading-tight">
-        {isHe ? "מערכת אירועים רב-פרוטוקולית (STOMP)" : "Multi-Protocol Event System (STOMP)"}
+        {isHe ? "מערכת אירועים מרובת-פרוטוקולים (STOMP)" : "Multi-Protocol Event System (STOMP)"}
       </h3>
 
       <p className="text-sm text-slate-400 leading-relaxed">
         {isHe
-          ? "מערכת pub/sub בזמן אמת לאירועי כדורגל חיים — כתבים מעלים JSON לערוצים; מנויים מקבלים MESSAGE frames מיידיים. שרת Java Reactor, גשר Python SQLite, וקליינט C++ עם שני threads שמממש STOMP 1.2 על TCP גולמי."
+          ? "מערכת Pub/Sub בזמן אמת לאירועי ספורט. כתבים משדרים קבצי JSON לערוצים, ומנויים מקבלים תשדורות MESSAGE מיידיות. נבנה עם שרת Java Reactor, גישור Python-SQLite, וקליינט C++ (מבוסס שני Threads) המממש את פרוטוקול STOMP 1.2 מאפס מעל TCP גולמי."
           : "Real-time pub/sub system for live football match events \u2014 reporters upload event JSON to named channels; all subscribers receive instant MESSAGE frames. Built with a Java Reactor server, Python SQLite bridge, and a two-threaded C++ client implementing the STOMP 1.2 protocol from scratch over raw TCP."}
       </p>
 
@@ -377,9 +377,9 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
 
   const securityPanels = isHe
     ? [
-        { icon: <Shield className="w-4 h-4" />, label: "פרומפטים ללא PII", desc: "כל הקוד והלוגים מסוננים לפני אינטראקציה עם LLM — שום נתוני משתמש אמיתיים לא מגיעים למודל." },
-        { icon: <KeyRound className="w-4 h-4" />, label: "בקרת גישה", desc: "קובצי .env ו-.gitignore מחמירים לכל מפתחות API של AI — לעולם לא מועלים לבקרת גרסאות." },
-        { icon: <Bot className="w-4 h-4" />, label: "סוכנים מודעי-מדיניות", desc: "סוכני LangGraph מבודדים עם system prompts מחמירים — מונעים הזיות ודליפות נתונים." },
+        { icon: <Shield className="w-4 h-4" />, label: "הגנת פרטיות (Zero-PII)", desc: "כל הקוד והלוגים עוברים סניטציה מלאה לפני שליחה ל-LLM. נתוני משתמשים אמיתיים לעולם לא מגיעים למודל." },
+        { icon: <KeyRound className="w-4 h-4" />, label: "בקרת הרשאות קפדנית", desc: "ניהול מחמיר של .env ו-.gitignore. מפתחות API של AI לעולם אינם עולים ל-Source Control." },
+        { icon: <Bot className="w-4 h-4" />, label: "סוכני AI מבודדים (Sandboxed)", desc: "סוכני ה-LangGraph רצים תחת System Prompts נוקשים למניעת הזיות (Hallucinations) ודליפת נתונים." },
       ]
     : [
         { icon: <Shield className="w-4 h-4" />, label: "Zero-PII Prompting", desc: "All code and logs sanitized before LLM interaction — no real user data ever reaches the model." },
@@ -414,21 +414,21 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
             style={{ background: FP.tealGlass, borderColor: FP.tealBorder, color: FP.teal }}
           >
             <Shield className="w-3.5 h-3.5" />
-            {isHe ? "הנדסה מוכנה ל-Forcepoint" : "Forcepoint-Ready Engineering"}
+            {isHe ? "פיתוח המותאם לסטנדרט של Forcepoint" : "Forcepoint-Ready Engineering"}
           </span>
           <h2
             className="text-3xl sm:text-4xl font-bold text-white mb-3"
             style={{ fontFamily: "var(--font-display, system-ui)" }}
           >
             {isHe ? (
-              <>נבנה לתפקידי <span style={{ color: FP.teal }}>אבטחת מידע</span></>
+              <>נבנה לתפקידי <span style={{ color: FP.teal }}>אבטחת נתונים (Data Security)</span></>
             ) : (
               <>Built for <span style={{ color: FP.teal }}>Data Security Roles</span></>
             )}
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
             {isHe
-              ? "מהירות אוטומציה עם AI בשילוב הנדסת מערכות ברמה נמוכה — שילוב מדויק שForcepoint צריך לבנות ולשלוח כלי אבטחה מבוסס AI במהירות."
+              ? "שילוב מדויק בין מהירות פיתוח (AI Velocity) להבנת מערכות Low-Level — בדיוק הסט-יכולות ש-Forcepoint צריכה כדי לפתח ולשחרר (Ship) כלי אבטחה מבוססי AI במהירות ובבטחה."
               : "AI automation velocity paired with low-level systems engineering \u2014 the exact combination Forcepoint needs to build and ship AI-native security tooling fast."}
           </p>
         </div>

@@ -66,11 +66,10 @@ export function Hero({ lang = "en" }: HeroProps) {
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
               {isHe ? (
                 <>
-                  אני בונה מערכות{" "}
+                  אני בונה מערכות חכמות. אבטחת מידע מעל הכל{" "}
                   <span className="inline-block relative text-accent font-bold">
-                    מונחות-מדיניות
-                  </span>{" "}
-                  (Policy-Driven).
+                    (Security-First).
+                  </span>
                 </>
               ) : (
                 <>
@@ -90,7 +89,7 @@ export function Hero({ lang = "en" }: HeroProps) {
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
               {isHe
-                ? "עומר זילברשטיין הופך תהליכים מורכבים למערכות AI חכמות. מפתח תוכנה ויוצא חיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד בשטח. מתמחה בבניית מערכות מונחות-מדיניות (Policy-Driven) באמצעות כלים כמו FastAPI ו-LangGraph, עם חשיבה שמתחילה תמיד מאבטחת מידע (Security-First)."
+                ? "בוגר יחידה טכנולוגית בחיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד. אני מתמחה בבניית מערכות AI (כמו FastAPI ו-LangGraph) ששמות את אבטחת המידע בחזית, ומשלב יכולות פיתוח Low-Level עם מהירות עבודה של AI."
                 : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>
