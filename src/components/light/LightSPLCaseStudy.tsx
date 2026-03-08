@@ -86,7 +86,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "boot",
       badge:    isHe ? "01 / ארכיטקטורה" : "01 / Architecture",
       headline: isHe ? "מחסנית תלת-שכבתית (A Three-Tier Stack)" : "A Three-Tier Stack",
-      btnLabel: isHe ? "אתחול המערכת →" : "Boot the System",
+      btnLabel: isHe ? "אתחול המערכת" : "Boot the System",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>שרת Java (שכבה עליונה):</strong>{" "}ממומש ב-Java, ותומך גם במודל <code style={LC}>Thread-Per-Client (TPC)</code> — שבו כל חיבור מקבל תהליכון OS ייעודי שחוסם (Blocks) על קריאות Socket — וגם במודל <code style={LC}>Reactor</code> א-סינכרוני, שבו לולאת Selector מנתבת אירועי I/O-readiness ל-Thread Pool מוגבל.</p>
@@ -105,7 +105,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "login",
       badge:    isHe ? "02 / מקביליות" : "02 / Concurrency",
       headline: isHe ? "מודל קליינט מבוסס שני תהליכונים (Two-Thread Client Model)" : "Two-Thread Client Model",
-      btnLabel: isHe ? "חיבור קליינטים →" : "Connect Clients",
+      btnLabel: isHe ? "חיבור קליינטים" : "Connect Clients",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>תהליכונים ייעודיים:</strong>{" "}הקליינט ב-C++ מריץ שני תהליכונים (Threads) מקבילים בעת ההתחברות כדי למנוע חסימה של ה-UI בזמן פעולות רשת (Network I/O) — תהליכון אחד לקלט ממשתמש, ותהליכון שני לזרם הנתונים מה-Socket.</p>
@@ -124,7 +124,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "pubsub",
       badge:    isHe ? "03 / פרוטוקול" : "03 / Protocol",
       headline: isHe ? "STOMP 1.2 מאפס (STOMP 1.2 from Scratch)" : "STOMP 1.2 from Scratch",
-      btnLabel: isHe ? "הרשמה ודיווח →" : "Subscribe & Report",
+      btnLabel: isHe ? "הרשמה ודיווח" : "Subscribe & Report",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>מחזור חיים מלא:</strong>{" "}מימוש מלא של סט ה-Frames של STOMP — <code style={LC}>CONNECT</code>, <code style={LC}>SUBSCRIBE</code>, <code style={LC}>SEND</code>, <code style={LC}>MESSAGE</code>, <code style={LC}>DISCONNECT</code>, <code style={LC}>RECEIPT</code>, <code style={LC}>ERROR</code> — גם בצד השרת וגם בצד הלקוח.</p>
@@ -143,7 +143,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "summary",
       badge:    isHe ? "04 / מבני נתונים" : "04 / Data Structures",
       headline: isHe ? "אגרגציה בצד הלקוח (Client-Side Aggregation)" : "Client-Side Aggregation",
-      btnLabel: isHe ? "יצירת סיכום →" : "Generate Summary",
+      btnLabel: isHe ? "יצירת סיכום" : "Generate Summary",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>מעקב אירועים:</strong>{" "}מפענח קבצי אירועים ב-JSON ושומר את אירועי המשחק במבנה נתונים מסוג Nested Map, שבו המפתחות הם שם הערוץ והמשתמש המדווח. השרת רק שומר את ה-Frames הגולמיים — כל לוגיקת האגרגציה יושבת לחלוטין בצד הלקוח.</p>
@@ -162,7 +162,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "logout",
       badge:    isHe ? "05 / מחזור חיים" : "05 / Lifecycle",
       headline: isHe ? "כיבוי חינני (Graceful Shutdown)" : "Graceful Shutdown",
-      btnLabel: isHe ? "התנתקות (Graceful Logout) →" : "Graceful Logout",
+      btnLabel: isHe ? "התנתקות (Graceful Logout)" : "Graceful Logout",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>DISCONNECT Frame:</strong>{" "}הקליינט שולח DISCONNECT Frame הכולל Receipt ID ייחודי לפני הסגירה. סגירת ה-Socket ללא ה-Handshake הזה מסתכנת באובדן שקט של נתונים (Bytes) שעדיין ממתינים בתור ב-Kernel Send Buffer.</p>
@@ -304,6 +304,7 @@ const SCOPED_CSS = `
 .spl-trigger-btn--active  { background: #EEF2FF; }
 .spl-trigger-arrow { font-size: 0.85rem; transition: transform 0.2s ease; }
 .spl-trigger-btn:hover .spl-trigger-arrow { transform: translateX(3px); }
+[dir="rtl"] .spl-trigger-btn:hover .spl-trigger-arrow { transform: translateX(-3px); }
 
 /* ── Terminal panel — intentionally dark (UX plan §5.3) ─────────────────── */
 .spl-panel {
@@ -441,12 +442,13 @@ function TerminalPanel({
 
 /* ─── StorySection ───────────────────────────────────────────────────────── */
 function StorySection({
-  section, isActive, isPlaying, onTrigger,
+  section, isActive, isPlaying, onTrigger, isHe = false,
 }: {
   section: StorySectionData;
   isActive: boolean;
   isPlaying: boolean;
   onTrigger: () => void;
+  isHe?: boolean;
 }) {
   return (
     <div className={`spl-section${isActive ? " spl-section--active" : ""}`}>
@@ -461,7 +463,7 @@ function StorySection({
       >
         <span>▶</span>
         {section.btnLabel}
-        <span className="spl-trigger-arrow">→</span>
+        <span className="spl-trigger-arrow">{isHe ? "←" : "→"}</span>
       </button>
     </div>
   );
@@ -777,7 +779,7 @@ export default function LightSPLCaseStudy({ lang = "en" }: { lang?: Lang }) {
         </div>
 
         {/* Split pane */}
-        <div className="spl-split">
+        <div className="spl-split" dir={isHe ? "rtl" : undefined}>
           <div className="spl-story" style={{ display: storyVisible ? undefined : "none" }}>
             {SECTIONS.map(section => (
               <StorySection
@@ -786,11 +788,12 @@ export default function LightSPLCaseStudy({ lang = "en" }: { lang?: Lang }) {
                 isActive={activeStep === section.stepId}
                 isPlaying={isPlaying}
                 onTrigger={() => playScenario(section.stepId)}
+                isHe={isHe}
               />
             ))}
           </div>
 
-          <div className="spl-terminal" style={{ display: demoVisible ? undefined : "none" }}>
+          <div className="spl-terminal" dir="ltr" style={{ display: demoVisible ? undefined : "none" }}>
             <TerminalPanel
               title="bash — messi"
               subtitle="@stomp-client  [keyboard-thread + socket-thread]"

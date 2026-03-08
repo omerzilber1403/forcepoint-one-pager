@@ -1,5 +1,5 @@
 "use client";
-import { Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight, ChevronLeft } from "lucide-react";
+import { Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight } from "lucide-react";
 
 type Lang = "en" | "he";
 
@@ -59,8 +59,8 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         <div style={{ display:"flex", alignItems:"center", gap:"1px" }}>
           {isHe ? (
             <>
-              <ChevronLeft className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45 }} />
-              <ChevronLeft className="lfp-arr" size={16} style={{ color:"#4F46E5" }} />
+              <ChevronRight className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45, transform:"scaleX(-1)" }} />
+              <ChevronRight className="lfp-arr" size={16} style={{ color:"#4F46E5", transform:"scaleX(-1)" }} />
             </>
           ) : (
             <>
@@ -137,8 +137,8 @@ function StompCard({ lang }: { lang: Lang }) {
         <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"2px" }}>
           {isHe ? (
             <>
-              <ChevronLeft className="lfp-arr" size={18} style={{ color:"#4F46E5" }} />
-              <ChevronLeft className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45 }} />
+              <ChevronRight className="lfp-arr" size={18} style={{ color:"#4F46E5", transform:"scaleX(-1)" }} />
+              <ChevronRight className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45, transform:"scaleX(-1)" }} />
             </>
           ) : (
             <>
@@ -156,11 +156,7 @@ function StompCard({ lang }: { lang: Lang }) {
       <ul style={{ listStyle:"none", margin:0, padding:0, display:"flex", flexDirection:"column", gap:"0.5rem" }}>
         {bullets.map(item => (
           <li key={item} style={{ display:"flex", alignItems:"flex-start", gap:"0.5rem", fontSize:"0.8rem", color:"#57534E" }}>
-            {isHe ? (
-              <ChevronLeft size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px" }} />
-            ) : (
-              <ChevronRight size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px" }} />
-            )}{item}
+            <ChevronRight size={13} style={{ color:"#4F46E5", flexShrink:0, marginTop:"2px", transform: isHe ? "scaleX(-1)" : undefined }} />{item}
           </li>
         ))}
       </ul>
@@ -217,7 +213,7 @@ export default function LightForcepointShowcase({ lang = "en" }: { lang?: Lang }
             {isHe ? "מהירות אוטומציה עם AI בשילוב הנדסת מערכות ברמה נמוכה — שילוב מדויק שForcepoint צריך לשלוח כלי אבטחה מבוסס AI במהירות." : "AI automation velocity paired with low-level systems engineering — the exact combination Forcepoint needs to ship AI-native security tooling fast."}
           </p>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:"1.25rem", marginBottom:"2rem", alignItems:"start" }}>
+        <div dir={isHe ? "rtl" : undefined} style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:"1.25rem", marginBottom:"2rem", alignItems:"start" }}>
           <SalesBotCard lang={lang} />
           <StompCard lang={lang} />
         </div>

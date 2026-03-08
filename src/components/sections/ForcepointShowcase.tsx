@@ -1,6 +1,6 @@
 "use client";
 import {
-  Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight, ChevronLeft,
+  Shield, KeyRound, Bot, Zap, Github, ArrowUpRight, ChevronRight,
 } from "lucide-react";
 
 /* ── Forcepoint brand tokens ─────────────────────────────────────────────── */
@@ -120,8 +120,8 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         <div className="flex items-center gap-0.5">
           {isHe ? (
             <>
-              <ChevronLeft className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
-              <ChevronLeft className="fp-arr  w-4 h-4" style={{ color: FP.teal }} />
+              <ChevronRight className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55, transform: "scaleX(-1)" }} />
+              <ChevronRight className="fp-arr  w-4 h-4" style={{ color: FP.teal, transform: "scaleX(-1)" }} />
             </>
           ) : (
             <>
@@ -276,8 +276,8 @@ function StompCard({ lang }: { lang: Lang }) {
         <div className="flex flex-col items-center justify-center gap-1 flex-shrink-0">
           {isHe ? (
             <>
-              <ChevronLeft className="fp-arr  w-5 h-5" style={{ color: FP.teal }} />
-              <ChevronLeft className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5 }} />
+              <ChevronRight className="fp-arr  w-5 h-5" style={{ color: FP.teal, transform: "scaleX(-1)" }} />
+              <ChevronRight className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5, transform: "scaleX(-1)" }} />
             </>
           ) : (
             <>
@@ -306,11 +306,10 @@ function StompCard({ lang }: { lang: Lang }) {
       <ul className="flex flex-col gap-1.5">
         {aiBullets.map((item) => (
           <li key={item} className="flex items-start gap-2 text-xs text-slate-400">
-            {isHe ? (
-              <ChevronLeft className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
-            ) : (
-              <ChevronRight className="w-3.5 h-3.5 flex-shrink-0 mt-px" style={{ color: FP.teal }} />
-            )}
+            <ChevronRight
+              className="w-3.5 h-3.5 flex-shrink-0 mt-px"
+              style={{ color: FP.teal, transform: isHe ? "scaleX(-1)" : undefined }}
+            />
             {item}
           </li>
         ))}
@@ -428,7 +427,7 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8 items-start" dir={isHe ? "rtl" : undefined}>
           <SalesBotCard lang={lang} />
           <StompCard lang={lang} />
         </div>

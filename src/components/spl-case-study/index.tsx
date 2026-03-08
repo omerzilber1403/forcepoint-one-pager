@@ -82,7 +82,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "boot",
       badge:    isHe ? "01 / ארכיטקטורה" : "01 / Architecture",
       headline: isHe ? "מחסנית תלת-שכבתית (A Three-Tier Stack)" : "A Three-Tier Stack",
-      btnLabel: isHe ? "אתחול המערכת →" : "Boot the System",
+      btnLabel: isHe ? "אתחול המערכת" : "Boot the System",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>שרת Java (שכבה עליונה):</strong>{" "}ממומש ב-Java, ותומך גם במודל <code>Thread-Per-Client (TPC)</code> — שבו כל חיבור מקבל תהליכון OS ייעודי שחוסם (Blocks) על קריאות Socket — וגם במודל <code>Reactor</code> א-סינכרוני, שבו לולאת Selector מנתבת אירועי I/O-readiness ל-Thread Pool מוגבל.</p>
@@ -101,7 +101,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "login",
       badge:    isHe ? "02 / מקביליות" : "02 / Concurrency",
       headline: isHe ? "מודל קליינט מבוסס שני תהליכונים (Two-Thread Client Model)" : "Two-Thread Client Model",
-      btnLabel: isHe ? "חיבור קליינטים →" : "Connect Clients",
+      btnLabel: isHe ? "חיבור קליינטים" : "Connect Clients",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>תהליכונים ייעודיים:</strong>{" "}הקליינט ב-C++ מריץ שני תהליכונים (Threads) מקבילים בעת ההתחברות כדי למנוע חסימה של ה-UI בזמן פעולות רשת (Network I/O) — תהליכון אחד לקלט ממשתמש, ותהליכון שני לזרם הנתונים מה-Socket.</p>
@@ -120,7 +120,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "pubsub",
       badge:    isHe ? "03 / פרוטוקול" : "03 / Protocol",
       headline: isHe ? "STOMP 1.2 מאפס (STOMP 1.2 from Scratch)" : "STOMP 1.2 from Scratch",
-      btnLabel: isHe ? "הרשמה ודיווח →" : "Subscribe & Report",
+      btnLabel: isHe ? "הרשמה ודיווח" : "Subscribe & Report",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>מחזור חיים מלא:</strong>{" "}מימוש מלא של סט ה-Frames של STOMP — <code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>SEND</code>, <code>MESSAGE</code>, <code>DISCONNECT</code>, <code>RECEIPT</code>, <code>ERROR</code> — גם בצד השרת וגם בצד הלקוח.</p>
@@ -139,7 +139,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "summary",
       badge:    isHe ? "04 / מבני נתונים" : "04 / Data Structures",
       headline: isHe ? "אגרגציה בצד הלקוח (Client-Side Aggregation)" : "Client-Side Aggregation",
-      btnLabel: isHe ? "יצירת סיכום →" : "Generate Summary",
+      btnLabel: isHe ? "יצירת סיכום" : "Generate Summary",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>מעקב אירועים:</strong>{" "}מפענח קבצי אירועים ב-JSON ושומר את אירועי המשחק במבנה נתונים מסוג Nested Map, שבו המפתחות הם שם הערוץ והמשתמש המדווח. השרת רק שומר את ה-Frames הגולמיים — כל לוגיקת האגרגציה יושבת לחלוטין בצד הלקוח.</p>
@@ -158,7 +158,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
       stepId:   "logout",
       badge:    isHe ? "05 / מחזור חיים" : "05 / Lifecycle",
       headline: isHe ? "כיבוי חינני (Graceful Shutdown)" : "Graceful Shutdown",
-      btnLabel: isHe ? "התנתקות (Graceful Logout) →" : "Graceful Logout",
+      btnLabel: isHe ? "התנתקות (Graceful Logout)" : "Graceful Logout",
       body: isHe ? (
         <div className="spl-body">
           <p><strong style={{ color: S }}>DISCONNECT Frame:</strong>{" "}הקליינט שולח DISCONNECT Frame הכולל Receipt ID ייחודי לפני הסגירה. סגירת ה-Socket ללא ה-Handshake הזה מסתכנת באובדן שקט של נתונים (Bytes) שעדיין ממתינים בתור ב-Kernel Send Buffer.</p>
@@ -318,6 +318,7 @@ const SCOPED_CSS = `
 .spl-trigger-btn--active  { background: rgba(76,199,184,0.15); box-shadow: 0 0 0 1px #4cc7b8 inset; }
 .spl-trigger-arrow { font-size: 0.85rem; transition: transform 0.2s ease; }
 .spl-trigger-btn:hover .spl-trigger-arrow { transform: translateX(3px); }
+[dir="rtl"] .spl-trigger-btn:hover .spl-trigger-arrow { transform: translateX(-3px); }
 
 /* ── Terminal panel ─────────────────────────────────────────────────────── */
 .spl-panel {
@@ -483,12 +484,13 @@ function TerminalPanel({
 
 /* ─── StorySection ───────────────────────────────────────────────────────── */
 function StorySection({
-  section, isActive, isPlaying, onTrigger,
+  section, isActive, isPlaying, onTrigger, isHe = false,
 }: {
   section:   StorySectionData;
   isActive:  boolean;
   isPlaying: boolean;
   onTrigger: () => void;
+  isHe?:     boolean;
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -508,7 +510,7 @@ function StorySection({
       >
         <span>▶</span>
         {section.btnLabel}
-        <span className="spl-trigger-arrow">→</span>
+        <span className="spl-trigger-arrow">{isHe ? "←" : "→"}</span>
       </button>
     </div>
   );
@@ -912,8 +914,8 @@ export default function SPLCaseStudy({ lang = "en" }: { lang?: Lang }) {
         </div>
 
         {/* Split pane */}
-        <div className="spl-split">
-          {/* Left: story */}
+        <div className="spl-split" dir={isHe ? "rtl" : undefined}>
+          {/* Story panel — right in RTL, left in LTR */}
           <div
             className="spl-story"
             style={{ display: storyVisible ? undefined : "none" }}
@@ -925,13 +927,15 @@ export default function SPLCaseStudy({ lang = "en" }: { lang?: Lang }) {
                 isActive={activeStep === section.stepId}
                 isPlaying={isPlaying}
                 onTrigger={() => playScenario(section.stepId)}
+                isHe={isHe}
               />
             ))}
           </div>
 
-          {/* Right: terminal */}
+          {/* Terminal panel — left in RTL; keep dir=ltr so code stays L→R */}
           <div
             className="spl-terminal"
+            dir="ltr"
             style={{ display: demoVisible ? undefined : "none" }}
           >
             <TerminalPanel
