@@ -9,7 +9,7 @@ const API_URL =
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type StepId = "multitenant" | "routing" | "handoff" | "forcepoint";
+type StepId = "multicompany" | "routing" | "handoff" | "learning" | "forcepoint";
 
 interface ChatMessage {
   id: number;
@@ -52,9 +52,9 @@ const DEMO_COMPANIES: DemoCompanyMeta[] = [
 function makeSections(isHe: boolean): StorySectionData[] {
   return [
     {
-      stepId: "multitenant",
+      stepId: "multicompany",
       badge: isHe ? "01 / ארכיטקטורה" : "01 / Architecture",
-      headline: isHe ? "גרף אחד, לכל חברה" : "One Graph, Every Company",
+      headline: isHe ? "מנוע אחד, סביבות מרובות" : "One Engine, Infinite Environments",
       demoMessage: "ספר לי על השירותים שלך",
       targetDomain: "geula-surf.co.il",
       btnLabel: isHe ? "שאל על המוצרים ←" : "Ask About Products →",
@@ -62,18 +62,17 @@ function makeSections(isHe: boolean): StorySectionData[] {
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>Company-as-Config:</strong>{" "}
-            הזהות של כל חברה — קטלוג מוצרים ותמחור, כאבי לקוח, Tone of Voice,
-            הגדרת ICP, חוקי Handoff ושדות מידע לאיסוף — נשמרת תחת שורת DB אחת
-            כעמודות JSON. אין צורך לשנות שורת קוד אחת כדי להוסיף Tenant חדש.
+            הזהות של כל חברה — קטלוג מוצרים, כאבי לקוח, Tone of Voice,
+            הגדרת ICP וחוקי Handoff — נשמרת תחת שורת DB אחת כעמודות JSON.
+            אין צורך לשנות שורת קוד אחת כדי להוסיף חברה חדשה.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>
               גרף Stateless, מסד נתונים Stateful:
             </strong>{" "}
-            הפונקציה <code>create_sales_graph(company_data)</code> משתמשת
-            ב-Closure על אובייקט החברה בכל קריאה. הגרף של LangGraph מיוצר מחדש
-            בכל בקשה — שורת ה-DB היא ה-Tenant, והגרף אינו שומר שום State בין
-            הסשנים.
+            המופע (Instance) של LangGraph נוצר באופן דינמי בכל בקשה על בסיס
+            נתוני ה-DB של החברה. הגרף לא שומר State בין סשנים, מה שמבטיח
+            בידוד נתונים מוחלט.
           </p>
         </div>
       ) : (
@@ -81,18 +80,17 @@ function makeSections(isHe: boolean): StorySectionData[] {
           <p>
             <strong style={{ color: "#cbd5e1" }}>Company-as-Config:</strong>{" "}
             Every company&apos;s identity — products with prices, pain points,
-            brand voice, ICP definition, handoff rules, and custom fields to
-            collect — lives in a single <code>Company</code> DB row as JSON
-            columns. No code change is needed to onboard a new tenant.
+            brand voice, ICP definition, handoff rules, and custom fields —
+            lives in a single <code>Company</code> DB row as JSON columns. No
+            code changes are needed to onboard a new company.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              Stateless graph, stateful DB:
+              Stateless Graph, Stateful DB:
             </strong>{" "}
-            <code>create_sales_graph(company_data)</code> closes over the
-            company dict per-request. The LangGraph graph is re-instantiated
-            fresh on every call — the DB row is the tenant, and the graph holds
-            zero state between sessions.
+            The LangGraph instance is generated dynamically per request using
+            the company&apos;s DB config. The graph holds zero state between
+            sessions, ensuring total data isolation and zero cross-contamination.
           </p>
         </div>
       ),
@@ -100,47 +98,45 @@ function makeSections(isHe: boolean): StorySectionData[] {
     {
       stepId: "routing",
       badge: isHe ? "02 / ניתוב בגרף (Graph Routing)" : "02 / Graph Routing",
-      headline: isHe ? "ה-Graph מחליט: B2C או B2B" : "B2C or B2B — the Graph Decides",
+      headline: isHe ? "מסלולי B2B ו-B2C חכמים" : "Smart B2B & B2C Pathways",
       demoMessage: "מה העסק שלכם עושה?",
       targetDomain: "scaleit.co.il",
       btnLabel: isHe ? "החלפה למצב B2B ←" : "Switch to B2B →",
       body: isHe ? (
         <div className="bot-body">
           <p>
-            <strong style={{ color: "#cbd5e1" }}>First-class routing node:</strong>{" "}
-            לאחר בניית הקונטקסט של הלקוח, הגרף קורא את{" "}
-            <code>company_data[&quot;business_type&quot;]</code> ומנתב
-            ל-<code>b2c_sales_agent</code> או ל-<code>b2b_sales_agent</code>.
-            אלו לא סתם תנאי If-Else בתוך Node אחד — מדובר בשני צמתים נפרדים
-            לחלוטין בגרף, שלכל אחד מהם בלוק System Prompt עצמאי.
+            <strong style={{ color: "#cbd5e1" }}>First-Class Routing Node:</strong>{" "}
+            לאחר בניית קונטקסט הלקוח, הגרף קורא את{" "}
+            <code>company_data[&quot;business_type&quot;]</code> ומנתב לסוכן
+            B2C או B2B. אלו לא תנאי If-Else בתוך צומת אחד — מדובר בשני
+            צמתים נפרדים לחלוטין עם פרומפטים שונים.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>עולמות שונים, אותו API:</strong>{" "}
-            משתמשי B2C מקבלים Prompt חם וזורם בעברית — רמת גלישה, גודל קבוצה,
-            תאריך מועדף. משתמשי B2B מקבלים Prompt מקצועי וייעוצי — גודל החברה,
-            מערכת CRM נוכחית, מקבל ההחלטות, לוחות זמנים. לחצו כדי להחליף
-            ל-SCALE IT ולשלוח את אותה שאלה בדיוק.
+            משתמשי B2C מקבלים פרומפט חם וזורם (רמת גלישה, גודל קבוצה).
+            משתמשי B2B מקבלים פרומפט ייעוצי ומקצועי (גודל חברה, CRM נוכחי,
+            מקבל החלטות). לחצו כדי להחליף ל-SCALE IT ולראות את ההבדל.
           </p>
         </div>
       ) : (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              First-class routing node:
+              First-Class Routing Node:
             </strong>{" "}
-            After building customer context, the graph reads{" "}
+            After building customer context, the graph evaluates{" "}
             <code>company_data[&quot;business_type&quot;]</code> and routes to
-            either <code>b2c_sales_agent</code> or <code>b2b_sales_agent</code>.
-            These aren&apos;t conditional flags inside one node — they are two
-            distinct graph nodes with separate system prompt blocks.
+            either a B2C or B2B agent. These aren&apos;t conditional flags
+            inside one node — they are two distinct graph nodes with separate
+            system prompts.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              Different worlds, same API:
+              Different Worlds, Same API:
             </strong>{" "}
-            B2C gets a warm, informal Hebrew prompt — surfing level, group size,
-            preferred date. B2B gets a professional consultant prompt — company
-            size, current CRM, decision maker, timeline. Click to switch to
+            B2C gets a warm, informal prompt (surfing level, group size,
+            preferred date). B2B gets a professional consultant prompt (company
+            size, current CRM, decision maker, timeline). Click to switch to
             SCALE IT and send the same question.
           </p>
         </div>
@@ -149,26 +145,26 @@ function makeSections(isHe: boolean): StorySectionData[] {
     {
       stepId: "handoff",
       badge: isHe ? "03 / מנגנון העברה לנציג (Handoff Guard)" : "03 / Handoff Guard",
-      headline: isHe ? "אסקלציה (Escalation) בשני שלבים" : "Two-Stage Escalation",
+      headline: isHe ? "אסקלציה בשני שלבים" : "Two-Stage Escalation",
       demoMessage: "אני רוצה לדבר עם נציג אנושי",
       btnLabel: isHe ? "הפעלת מנגנון Handoff ←" : "Trigger Handoff →",
       body: isHe ? (
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              שלב 1 — רשימה שחורה (Keyword Blocklist):
+              שלב 1 — סינון מילות מפתח (Zero-Cost):
             </strong>{" "}
-            רשימה מפורשת של בקשות למענה אנושי (מנהל, נציג, תלונה, תפסיק…)
-            מפעילה Handoff מיידי — באפס עלות LLM. שאלות מכירה לגיטימיות (מחיר,
-            זמינות, איך זה עובד) מוחרגות במפורש כדי למנוע False Positives.
+            בקשות מפורשות למענה אנושי (מנהל, נציג, תלונה) מפעילות העברה
+            מיידית באפס עלות LLM. שאלות מכירה שגרתיות (מחיר, זמינות) מוחרגות
+            במפורש כדי למנוע False Positives.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              שלב 2 — סיווג בינארי באמצעות LLM:
+              שלב 2 — סיווג LLM בינארי:
             </strong>{" "}
-            רק הודעות לא ברורות שעוברות את שלב 1 מקבלות קריאה שנייה ל-LLM:
-            פרומפט בינארי (Single-shot) ששואל כן/לא האם המשתמש רוצה נציג אנושי.
-            שדה ה-<code>execution_path</code> בכל תגובה מראה איזה שלב הופעל.
+            הודעות מורכבות יותר מפעילות קריאת LLM נקודתית וקלה (Single-shot)
+            המכריעה ב-כן/לא האם נדרשת התערבות אנושית. שדה ה-
+            <code>execution_path</code> בתגובה מראה בדיוק איזה שלב הופעל.
             שלחו הודעת דמו כדי לראות את שני השלבים בפעולה.
           </p>
         </div>
@@ -176,21 +172,66 @@ function makeSections(isHe: boolean): StorySectionData[] {
         <div className="bot-body">
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              Stage 1 — keyword blocklist:
+              Stage 1 — Zero-Cost Blocklist:
             </strong>{" "}
-            An explicit human-request list (מנהל, נציג, תלונה, תפסיק…) triggers
-            handoff instantly with zero LLM cost. Straightforward sales
-            questions (price, availability, how-it-works) are explicitly
-            excluded to prevent false positives.
+            Explicit requests for human help (&ldquo;manager&rdquo;,
+            &ldquo;representative&rdquo;, &ldquo;complain&rdquo;) trigger an
+            instant handoff, bypassing the LLM entirely. Standard sales
+            questions (price, availability) are explicitly excluded to prevent
+            false positives.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>
-              Stage 2 — LLM binary classification:
+              Stage 2 — Binary LLM Classification:
             </strong>{" "}
-            Only ambiguous messages that pass stage 1 get a second LLM call: a
-            single-shot binary prompt asking כן/לא whether the user wants a
-            human. The <code>execution_path</code> in each response shows which
+            Ambiguous messages trigger a lightweight, single-shot LLM prompt
+            asking Yes/No if human intervention is needed. The{" "}
+            <code>execution_path</code> in each response shows exactly which
             stage fired. Send the demo message to see both stages in action.
+          </p>
+        </div>
+      ),
+    },
+    {
+      stepId: "learning",
+      badge: isHe ? "04 / לולאת למידה" : "04 / Learning Loop",
+      headline: isHe
+        ? "הנדסת פרומפטים מבוססת-פידבק"
+        : "Feedback-Driven Prompt Engineering",
+      demoMessage: isHe ? "מה התמחור שלכם?" : "What are your pricing plans?",
+      btnLabel: isHe ? "שאל שאלת תמחור ←" : "Ask a Pricing Question →",
+      body: isHe ? (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>מפידבק לשינוי הפרומפט:</strong>{" "}
+            משתמשים מדרגים את התשובות ב-1 עד 5 כוכבים. לפני הבקשה הבאה,
+            המערכת מזהה נושאים חלשים (תמחור, טון) ומוסיפה אוטומטית הוראות
+            דריסה (Overrides) מותאמות אישית בתחתית ה-System Prompt.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>ללא צורך באימון מחדש:</strong>{" "}
+            דפוסים שליליים מצטברים ומשנים אוטומטית את התנהגות הבוט עבור אותה
+            חברה — אך ורק באמצעות Prompt Engineering. היסטוריית השיחה מספקת
+            ל-LLM קונטקסט מלא בכל פנייה.
+          </p>
+        </div>
+      ) : (
+        <div className="bot-body">
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>
+              Feedback to Prompt Mutation:
+            </strong>{" "}
+            After each bot reply, users rate 1–5 stars. Before the next
+            request, the system categorizes low-rated topics (pricing, tone,
+            handoff) and dynamically appends tailored override instructions to
+            the bottom of the system prompt.
+          </p>
+          <p>
+            <strong style={{ color: "#cbd5e1" }}>No Retraining Required:</strong>{" "}
+            Negative patterns accumulate and instantly change the bot&apos;s
+            behavior for that company — purely through prompt engineering. The
+            full conversation history gives the LLM complete prior context on
+            every turn.
           </p>
         </div>
       ),
@@ -213,36 +254,36 @@ function makeSections(isHe: boolean): StorySectionData[] {
       body: isHe ? (
         <div className="bot-body">
           <p>
-            <strong style={{ color: "#cbd5e1" }}>הנתונים שלכם כבר בפנים.</strong>{" "}
-            קווי המוצרים של Forcepoint, הגדרת ה-ICP, ספר הטיפול בהתנגדויות,
-            המיצוב התחרותי (מול Netskope, Zscaler, Purview, Symantec) ומקרי
-            בוחן — כולם נשאבו מ-<code>forcepoint.com</code> באמצעות{" "}
+            <strong style={{ color: "#cbd5e1" }}>הנתונים כבר בפנים.</strong>{" "}
+            קווי המוצרים של Forcepoint, ה-ICP והמיצוב התחרותי (מול Netskope,
+            Zscaler, Purview, Symantec) נשאבו באמצעות{" "}
             <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> והוזנו
-            כסביבת לקוח נפרדת במערכת — אותו Zero-code pipeline שעוברת כל חברה.
+            כמרחב עבודה עצמאי. זהו אותו תהליך אוטומטי (Zero-code) שעוברת
+            כל חברה.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>נסו את זה עכשיו.</strong>{" "}
-            שאלו על False Positives ב-DLP, סיכוני נתונים ב-GenAI, תאימות
-            ל-FedRAMP, או איך Forcepoint עומדת מול Netskope — ככה בדיוק נשמע
-            סוכן מכירות שהוגדר במיוחד עבור Forcepoint. לחצו על הכפתור כדי
-            להתחיל את השיחה עם השאלה האמיתית הראשונה.
+            שאלו על False Positives ב-DLP, סיכוני GenAI, תאימות ל-FedRAMP,
+            או איך Forcepoint עומדת מול Netskope. לחצו על הכפתור כדי להתחיל
+            שיחה מול הבוט.
           </p>
         </div>
       ) : (
         <div className="bot-body">
           <p>
-            <strong style={{ color: "#cbd5e1" }}>Your data is already loaded.</strong>{" "}
-            Forcepoint&apos;s product lines, ICP definition, objection playbook, competitive
-            positioning against Netskope / Zscaler / Purview / Symantec, and case studies were
-            scraped from <code>forcepoint.com</code> using{" "}
-            <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> and seeded as a single
-            DB tenant — the same zero-code pipeline every company goes through.
+            <strong style={{ color: "#cbd5e1" }}>Data Already Seeded.</strong>{" "}
+            Forcepoint&apos;s product lines, ICP definition, objection playbook,
+            and competitive positioning (Netskope, Zscaler, Purview, Symantec)
+            were scraped from <code>forcepoint.com</code> via{" "}
+            <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> and
+            loaded as a single DB workspace. This is the exact zero-code
+            pipeline every new client goes through.
           </p>
           <p>
-            <strong style={{ color: "#cbd5e1" }}>Try it now.</strong>{" "}
-            Ask about DLP false positives, GenAI data risk, FedRAMP compliance, or how
-            Forcepoint stacks up against Netskope — this is what a configured Forcepoint
-            sales agent actually sounds like. Hit the button to open with the first real question.
+            <strong style={{ color: "#cbd5e1" }}>Test It Now.</strong>{" "}
+            Ask about DLP false positives, GenAI data risks, FedRAMP
+            compliance, or how Forcepoint stacks up against Netskope. Hit the
+            button to start chatting with the configured Forcepoint bot.
           </p>
         </div>
       ),
@@ -804,8 +845,8 @@ export default function AgentShowcase({ lang: langProp }: { lang?: "en" | "he" }
           <div className="bot-header-badge">
             <span className="bot-header-dot" />
             {isHe
-              ? "LangGraph · ארכיטקטורת Multi-Tenant · דמו חי ל-Forcepoint"
-              : "LangGraph · Multi-Tenant · Forcepoint Live"}
+              ? "LangGraph · Multi-Company · דמו חי ל-Forcepoint"
+              : "LangGraph · Multi-Company · Forcepoint Live"}
           </div>
           <h2 className="bot-title">
             {isHe ? (
@@ -823,22 +864,22 @@ export default function AgentShowcase({ lang: langProp }: { lang?: "en" | "he" }
           <p className="bot-subtitle">
             {isHe ? (
               <>
-                סוכן מכירות מבוסס LangGraph בארכיטקטורת Multi-Tenant, הכולל
+                סוכן מכירות מבוסס LangGraph התומך במספר חברות במקביל, כולל
                 ניתוב B2B/B2C, מנגנון Handoff (העברה לנציג) דו-שלבי, ולולאת
                 למידה מבוססת-פידבק. הנתונים האמיתיים של Forcepoint מוזנים
-                פנימה כ-Tenant פעיל — לחצו על כל אחד מהחלקים כדי לשלוח הודעת
-                דמו ל-Backend האמיתי. נסו{" "}
+                פנימה כסביבת עבודה פעילה — לחצו על כל אחד מהחלקים כדי לשלוח
+                הודעת דמו ל-Backend האמיתי. נסו{" "}
                 <strong style={{ color: "#4cc7b8" }}>בעברית</strong> או{" "}
                 <strong style={{ color: "#4cc7b8" }}>באנגלית</strong> — הבוט
                 מזהה את השפה אוטומטית.
               </>
             ) : (
               <>
-                A LangGraph-powered multi-tenant sales agent with B2C/B2B
+                A LangGraph-powered multi-company sales agent with B2C/B2B
                 routing, two-stage handoff detection, and a feedback-driven
                 learning loop. Forcepoint&apos;s real product data is seeded as
-                a live tenant — click any section to send a demo message to the
-                real backend. Try it in{" "}
+                a live workspace — click any section to send a demo message to
+                the real backend. Try it in{" "}
                 <strong style={{ color: "#4cc7b8" }}>Hebrew</strong> or{" "}
                 <strong style={{ color: "#4cc7b8" }}>English</strong> — the
                 agent detects language automatically.
