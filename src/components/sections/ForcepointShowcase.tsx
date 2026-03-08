@@ -37,6 +37,12 @@ const SHOWCASE_CSS = `
   .fp-glow-text { animation: fp-glow-pulse 2.6s ease-in-out infinite; }
   .fp-arr  { animation: fp-arrow-pulse 0.65s ease-in-out infinite alternate; }
   .fp-arr2 { animation: fp-arrow-pulse 0.65s 0.18s ease-in-out infinite alternate; }
+  @keyframes fp-arrow-pulse-rtl {
+    from { transform: scaleX(-1) translateX(2px);  opacity: 0.55; }
+    to   { transform: scaleX(-1) translateX(-2px); opacity: 1;    }
+  }
+  .fp-arr-rtl  { animation: fp-arrow-pulse-rtl 0.65s ease-in-out infinite alternate; }
+  .fp-arr2-rtl { animation: fp-arrow-pulse-rtl 0.65s 0.18s ease-in-out infinite alternate; }
 `;
 
 /* ── Pill tag ────────────────────────────────────────────────────────────── */
@@ -120,8 +126,8 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         <div className="flex items-center gap-0.5">
           {isHe ? (
             <>
-              <ChevronRight className="fp-arr2 w-4 h-4" style={{ color: FP.teal, opacity: 0.55, transform: "scaleX(-1)" }} />
-              <ChevronRight className="fp-arr  w-4 h-4" style={{ color: FP.teal, transform: "scaleX(-1)" }} />
+              <ChevronRight className="fp-arr2-rtl w-4 h-4" style={{ color: FP.teal, opacity: 0.55 }} />
+              <ChevronRight className="fp-arr-rtl  w-4 h-4" style={{ color: FP.teal }} />
             </>
           ) : (
             <>
@@ -276,8 +282,8 @@ function StompCard({ lang }: { lang: Lang }) {
         <div className="flex flex-col items-center justify-center gap-1 flex-shrink-0">
           {isHe ? (
             <>
-              <ChevronRight className="fp-arr  w-5 h-5" style={{ color: FP.teal, transform: "scaleX(-1)" }} />
-              <ChevronRight className="fp-arr2 w-5 h-5" style={{ color: FP.teal, opacity: 0.5, transform: "scaleX(-1)" }} />
+              <ChevronRight className="fp-arr-rtl  w-5 h-5" style={{ color: FP.teal }} />
+              <ChevronRight className="fp-arr2-rtl w-5 h-5" style={{ color: FP.teal, opacity: 0.5 }} />
             </>
           ) : (
             <>

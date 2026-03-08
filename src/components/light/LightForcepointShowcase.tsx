@@ -12,6 +12,9 @@ const CSS = `
   .lfp-a3 { animation: lfp-fade-up 0.5s 0.32s ease both; }
   .lfp-arr  { animation: lfp-arr 0.6s ease-in-out infinite alternate; }
   .lfp-arr2 { animation: lfp-arr 0.6s 0.18s ease-in-out infinite alternate; }
+  @keyframes lfp-arr-rtl { from{transform:scaleX(-1) translateX(2px)} to{transform:scaleX(-1) translateX(-2px)} }
+  .lfp-arr-rtl  { animation: lfp-arr-rtl 0.6s ease-in-out infinite alternate; }
+  .lfp-arr2-rtl { animation: lfp-arr-rtl 0.6s 0.18s ease-in-out infinite alternate; }
   .lfp-card { background:#fff; border:1px solid #E7E5E4; border-radius:1.25rem; padding:1.75rem;
     box-shadow:0 1px 4px rgba(28,25,23,0.06);
     transition:box-shadow 0.2s,border-color 0.2s,transform 0.2s;
@@ -59,8 +62,8 @@ function SalesBotCard({ lang }: { lang: Lang }) {
         <div style={{ display:"flex", alignItems:"center", gap:"1px" }}>
           {isHe ? (
             <>
-              <ChevronRight className="lfp-arr2" size={16} style={{ color:"#4F46E5", opacity:0.45, transform:"scaleX(-1)" }} />
-              <ChevronRight className="lfp-arr" size={16} style={{ color:"#4F46E5", transform:"scaleX(-1)" }} />
+              <ChevronRight className="lfp-arr2-rtl" size={16} style={{ color:"#4F46E5", opacity:0.45 }} />
+              <ChevronRight className="lfp-arr-rtl"  size={16} style={{ color:"#4F46E5" }} />
             </>
           ) : (
             <>
@@ -137,8 +140,8 @@ function StompCard({ lang }: { lang: Lang }) {
         <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"2px" }}>
           {isHe ? (
             <>
-              <ChevronRight className="lfp-arr" size={18} style={{ color:"#4F46E5", transform:"scaleX(-1)" }} />
-              <ChevronRight className="lfp-arr2" size={18} style={{ color:"#4F46E5", opacity:0.45, transform:"scaleX(-1)" }} />
+              <ChevronRight className="lfp-arr-rtl"  size={18} style={{ color:"#4F46E5" }} />
+              <ChevronRight className="lfp-arr2-rtl" size={18} style={{ color:"#4F46E5", opacity:0.45 }} />
             </>
           ) : (
             <>
