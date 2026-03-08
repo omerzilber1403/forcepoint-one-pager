@@ -9,7 +9,7 @@ const API_URL =
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type StepId = "multitenant" | "routing" | "handoff" | "learning" | "forcepoint";
+type StepId = "multitenant" | "routing" | "handoff" | "forcepoint";
 
 interface ChatMessage {
   id: number;
@@ -191,58 +191,6 @@ function makeSections(isHe: boolean): StorySectionData[] {
             single-shot binary prompt asking כן/לא whether the user wants a
             human. The <code>execution_path</code> in each response shows which
             stage fired. Send the demo message to see both stages in action.
-          </p>
-        </div>
-      ),
-    },
-    {
-      stepId: "learning",
-      badge: isHe ? "04 / לולאת למידה (Learning Loop)" : "04 / Learning Loop",
-      headline: isHe ? "הפידבקים משכתבים את הפרומפט" : "Ratings Rewrite the Prompt",
-      demoMessage: "מה המחיר ומה כולל בדיוק?",
-      btnLabel: isHe ? "שאל שאלת תמחור ←" : "Ask a Pricing Question →",
-      body: isHe ? (
-        <div className="bot-body">
-          <p>
-            <strong style={{ color: "#cbd5e1" }}>Feedback → prompt mutation:</strong>{" "}
-            אחרי כל תשובה של הבוט, המשתמשים מדרגים 1–5 כוכבים עם אופציה לטקסט
-            חופשי. הדירוגים נשמרים ל-<code>data/ratings.json</code>. לפני כל
-            בקשה חדשה,{" "}
-            <code>get_company_learning_instructions()</code> קוראת את הקובץ,
-            מסווגת נושאים עם דירוג נמוך (תמחור / טון / תוכן / Handoff), ומוסיפה
-            הוראות דריסה (Overrides) מותאמות אישית בתחתית ה-System Prompt.
-          </p>
-          <p>
-            <strong style={{ color: "#cbd5e1" }}>
-              ללא צורך באימון מחדש (No Retraining Required):
-            </strong>{" "}
-            דפוסים שליליים מצטברים ומשנים את התנהגות הבוט עבור אותה חברה בסשן
-            הבא — אך ורק באמצעות Prompt Engineering. היסטוריית השיחה המלאה
-            מנוגנת מחדש לתוך הגרף בכל פנייה, מה שמעניק ל-LLM קונטקסט מקדים
-            מלא.
-          </p>
-        </div>
-      ) : (
-        <div className="bot-body">
-          <p>
-            <strong style={{ color: "#cbd5e1" }}>
-              Feedback → prompt mutation:
-            </strong>{" "}
-            After each bot reply, users rate 1–5 stars with optional free text.
-            Ratings persist to <code>data/ratings.json</code>. Before each new
-            request, <code>get_company_learning_instructions()</code> reads the
-            file, categorizes low-rated topics (pricing / tone / content /
-            handoff), and appends tailored override instructions at the bottom
-            of the system prompt.
-          </p>
-          <p>
-            <strong style={{ color: "#cbd5e1" }}>
-              No retraining required:
-            </strong>{" "}
-            Negative patterns accumulate and change the bot&apos;s behaviour for
-            that company in the next session — purely through prompt
-            engineering. The full conversation history is replayed into the
-            graph on every turn, giving the LLM complete prior context.
           </p>
         </div>
       ),
