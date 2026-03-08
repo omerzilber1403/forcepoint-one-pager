@@ -73,143 +73,108 @@ function buildErrorFrame(message: string, details: string[]): string {
 }
 
 /* ─── Story sections ─────────────────────────────────────────────────────── */
-const SECTIONS: StorySectionData[] = [
-  {
-    stepId:   "boot",
-    badge:    "01 / Architecture",
-    headline: "A Three-Tier Stack",
-    btnLabel: "Boot the System",
-    body: (
-      <div className="spl-body">
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Java Server (top tier):</strong>{" "}
-          Implemented in Java, supporting both <code>Thread-Per-Client (TPC)</code> —
-          each connection owns a dedicated OS thread blocking on socket reads — and a
-          non-blocking <code>Reactor</code> model, where a selector loop dispatches
-          I/O-readiness events to a bounded thread pool.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Python DB bridge (middle tier):</strong>{" "}
-          A Python server bridging via raw TCP on port <code>7778</code>, executing SQL
-          queries on a <code>SQLite</code> database. Handles user registration, login
-          records, and persisted event logs — keeping the Java server stateless.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>C++ Client (bottom tier):</strong>{" "}
-          Implemented in C++, acting as the client-side <code>STOMP 1.2</code> interface
-          for channel subscription, event reporting, and summary generation.
-        </p>
-      </div>
-    ),
-  },
-  {
-    stepId:   "login",
-    badge:    "02 / Concurrency",
-    headline: "Two-Thread Client Model",
-    btnLabel: "Connect Clients",
-    body: (
-      <div className="spl-body">
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Dedicated threads:</strong>{" "}
-          The C++ client runs two concurrent threads at login to prevent UI blocking
-          during network I/O — one for input, one for the live socket stream.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Keyboard thread:</strong>{" "}
-          Exclusively reads commands from <code>stdin</code> and writes outgoing STOMP
-          frames to the socket. Never reads from the socket — ownership is strict.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Socket thread:</strong>{" "}
-          Exclusively listens on the socket and dispatches incoming frames to registered
-          handlers. Owns the read side of the connection from login to teardown.
-        </p>
-      </div>
-    ),
-  },
-  {
-    stepId:   "pubsub",
-    badge:    "03 / Protocol",
-    headline: "STOMP 1.2 from Scratch",
-    btnLabel: "Subscribe & Report",
-    body: (
-      <div className="spl-body">
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Full lifecycle:</strong>{" "}
-          Implements the complete STOMP frame set —{" "}
-          <code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>SEND</code>,{" "}
-          <code>MESSAGE</code>, <code>DISCONNECT</code>, <code>RECEIPT</code>,{" "}
-          <code>ERROR</code> — across both client and server.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Client-generated IDs:</strong>{" "}
-          Subscription IDs and receipt IDs are generated uniquely by the client and
-          tracked locally. The server echoes them back in <code>MESSAGE</code> and{" "}
-          <code>RECEIPT</code> frames for O(1) client-side lookup.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Frame parsing:</strong>{" "}
-          Reads the raw socket stream, parses <code>header:value</code> pairs line by
-          line, and extracts the body until the null-char (<code>\0</code>) terminator.
-        </p>
-      </div>
-    ),
-  },
-  {
-    stepId:   "summary",
-    badge:    "04 / Data Structures",
-    headline: "Client-Side Aggregation",
-    btnLabel: "Generate Summary",
-    body: (
-      <div className="spl-body">
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Event tracking:</strong>{" "}
-          Parses JSON event files and stores game events in a nested map keyed by
-          channel name and reporting user. The server only persists raw frames — all
-          aggregation logic lives entirely on the client.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Chronological ordering:</strong>{" "}
-          Events are stored and printed ordered by occurrence time. A secondary sort
-          on the event list by the <code>time</code> field produces the final output.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Lexicographical stats:</strong>{" "}
-          Stats are aggregated locally and printed in lexicographical order by stat
-          name — the data structure guarantees order without a post-sort step.
-        </p>
-      </div>
-    ),
-  },
-  {
-    stepId:   "logout",
-    badge:    "05 / Lifecycle",
-    headline: "Graceful Shutdown",
-    btnLabel: "Graceful Logout",
-    body: (
-      <div className="spl-body">
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>DISCONNECT frame:</strong>{" "}
-          Client sends a <code>DISCONNECT</code> frame with a unique receipt ID before
-          closing. Closing the socket without this handshake risks silently dropping
-          bytes still queued in the kernel send buffer.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Server acknowledgment:</strong>{" "}
-          Client strictly waits for the matching <code>RECEIPT</code> frame before
-          calling <code>close(sockfd)</code>. The keyboard thread blocks on a
-          condition variable until the socket thread signals receipt confirmed.
-        </p>
-        <p>
-          <strong style={{ color: "#cbd5e1" }}>Zero message loss:</strong>{" "}
-          Per the STOMP 1.2 RFC, a <code>RECEIPT</code> is cumulative — it acknowledges
-          all preceding frames. This handshake guarantees every <code>SEND</code>
-          before the <code>DISCONNECT</code> was processed. No data is silently dropped.
-        </p>
-      </div>
-    ),
-  },
-];
+type Lang = "en" | "he";
+
+function makeSections(isHe: boolean): StorySectionData[] {
+  const S = "#cbd5e1";
+  return [
+    {
+      stepId:   "boot",
+      badge:    isHe ? "01 / ארכיטקטורה" : "01 / Architecture",
+      headline: isHe ? "מחסנית תלת-שכבתית (A Three-Tier Stack)" : "A Three-Tier Stack",
+      btnLabel: isHe ? "אתחול המערכת →" : "Boot the System",
+      body: isHe ? (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>שרת Java (שכבה עליונה):</strong>{" "}ממומש ב-Java, ותומך גם במודל <code>Thread-Per-Client (TPC)</code> — שבו כל חיבור מקבל תהליכון OS ייעודי שחוסם (Blocks) על קריאות Socket — וגם במודל <code>Reactor</code> א-סינכרוני, שבו לולאת Selector מנתבת אירועי I/O-readiness ל-Thread Pool מוגבל.</p>
+          <p><strong style={{ color: S }}>גישור DB ב-Python (שכבת אמצע):</strong>{" "}שרת Python המשמש כגשר מעל Raw TCP בפורט <code>7778</code>, ומבצע שאילתות SQL מול מסד נתונים <code>SQLite</code>. מנהל רישום משתמשים, לוגי התחברויות, ושמירת לוגי אירועים — מה שמשאיר את שרת ה-Java במצב Stateless.</p>
+          <p><strong style={{ color: S }}>קליינט C++ (שכבה תחתונה):</strong>{" "}ממומש ב-C++, ומשמש כממשק <code>STOMP 1.2</code> בצד הלקוח עבור הרשמה לערוצים, דיווח אירועים, ויצירת סיכומים.</p>
+        </div>
+      ) : (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>Java Server (top tier):</strong>{" "}Implemented in Java, supporting both <code>Thread-Per-Client (TPC)</code> — each connection owns a dedicated OS thread blocking on socket reads — and a non-blocking <code>Reactor</code> model, where a selector loop dispatches I/O-readiness events to a bounded thread pool.</p>
+          <p><strong style={{ color: S }}>Python DB bridge (middle tier):</strong>{" "}A Python server bridging via raw TCP on port <code>7778</code>, executing SQL queries on a <code>SQLite</code> database. Handles user registration, login records, and persisted event logs — keeping the Java server stateless.</p>
+          <p><strong style={{ color: S }}>C++ Client (bottom tier):</strong>{" "}Implemented in C++, acting as the client-side <code>STOMP 1.2</code> interface for channel subscription, event reporting, and summary generation.</p>
+        </div>
+      ),
+    },
+    {
+      stepId:   "login",
+      badge:    isHe ? "02 / מקביליות" : "02 / Concurrency",
+      headline: isHe ? "מודל קליינט מבוסס שני תהליכונים (Two-Thread Client Model)" : "Two-Thread Client Model",
+      btnLabel: isHe ? "חיבור קליינטים →" : "Connect Clients",
+      body: isHe ? (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>תהליכונים ייעודיים:</strong>{" "}הקליינט ב-C++ מריץ שני תהליכונים (Threads) מקבילים בעת ההתחברות כדי למנוע חסימה של ה-UI בזמן פעולות רשת (Network I/O) — תהליכון אחד לקלט ממשתמש, ותהליכון שני לזרם הנתונים מה-Socket.</p>
+          <p><strong style={{ color: S }}>תהליכון המקלדת (Keyboard Thread):</strong>{" "}קורא פקודות בלעדית מ-<code>stdin</code> וכותב STOMP Frames יוצאים אל ה-Socket. תהליכון זה לעולם לא קורא מה-Socket — הבעלות (Ownership) מוגדרת באופן נוקשה.</p>
+          <p><strong style={{ color: S }}>תהליכון ה-Socket (Socket Thread):</strong>{" "}מאזין בלעדית ל-Socket ומנתב Frames נכנסים ל-Handlers הרשומים. תהליכון זה מחזיק בבעלות על צד הקריאה (Read) של החיבור משלב הלוגין ועד ל-Teardown.</p>
+        </div>
+      ) : (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>Dedicated threads:</strong>{" "}The C++ client runs two concurrent threads at login to prevent UI blocking during network I/O — one for input, one for the live socket stream.</p>
+          <p><strong style={{ color: S }}>Keyboard thread:</strong>{" "}Exclusively reads commands from <code>stdin</code> and writes outgoing STOMP frames to the socket. Never reads from the socket — ownership is strict.</p>
+          <p><strong style={{ color: S }}>Socket thread:</strong>{" "}Exclusively listens on the socket and dispatches incoming frames to registered handlers. Owns the read side of the connection from login to teardown.</p>
+        </div>
+      ),
+    },
+    {
+      stepId:   "pubsub",
+      badge:    isHe ? "03 / פרוטוקול" : "03 / Protocol",
+      headline: isHe ? "STOMP 1.2 מאפס (STOMP 1.2 from Scratch)" : "STOMP 1.2 from Scratch",
+      btnLabel: isHe ? "הרשמה ודיווח →" : "Subscribe & Report",
+      body: isHe ? (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>מחזור חיים מלא:</strong>{" "}מימוש מלא של סט ה-Frames של STOMP — <code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>SEND</code>, <code>MESSAGE</code>, <code>DISCONNECT</code>, <code>RECEIPT</code>, <code>ERROR</code> — גם בצד השרת וגם בצד הלקוח.</p>
+          <p><strong style={{ color: S }}>מזהים מבוססי-לקוח (Client-generated IDs):</strong>{" "}מזהי הרשמות (Subscription IDs) ומזהי קבלות (Receipt IDs) מיוצרים בצורה ייחודית על ידי הלקוח ומנוהלים מקומית. השרת מהדהד אותם חזרה ב-<code>MESSAGE</code> ו-<code>RECEIPT</code> Frames לחיפוש O(1) בצד הלקוח.</p>
+          <p><strong style={{ color: S }}>פענוח (Frame Parsing):</strong>{" "}קורא את זרם ה-Raw Socket, מפענח צמדי <code>header:value</code> שורה אחר שורה, ומחלץ את גוף ההודעה (Body) עד לתו מסיים המחרוזת (<code>\0</code>).</p>
+        </div>
+      ) : (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>Full lifecycle:</strong>{" "}Implements the complete STOMP frame set — <code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>SEND</code>, <code>MESSAGE</code>, <code>DISCONNECT</code>, <code>RECEIPT</code>, <code>ERROR</code> — across both client and server.</p>
+          <p><strong style={{ color: S }}>Client-generated IDs:</strong>{" "}Subscription IDs and receipt IDs are generated uniquely by the client and tracked locally. The server echoes them back in <code>MESSAGE</code> and <code>RECEIPT</code> frames for O(1) client-side lookup.</p>
+          <p><strong style={{ color: S }}>Frame parsing:</strong>{" "}Reads the raw socket stream, parses <code>header:value</code> pairs line by line, and extracts the body until the null-char (<code>\0</code>) terminator.</p>
+        </div>
+      ),
+    },
+    {
+      stepId:   "summary",
+      badge:    isHe ? "04 / מבני נתונים" : "04 / Data Structures",
+      headline: isHe ? "אגרגציה בצד הלקוח (Client-Side Aggregation)" : "Client-Side Aggregation",
+      btnLabel: isHe ? "יצירת סיכום →" : "Generate Summary",
+      body: isHe ? (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>מעקב אירועים:</strong>{" "}מפענח קבצי אירועים ב-JSON ושומר את אירועי המשחק במבנה נתונים מסוג Nested Map, שבו המפתחות הם שם הערוץ והמשתמש המדווח. השרת רק שומר את ה-Frames הגולמיים — כל לוגיקת האגרגציה יושבת לחלוטין בצד הלקוח.</p>
+          <p><strong style={{ color: S }}>סידור כרונולוגי:</strong>{" "}האירועים נשמרים ומודפסים לפי סדר התרחשותם. מיון משני על רשימת האירועים לפי שדה הזמן (<code>time</code>) מייצר את הפלט הסופי.</p>
+          <p><strong style={{ color: S }}>סטטיסטיקות לקסיקוגרפיות:</strong>{" "}הסטטיסטיקות מחושבות מקומית ומודפסות בסדר לקסיקוגרפי לפי שם הסטטיסטיקה — מבנה הנתונים מבטיח את הסדר הזה ללא צורך בשלב מיון (Post-sort) נוסף.</p>
+        </div>
+      ) : (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>Event tracking:</strong>{" "}Parses JSON event files and stores game events in a nested map keyed by channel name and reporting user. The server only persists raw frames — all aggregation logic lives entirely on the client.</p>
+          <p><strong style={{ color: S }}>Chronological ordering:</strong>{" "}Events are stored and printed ordered by occurrence time. A secondary sort on the event list by the <code>time</code> field produces the final output.</p>
+          <p><strong style={{ color: S }}>Lexicographical stats:</strong>{" "}Stats are aggregated locally and printed in lexicographical order by stat name — the data structure guarantees order without a post-sort step.</p>
+        </div>
+      ),
+    },
+    {
+      stepId:   "logout",
+      badge:    isHe ? "05 / מחזור חיים" : "05 / Lifecycle",
+      headline: isHe ? "כיבוי חינני (Graceful Shutdown)" : "Graceful Shutdown",
+      btnLabel: isHe ? "התנתקות (Graceful Logout) →" : "Graceful Logout",
+      body: isHe ? (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>DISCONNECT Frame:</strong>{" "}הקליינט שולח DISCONNECT Frame הכולל Receipt ID ייחודי לפני הסגירה. סגירת ה-Socket ללא ה-Handshake הזה מסתכנת באובדן שקט של נתונים (Bytes) שעדיין ממתינים בתור ב-Kernel Send Buffer.</p>
+          <p><strong style={{ color: S }}>אישור שרת (Server Acknowledgment):</strong>{" "}הקליינט ממתין באופן נוקשה ל-RECEIPT Frame התואם לפני קריאה ל-<code>close(sockfd)</code>. תהליכון המקלדת נחסם על Condition Variable עד שתהליכון ה-Socket מאותת שהקבלה אושרה.</p>
+          <p><strong style={{ color: S }}>אפס אובדן הודעות (Zero Message Loss):</strong>{" "}לפי פרוטוקול STOMP 1.2 RFC, ה-RECEIPT הוא מצטבר (Cumulative) — הוא מאשר את כל ה-Frames שקדמו לו. לחיצת היד הזו מבטיחה שכל SEND שקדם ל-DISCONNECT עובד בהצלחה.</p>
+        </div>
+      ) : (
+        <div className="spl-body">
+          <p><strong style={{ color: S }}>DISCONNECT frame:</strong>{" "}Client sends a <code>DISCONNECT</code> frame with a unique receipt ID before closing. Closing the socket without this handshake risks silently dropping bytes still queued in the kernel send buffer.</p>
+          <p><strong style={{ color: S }}>Server acknowledgment:</strong>{" "}Client strictly waits for the matching <code>RECEIPT</code> frame before calling <code>close(sockfd)</code>. The keyboard thread blocks on a condition variable until the socket thread signals receipt confirmed.</p>
+          <p><strong style={{ color: S }}>Zero message loss:</strong>{" "}Per the STOMP 1.2 RFC, a <code>RECEIPT</code> is cumulative — it acknowledges all preceding frames. This handshake guarantees every <code>SEND</code> before the <code>DISCONNECT</code> was processed. No data is silently dropped.</p>
+        </div>
+      ),
+    },
+  ];
+}
 
 /* ─── Scoped CSS ─────────────────────────────────────────────────────────── */
 const SCOPED_CSS = `
@@ -550,7 +515,8 @@ function StorySection({
 }
 
 /* ─── SPLCaseStudy ───────────────────────────────────────────────────────── */
-export default function SPLCaseStudy() {
+export default function SPLCaseStudy({ lang = "en" }: { lang?: Lang }) {
+  const isHe = lang === "he";
   const welcome = (who: string): TerminalLine[] => [
     { type: "info",   text: `StompWCIClient — ${who}`, complete: true },
     { type: "output", text: "Click a button on the left to run a scenario ↑", complete: true },
@@ -566,6 +532,7 @@ export default function SPLCaseStudy() {
   const [serverLines,   setServerLines]   = useState<TerminalLine[]>(welcomeServer());
   const [isPlaying,     setIsPlaying]     = useState(false);
   const [activeTab,     setActiveTab]     = useState<"story" | "demo">("story");
+  const SECTIONS = makeSections(isHe);
 
   const messiBot   = useRef<HTMLDivElement>(null);
   const ronaldoBot = useRef<HTMLDivElement>(null);
@@ -891,50 +858,39 @@ export default function SPLCaseStudy() {
         <div className="spl-header">
           <span className="spl-header-badge">
             <span className="spl-header-dot" />
-            BGU SPL Systems Programming — World Cup 2022 Informer
+            {isHe ? "BGU SPL Systems Programming — אפליקציית דיווחי מונדיאל 2022" : "BGU SPL Systems Programming — World Cup 2022 Informer"}
           </span>
           <h2 className="spl-title">
-            A <span className="spl-title-em">Distributed</span> STOMP System
+            {isHe ? <>מערכת STOMP <span className="spl-title-em">מבוזרת</span> (Distributed STOMP System)</> : <>A <span className="spl-title-em">Distributed</span> STOMP System</>}
           </h2>
           <p className="spl-subtitle">
-            Java Reactor server · Python SQLite bridge · C++ multithreaded client · Custom STOMP 1.2 protocol over TCP. Five engineering decisions that shaped the implementation — click any button to watch the live protocol exchange.
+            {isHe
+              ? "שרת Java מבוסס Reactor · גישור ל-SQLite ב-Python · קליינט C++ מרובה תהליכונים (Multithreaded) · פרוטוקול STOMP 1.2 מותאם אישית מעל TCP. חמש החלטות הנדסיות שעיצבו את המימוש — לחצו על הכפתורים כדי לראות את תעבורת הפרוטוקול בלייב."
+              : "Java Reactor server · Python SQLite bridge · C++ multithreaded client · Custom STOMP 1.2 protocol over TCP. Five engineering decisions that shaped the implementation — click any button to watch the live protocol exchange."}
           </p>
           <p className="spl-subtitle" style={{ fontSize: "0.78rem", color: "#64748b", marginTop: "0.35rem" }}>
-            Simulated demo — interactions reflect the real protocol flow.
+            {isHe ? "* הדמו מכיל סימולציה — האינטראקציות משקפות את זרימת הפרוטוקול האמיתית." : "Simulated demo — interactions reflect the real protocol flow."}
           </p>
         </div>
 
         {/* Project context */}
-        <div className="spl-context">
+        <div className="spl-context" dir={isHe ? "rtl" : undefined}>
           <div className="spl-context-card">
-            <div className="spl-context-card-label">What it does</div>
+            <div className="spl-context-card-label">{isHe ? "מה המערכת עושה?" : "What it does"}</div>
             <div className="spl-context-card-body">
-              A <strong>real-time pub/sub event system</strong> for football matches.
-              Reporters upload game event JSON files to a named channel
-              (e.g. <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}>argentina_france</code>).
-              Every subscribed client instantly receives a MESSAGE frame per event —
-              scores, kickoffs, substitutions — as they are published.
+              {isHe ? (<>מערכת <strong>Pub/Sub בזמן אמת</strong> לאירועי משחקי כדורגל. כתבים מעלים קבצי JSON של אירועי משחק לערוץ ייעודי (למשל: <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}>argentina_france</code>). כל קליינט שמנוי לערוץ מקבל באופן מיידי MESSAGE frame על כל אירוע — שערים, בעיטות פתיחה, חילופים — ברגע שהם מפורסמים.</>) : (<>A <strong>real-time pub/sub event system</strong> for football matches. Reporters upload game event JSON files to a named channel (e.g. <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}>argentina_france</code>). Every subscribed client instantly receives a MESSAGE frame per event — scores, kickoffs, substitutions — as they are published.</>)}
             </div>
           </div>
           <div className="spl-context-card">
-            <div className="spl-context-card-label">Who uses it</div>
+            <div className="spl-context-card-label">{isHe ? "מי משתמש בזה?" : "Who uses it"}</div>
             <div className="spl-context-card-body">
-              Two user roles share the same server.
-              A <strong>reporter</strong> connects, subscribes to a channel,
-              and uploads an event file. A <strong>subscriber</strong> connects
-              and subscribes to receive live updates. Any client can call
-              <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}> summary</code> to
-              get aggregated stats for any reporter on any channel.
+              {isHe ? (<>שני סוגי משתמשים (Roles) חולקים את אותו השרת. <strong>כתב (Reporter)</strong> מתחבר, נרשם לערוץ, ומעלה קובץ אירועים. <strong>מנוי (Subscriber)</strong> מתחבר ונרשם כדי לקבל עדכונים בלייב. כל קליינט יכול לקרוא לפקודת <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}>summary</code> כדי לקבל נתונים סטטיסטיים מרוכזים עבור כל כתב, בכל ערוץ.</>) : (<>Two user roles share the same server. A <strong>reporter</strong> connects, subscribes to a channel, and uploads an event file. A <strong>subscriber</strong> connects and subscribes to receive live updates. Any client can call <code style={{ fontFamily: "monospace", fontSize: "0.75rem", color: "#4cc7b8" }}> summary</code> to get aggregated stats for any reporter on any channel.</>)}
             </div>
           </div>
           <div className="spl-context-card">
-            <div className="spl-context-card-label">Why STOMP</div>
+            <div className="spl-context-card-label">{isHe ? "למה STOMP?" : "Why STOMP"}</div>
             <div className="spl-context-card-body">
-              STOMP 1.2 provides <strong>channel-based pub/sub over raw TCP</strong> with
-              a standardized text frame format — CONNECT, SUBSCRIBE, SEND, MESSAGE,
-              DISCONNECT. Its <strong>RECEIPT handshake</strong> guarantees all frames
-              are processed before a client disconnects, making clean teardown reliable
-              without application-level polling.
+              {isHe ? (<>פרוטוקול STOMP 1.2 מספק <strong>ארכיטקטורת Pub/Sub מבוססת-ערוצים מעל TCP גולמי</strong> עם פורמט Frames טקסטואלי סטנדרטי — CONNECT, SUBSCRIBE, SEND, MESSAGE, DISCONNECT. מנגנון לחיצת-יד ה-<strong>RECEIPT</strong> מבטיח שכל ה-Frames עובדו במלואם לפני שהקליינט מתנתק, מה שמאפשר Teardown נקי ואמין ללא Polling ברמת האפליקציה.</>) : (<>STOMP 1.2 provides <strong>channel-based pub/sub over raw TCP</strong> with a standardized text frame format — CONNECT, SUBSCRIBE, SEND, MESSAGE, DISCONNECT. Its <strong>RECEIPT handshake</strong> guarantees all frames are processed before a client disconnects, making clean teardown reliable without application-level polling.</>)}
             </div>
           </div>
         </div>
@@ -945,13 +901,13 @@ export default function SPLCaseStudy() {
             className={`spl-tab${activeTab === "story" ? " spl-tab--active" : " spl-tab--inactive"}`}
             onClick={() => setActiveTab("story")}
           >
-            📖 Engineering Story
+            {isHe ? "📖 סיפור הנדסי" : "📖 Engineering Story"}
           </button>
           <button
             className={`spl-tab${activeTab === "demo" ? " spl-tab--active" : " spl-tab--inactive"}`}
             onClick={() => setActiveTab("demo")}
           >
-            ⚡ Live Terminal
+            {isHe ? "⚡ טרמינל חי" : "⚡ Live Terminal"}
           </button>
         </div>
 

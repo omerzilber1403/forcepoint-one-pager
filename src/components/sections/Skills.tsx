@@ -10,16 +10,28 @@ type Lang = "en" | "he";
 
 const HE: Record<string, { role:string; organization:string; period:string; metric?:string; highlights:string[] }> = {
   freelance: {
-    role: "מפתח ווב ו-AI עצמאי", organization: "עצמאי", period: "2023 – עד היום", metric: "3 מערכות ייצור שולחו",
-    highlights: ["מערכות ווב לייצור: React, Node.js, WordPress", "סוכן מכירות GenAI על LangGraph multi-agent", "אינטגרציית LLM API עם לוח מחוונים ב-React"],
+    role: "מפתח Web ו-AI עצמאי", organization: "פרילנס", period: "2023 – היום", metric: "3 מערכות Production הושקו",
+    highlights: [
+      "פיתוח מערכות Web לייצור: React, Node.js, WordPress",
+      "בניית סוכן מכירות GenAI מבוסס LangGraph (Multi-agent)",
+      "אינטגרציית מודלי שפה (LLM API) מול מערכות Dashboard ב-React",
+    ],
   },
   idf: {
-    role: "מפתח תוכנה", organization: 'חיל הים, צה"ל', period: "2020 – 2023", metric: "₪500,000/שנה נחסכו",
-    highlights: ["מדמי Unity3D / C# לאימון קצינים — מאות קצינים בשנה", "הדמייה מבוסס תרחישים + מנועי ניקוד אוטומטיים", "החליף ספק חיצוני — קיבל הכרה רשמית מהצבא"],
+    role: "מפתח תוכנה", organization: 'חיל הים, צה"ל', period: "2020 – 2023", metric: "חיסכון של ₪500,000 בשנה",
+    highlights: [
+      "פיתוח סימולטור (Unity3D / C#) לאימון מאות קצינים בשנה",
+      "בניית הדמיות מבוססות-תרחישים כולל מנועי ניקוד אוטומטיים (Scoring Engines)",
+      "המערכת החליפה ספק חיצוני וקיבלה הכרה רשמית מהצבא",
+    ],
   },
   bgu: {
-    role: "תואר ראשון במדעי המחשב", organization: "אוניברסיטת בן גוריון בנגב", period: "2024 – 2027", metric: "התמחות במדע נתונים",
-    highlights: ["סטודנט למדעי המחשב בבן גוריון (סמסטר 4), בהתמחות מדע נתונים.", "מבני נתונים: 98 | מבוא למדעי המחשב: 92", "תכנות מערכות (SPL): 87 | הסתברות: 93"],
+    role: "תואר ראשון (B.Sc.) במדעי המחשב", organization: "אוניברסיטת בן גוריון בנגב", period: "2024 – 2027", metric: "התמחות במדע נתונים (Data Science)",
+    highlights: [
+      "סטודנט בשנה ב' (סמסטר 4), במסלול מדעי הנתונים",
+      "מבני נתונים: 98 | מבוא למדעי המחשב: 92",
+      "תכנות מערכות (SPL): 87 | הסתברות: 93",
+    ],
   },
 };
 

@@ -62,7 +62,7 @@ export default function Home() {
       </div>
 
       <AgentShowcase />
-      <SPLCaseStudy />
+      <SPLCaseStudy lang={lang} />
       <Skills lang={lang} />
       <DataPrivacy lang={lang} />
       <Contact lang={lang} />

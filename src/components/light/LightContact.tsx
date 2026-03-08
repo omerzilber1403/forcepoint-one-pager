@@ -14,7 +14,7 @@ export default function LightContact({ lang = "en" }: { lang?: Lang }) {
           {isHe ? "צור קשר" : "Get in Touch"}
         </p>
         <h2 style={{ fontSize:"clamp(1.9rem,4vw,3rem)", fontWeight:700, color:"#1C1917", letterSpacing:"-0.025em", lineHeight:1.1, margin:"0 0 1rem" }}>
-          {isHe ? <>בואו נבנה משהו <span style={{ color:"#4F46E5" }}>שמשנה.</span></> : <>Let’s build something <span style={{ color:"#4F46E5" }}>that matters.</span></>}
+          {isHe ? <>בואו נבנה משהו <span style={{ color:"#4F46E5" }}>עם אימפקט.</span></> : <>Let’s build something <span style={{ color:"#4F46E5" }}>that matters.</span></>}
         </h2>
         <p style={{ color:"#57534E", maxWidth:"32rem", margin:"0 auto 3rem", lineHeight:1.75, fontSize:"1rem" }}>
           {isHe ? "פתוח לתפקיד סטודנט מהנדס תוכנה ב-Forcepoint. מענה מהיר מובטח." : "Open to the Software Engineer‑ Student role at Forcepoint. Fast reply guaranteed."}

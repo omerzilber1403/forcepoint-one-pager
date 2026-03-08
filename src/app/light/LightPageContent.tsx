@@ -69,7 +69,7 @@ export default function LightPageContent() {
       </div>
 
       <LightAgentShowcase />
-      <LightSPLCaseStudy />
+      <LightSPLCaseStudy lang={lang} />
       <LightSkills lang={lang} />
       <LightDataPrivacy lang={lang} />
       <LightContact lang={lang} />

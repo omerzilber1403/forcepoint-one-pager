@@ -15,7 +15,7 @@ export function Contact({ lang = "en" }: { lang?: Lang }) {
             {isHe ? "צור קשר" : "Get in Touch"}
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-text-primary mb-4">
-            {isHe ? "בואו נבנה משהו שמשנה." : "Let’s build something that matters."}
+            {isHe ? "בואו נבנה משהו עם אימפקט." : "Let’s build something that matters."}
           </h2>
           <p className="text-text-secondary max-w-lg mx-auto mb-10">
             {isHe ? "פתוח לתפקיד סטודנט מהנדס תוכנה ב-Forcepoint. מענה מהיר מובטח." : "Open to the Software Engineer‑ Student role at Forcepoint. Fast reply guaranteed."}
