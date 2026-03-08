@@ -10,7 +10,7 @@ type Lang = "en" | "he";
 
 const HE: Record<string, { role:string; organization:string; period:string; metric?:string; highlights:string[] }> = {
   freelance: {
-    role: "מפתח Web ו-AI עצמאי", organization: "פרילנס", period: "2023 – היום", metric: "הובלת 3 פרויקטים מקצה לקצה (End-to-End) שהושקו לסביבת ייצור (Production).",
+    role: "מפתח Web ו-AI עצמאי", organization: "פרילנס", period: "2023 – היום", metric: "הובלת פרויקטים מקצה לקצה",
     highlights: [
       "ארכיטקטורה ופיתוח אפליקציות Web מתקדמות ב-React ו-Node.js, תוך דגש על ביצועים וחווית משתמש.",
       "תכנון ומימוש סוכני מכירות אוטונומיים (GenAI) בארכיטקטורת Multi-agent מורכבת מבוססת LangGraph.",
