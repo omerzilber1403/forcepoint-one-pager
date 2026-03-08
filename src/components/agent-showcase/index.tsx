@@ -374,18 +374,57 @@ const SCOPED_CSS = `
 .bot-send:hover:not(:disabled) { background: #38b2a4; box-shadow: 0 4px 14px rgba(76,199,184,0.4); }
 .bot-send:disabled              { opacity: 0.45; cursor: not-allowed; }
 
-/* ── Offline / checking states ───────────────────────────────── */
+/* ── Warmup loading state ────────────────────────────────────── */
+.bot-warmup {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 1.5rem; padding: 2rem; text-align: center; min-height: 0;
+}
+.bot-warmup-ring {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid rgba(76,199,184,0.15); border-top-color: #4cc7b8;
+  animation: bot-spin 0.85s linear infinite;
+  box-shadow: 0 0 22px rgba(76,199,184,0.22);
+  flex-shrink: 0;
+}
+@keyframes bot-spin { to { transform: rotate(360deg); } }
+.bot-warmup-text {
+  font-size: 0.8rem; color: #64748b; line-height: 1.75;
+  max-width: 17rem; font-family: monospace;
+}
+.bot-warmup-text em { color: #4cc7b8; font-style: normal; font-weight: 600; }
+.bot-warmup-bars { width: 100%; max-width: 14rem; display: flex; flex-direction: column; gap: 0.45rem; }
+.bot-warmup-bar {
+  height: 8px; border-radius: 9999px; background: rgba(76,199,184,0.10);
+  animation: bot-shimmer 1.8s ease-in-out infinite;
+}
+.bot-warmup-bar:nth-child(2) { animation-delay: 0.25s; width: 78%; }
+.bot-warmup-bar:nth-child(3) { animation-delay: 0.5s;  width: 55%; }
+@keyframes bot-shimmer { 0%,100%{ opacity:0.4; } 50%{ opacity:1; } }
+
+/* ── Timeout / offline state ─────────────────────────────────── */
 .bot-offline {
   flex: 1; display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 0.9rem; padding: 2rem; text-align: center;
 }
-.bot-offline-icon  { font-size: 2.5rem; opacity: 0.5; }
-.bot-offline-title { font-size: 0.85rem; font-weight: 600; color: #64748b; }
-.bot-offline-cmd {
-  font-family: monospace; font-size: 0.72rem; color: #4cc7b8;
-  background: rgba(6,59,88,0.6); border: 1px solid rgba(76,199,184,0.2);
-  border-radius: 0.5rem; padding: 0.5rem 0.9rem;
+.bot-offline-icon  { font-size: 2.25rem; opacity: 0.55; }
+.bot-offline-title { font-size: 0.85rem; font-weight: 600; color: #64748b; font-family: monospace; }
+.bot-offline-msg   { font-size: 0.72rem; color: #475569; font-family: monospace; max-width: 15rem; line-height: 1.65; }
+.bot-retry-btn {
+  margin-top: 0.25rem; padding: 0.45rem 1.2rem; border-radius: 9999px;
+  border: 1px solid #4cc7b8; background: transparent; color: #4cc7b8;
+  font-size: 0.78rem; font-family: monospace; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease;
 }
+.bot-retry-btn:hover { background: #4cc7b8; color: #063b58; box-shadow: 0 4px 16px rgba(76,199,184,0.35); }
+
+/* ── Chat fade-in on backend ready ───────────────────────────── */
+.bot-chat-reveal {
+  display: flex; flex-direction: column; flex: 1; min-height: 0;
+  animation: bot-fade-in 0.45s ease both;
+}
+@keyframes bot-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Legacy checking class (kept for safety) ────────────────── */
 .bot-checking { flex: 1; display: flex; align-items: center; justify-content: center; }
 
 /* ── Responsive ──────────────────────────────────────────────── */
@@ -464,6 +503,7 @@ export default function AgentShowcase() {
   >("checking");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pollTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Stable per-company session IDs (reset only on page refresh)
   const sessionIds = useRef<Record<string, string>>({});
@@ -477,22 +517,58 @@ export default function AgentShowcase() {
   const selectedCompany =
     companies.find((c) => c.domain === selectedDomain) ?? companies[0];
 
-  // ── Backend health check ─────────────────────────────────────
+  // ── Language — read from localStorage written by the Navbar ──
+  const [lang, setLang] = useState<"en" | "he">("en");
   useEffect(() => {
-    const check = async () => {
-      try {
-        const r = await fetch(`${API_URL}/health`, {
-          signal: AbortSignal.timeout(4000),
-        });
-        setBackendStatus(r.ok ? "online" : "offline");
-      } catch {
-        setBackendStatus("offline");
+    const saved = localStorage.getItem("portfolio-lang");
+    if (saved === "en" || saved === "he") setLang(saved);
+    // Sync whenever the user switches language elsewhere in the page
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "portfolio-lang" && (e.newValue === "en" || e.newValue === "he")) {
+        setLang(e.newValue);
       }
     };
-    check();
-    const iv = setInterval(check, 30_000);
-    return () => clearInterval(iv);
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  // ── Backend warm-up: poll every 5 s for up to 60 s ───────────
+  const startWarmup = useCallback(() => {
+    if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+    setBackendStatus("checking");
+    const deadline = Date.now() + 60_000;
+
+    const poll = async () => {
+      try {
+        const r = await fetch(`${API_URL}/health`, {
+          signal: AbortSignal.timeout(4500),
+        });
+        if (r.ok) { setBackendStatus("online"); return; }
+      } catch { /* still waking */ }
+
+      if (Date.now() >= deadline) { setBackendStatus("offline"); return; }
+      pollTimerRef.current = setTimeout(poll, 5_000);
+    };
+
+    poll();
+  }, []);
+
+  useEffect(() => {
+    startWarmup();
+    return () => { if (pollTimerRef.current) clearTimeout(pollTimerRef.current); };
+  }, [startWarmup]);
+
+  // ── Re-check every 30 s once online to detect server restart ─
+  useEffect(() => {
+    if (backendStatus !== "online") return;
+    const iv = setInterval(async () => {
+      try {
+        const r = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(4000) });
+        if (!r.ok) startWarmup();
+      } catch { startWarmup(); }
+    }, 30_000);
+    return () => clearInterval(iv);
+  }, [backendStatus, startWarmup]);
 
   // ── Fetch company IDs once backend is confirmed online ───────
   useEffect(() => {
@@ -734,8 +810,8 @@ export default function AgentShowcase() {
                   {backendStatus === "online"
                     ? "Backend online"
                     : backendStatus === "offline"
-                      ? "Backend offline"
-                      : "Connecting…"}
+                      ? "Timed out"
+                      : "Waking up…"}
                 </span>
               </div>
               <div className="bot-company-tabs">
@@ -756,36 +832,40 @@ export default function AgentShowcase() {
               </div>
             </div>
 
-            {/* Body: checking / offline / chat */}
+            {/* Body: waking up / timed out / chat */}
             {backendStatus === "checking" ? (
-              <div className="bot-checking">
-                <div className="bot-typing-row">
-                  <div className="bot-dot" />
-                  <div className="bot-dot" />
-                  <div className="bot-dot" />
+              <div className="bot-warmup">
+                <div className="bot-warmup-ring" />
+                <div className="bot-warmup-bars">
+                  <div className="bot-warmup-bar" />
+                  <div className="bot-warmup-bar" />
+                  <div className="bot-warmup-bar" />
                 </div>
+                <p className="bot-warmup-text">
+                  {lang === "he" ? (
+                    <>מעירים את שרתי ה-AI... <em>זה עשוי לקחת כמה שניות</em>, אבל ברגע שזה יעלה — זה יטוס 🚀</>
+                  ) : (
+                    <>Waking up the AI servers&hellip; <em>This might take a few seconds</em>, but it&apos;ll be lightning fast once it&apos;s ready!</>
+                  )}
+                </p>
               </div>
             ) : backendStatus === "offline" ? (
               <div className="bot-offline">
-                <div className="bot-offline-icon">🔌</div>
+                <div className="bot-offline-icon">⏱️</div>
                 <div className="bot-offline-title">
-                  Backend not running
+                  {lang === "he" ? "השרת לא הגיב בזמן" : "Server didn't respond in time"}
                 </div>
-                <div className="bot-offline-cmd">
-                  uvicorn backend.main:app --reload
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.7rem",
-                    color: "#334155",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  Run from the agent-sales-bot directory
-                </div>
+                <p className="bot-offline-msg">
+                  {lang === "he"
+                    ? "ייתכן שהשרת עמוס. נסה שוב בעוד רגע."
+                    : "The server might be under load — give it another try."}
+                </p>
+                <button className="bot-retry-btn" onClick={startWarmup}>
+                  {lang === "he" ? "נסה שוב ↺" : "Retry ↺"}
+                </button>
               </div>
             ) : (
-              <>
+              <div className="bot-chat-reveal">
                 {/* Messages */}
                 <div className="bot-messages">
                   {messages.length === 0 && (
@@ -883,7 +963,7 @@ export default function AgentShowcase() {
                     שלח
                   </button>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
