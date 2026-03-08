@@ -29,37 +29,11 @@ export default function Home() {
     localStorage.setItem("portfolio-lang", l);
   };
 
-  const isHe = lang === "he";
-
   return (
     <main>
       <Navbar lang={lang} onLangChange={handleLangChange} />
       <Hero lang={lang} />
       <ForcepointShowcase lang={lang} />
-
-      {/* Demo teaser — bridges the engineering projects to the live demo below */}
-      <div
-        dir={isHe ? "rtl" : undefined}
-        style={{
-          textAlign: "center",
-          padding: "3.5rem 1.5rem 0",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "clamp(1.35rem, 3.5vw, 2rem)",
-            fontWeight: 800,
-            color: "#e2e8f0",
-            letterSpacing: "-0.02em",
-            lineHeight: 1.3,
-            margin: 0,
-          }}
-        >
-          {isHe
-            ? "יצרתי דמו במיוחד עבורכם 👇"
-            : "I built a live demo — just for you 👇"}
-        </p>
-      </div>
 
       <AgentShowcase />
       <SPLCaseStudy lang={lang} />
