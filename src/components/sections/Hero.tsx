@@ -9,6 +9,7 @@ import { OWNER } from "@/lib/data";
 import { Github, Linkedin, ArrowDown, Download } from "lucide-react";
 
 const HERO_ROTATING_WORDS = ["Intelligent", "Secure", "Privacy-Aware", "Policy-Driven", "Automation-First"];
+const HERO_ROTATING_WORDS_HE = ["חכמות", "מאובטחות", "אוטומטיות", "מונחות-מדיניות", "AI-First"];
 
 interface HeroProps {
   lang?: "en" | "he";
@@ -65,7 +66,14 @@ export function Hero({ lang = "en" }: HeroProps) {
             <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
               {isHe ? (
-                <>אני מפתח מערכות חכמות, בדגש על אבטחת מידע וחווית משתמש.</>
+                <>
+                  אני בונה מערכות{" "}
+                  <FlipWords
+                    words={HERO_ROTATING_WORDS_HE}
+                    duration={3000}
+                    className="text-accent font-bold"
+                  />
+                </>
               ) : (
                 <>
                   I build{" "}
