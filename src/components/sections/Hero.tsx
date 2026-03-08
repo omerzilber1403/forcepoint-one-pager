@@ -93,7 +93,7 @@ export function Hero({ lang = "en" }: HeroProps) {
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
               {isHe
-                ? "מפתח יוצא חיל הים — כיום סטודנט למדעי המחשב בבן גוריון ופרילנסר בתחום ה-AI. אני מאתר תהליכי עבודה עתירי-חיכוך ומפתח אוטומציות בעלות אימפקט מדיד. מתמחה ב-FastAPI, LangGraph, ותמיד בגישת Security-First."
+                ? "עומר זילברשטיין הופך תהליכים מורכבים למערכות AI חכמות. מפתח תוכנה ויוצא חיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד בשטח. מתמחה בבניית מערכות מונחות-מדיניות (Policy-Driven) באמצעות כלים כמו FastAPI ו-LangGraph, עם חשיבה שמתחילה תמיד מאבטחת מידע (Security-First)."
                 : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>

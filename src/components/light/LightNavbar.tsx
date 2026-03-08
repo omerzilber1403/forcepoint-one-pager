@@ -13,9 +13,13 @@ const HE_NAV_LABELS: Record<string, string> = {
 
 type Lang = "en" | "he";
 
-export default function LightNavbar() {
+interface LightNavbarProps {
+  lang?: Lang;
+  onLangChange?: (l: Lang) => void;
+}
+
+export default function LightNavbar({ lang = "en", onLangChange }: LightNavbarProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [lang, setLang] = useState<Lang>("en");
   const isHe = lang === "he";
 
   useEffect(() => {
@@ -24,16 +28,8 @@ export default function LightNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Sync with persisted preference
-  useEffect(() => {
-    const saved = localStorage.getItem("portfolio-lang") as Lang | null;
-    if (saved === "en" || saved === "he") setLang(saved);
-  }, []);
-
   const handleLangChange = () => {
-    const next: Lang = isHe ? "en" : "he";
-    setLang(next);
-    localStorage.setItem("portfolio-lang", next);
+    onLangChange?.(isHe ? "en" : "he");
   };
 
   const btnStyle: CSSProperties = {

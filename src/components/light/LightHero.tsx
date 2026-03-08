@@ -14,6 +14,12 @@ const HERO_ROTATING_WORDS = [
   "Automation-First",
 ];
 
+type Lang = "en" | "he";
+
+interface LightHeroProps {
+  lang?: Lang;
+}
+
 /* ── Ghost button ─────────────────────────────────────────────── */
 function GhostBtn({
   href,
@@ -66,42 +72,78 @@ function GhostBtn({
 }
 
 /* ── Architecture diagram (replaces Spline) ───────────────────── */
-function ArchDiagram() {
-  const nodes = [
-    {
-      label: "LangGraph Agent",
-      sub: "B2C · B2B routing · Handoff guard",
-      accent: "#4F46E5",
-      bg: "#EEF2FF",
-      border: "#C7D2FE",
-      textAccent: "#4338CA",
-    },
-    {
-      label: "FastAPI Backend",
-      sub: "REST :8080 · Multi-tenant config",
-      accent: "#7C3AED",
-      bg: "#F5F3FF",
-      border: "#DDD6FE",
-      textAccent: "#6D28D9",
-    },
-    {
-      label: "SQLite · Multi-tenant DB",
-      sub: "One JSON row per tenant · Zero restart",
-      accent: "#0369A1",
-      bg: "#F0F9FF",
-      border: "#BAE6FD",
-      textAccent: "#0284C7",
-    },
-  ];
+function ArchDiagram({ lang = "en" }: { lang?: Lang }) {
+  const isHe = lang === "he";
 
-  const stats = [
-    { value: "3", label: "Production systems" },
-    { value: "2+", label: "Live demos" },
-    { value: "₪500K", label: "Savings impact" },
-  ];
+  const nodes = isHe
+    ? [
+        {
+          label: "סוכן LangGraph",
+          sub: "ניתוב B2C · B2B · שמירת העברה",
+          accent: "#4F46E5",
+          bg: "#EEF2FF",
+          border: "#C7D2FE",
+          textAccent: "#4338CA",
+        },
+        {
+          label: "שרת FastAPI",
+          sub: "REST :8080 · הגדרה רב-לקוחית",
+          accent: "#7C3AED",
+          bg: "#F5F3FF",
+          border: "#DDD6FE",
+          textAccent: "#6D28D9",
+        },
+        {
+          label: "SQLite · בסיס נתונים רב-לקוחי",
+          sub: "שורת JSON אחת ללקוח · אפס אתחולים",
+          accent: "#0369A1",
+          bg: "#F0F9FF",
+          border: "#BAE6FD",
+          textAccent: "#0284C7",
+        },
+      ]
+    : [
+        {
+          label: "LangGraph Agent",
+          sub: "B2C · B2B routing · Handoff guard",
+          accent: "#4F46E5",
+          bg: "#EEF2FF",
+          border: "#C7D2FE",
+          textAccent: "#4338CA",
+        },
+        {
+          label: "FastAPI Backend",
+          sub: "REST :8080 · Multi-tenant config",
+          accent: "#7C3AED",
+          bg: "#F5F3FF",
+          border: "#DDD6FE",
+          textAccent: "#6D28D9",
+        },
+        {
+          label: "SQLite · Multi-tenant DB",
+          sub: "One JSON row per tenant · Zero restart",
+          accent: "#0369A1",
+          bg: "#F0F9FF",
+          border: "#BAE6FD",
+          textAccent: "#0284C7",
+        },
+      ];
+
+  const stats = isHe
+    ? [
+        { value: "3", label: "מערכות ייצור" },
+        { value: "2+", label: "הדגמות חיות" },
+        { value: "₪500K", label: "חיסכון מוכח" },
+      ]
+    : [
+        { value: "3", label: "Production systems" },
+        { value: "2+", label: "Live demos" },
+        { value: "₪500K", label: "Savings impact" },
+      ];
 
   return (
     <div
+      dir={isHe ? "rtl" : undefined}
       style={{
         width: "100%",
         borderRadius: "1.25rem",
@@ -127,7 +169,7 @@ function ArchDiagram() {
           marginBottom: "0.25rem",
         }}
       >
-        System Architecture
+        {isHe ? "ארכיטקטורת המערכת" : "System Architecture"}
       </div>
 
       {/* Node stack */}
@@ -268,7 +310,7 @@ function ArchDiagram() {
             fontWeight: 600,
           }}
         >
-          Forcepoint tenant live in demo ↓
+          {isHe ? "טנאנט Forcepoint חי בהדגמה ↓" : "Forcepoint tenant live in demo ↓"}
         </span>
       </div>
     </div>
@@ -276,7 +318,9 @@ function ArchDiagram() {
 }
 
 /* ── Main ─────────────────────────────────────────────────────── */
-export default function LightHero() {
+export default function LightHero({ lang = "en" }: LightHeroProps) {
+  const isHe = lang === "he";
+
   return (
     <section
       id="hero"
@@ -327,6 +371,7 @@ export default function LightHero() {
         <div className="lhero-grid">
           {/* ── LEFT: text column ─────────────────────────── */}
           <div
+            dir={isHe ? "rtl" : undefined}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -366,13 +411,16 @@ export default function LightHero() {
                     animation: "lhero-pulse 2.4s ease-in-out infinite",
                   }}
                 />
-                Applying — Software Engineer Student @ Forcepoint
+                {isHe
+                  ? "מועמד — סטודנט להנדסת תוכנה @ Forcepoint"
+                  : "Applying — Software Engineer Student @ Forcepoint"}
               </div>
             </FadeIn>
 
             {/* Name — elevated editorial */}
             <FadeIn delay={0.07}>
               <Sparkles
+                key={lang}
                 particleColor="#6366f1"
                 particleDensity={40}
                 className="block mb-2"
@@ -387,12 +435,12 @@ export default function LightHero() {
                     margin: 0,
                   }}
                 >
-                  {OWNER.name}
+                  {isHe ? "עומר זילברשטיין" : OWNER.name}
                 </h1>
               </Sparkles>
             </FadeIn>
 
-            {/* Flip tagline */}
+            {/* Tagline */}
             <FadeIn delay={0.18}>
               <div
                 style={{
@@ -403,15 +451,25 @@ export default function LightHero() {
                   lineHeight: 1.4,
                 }}
               >
-                I build{" "}
-                <span style={{ color: "#4F46E5" }}>
-                  <FlipWords
-                    words={HERO_ROTATING_WORDS}
-                    duration={3000}
-                    className="font-bold"
-                  />
-                </span>
-                {" "}systems.
+                {isHe ? (
+                  <>
+                    אני בונה מערכות{" "}
+                    <span style={{ color: "#4F46E5" }}>מונחות-מדיניות</span>{" "}
+                    (Policy-Driven).
+                  </>
+                ) : (
+                  <>
+                    I build{" "}
+                    <span style={{ color: "#4F46E5" }}>
+                      <FlipWords
+                        words={HERO_ROTATING_WORDS}
+                        duration={3000}
+                        className="font-bold"
+                      />
+                    </span>
+                    {" "}systems.
+                  </>
+                )}
               </div>
             </FadeIn>
 
@@ -426,10 +484,9 @@ export default function LightHero() {
                   maxWidth: "28rem",
                 }}
               >
-                IDF Navy developer — now BGU CS student &amp; AI freelancer.
-                I identify high-friction workflows and ship automations with
-                measurable before/after impact. FastAPI, LangGraph, always
-                security-first.
+                {isHe
+                  ? "עומר זילברשטיין הופך תהליכים מורכבים למערכות AI חכמות. מפתח תוכנה ויוצא חיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד בשטח. מתמחה בבניית מערכות מונחות-מדיניות (Policy-Driven) באמצעות כלים כמו FastAPI ו-LangGraph, עם חשיבה שמתחילה תמיד מאבטחת מידע (Security-First)."
+                  : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
               </p>
             </FadeIn>
 
@@ -475,7 +532,7 @@ export default function LightHero() {
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
-                  View My Work <ArrowDown size={16} />
+                  {isHe ? "צפה בעבודות שלי" : "View My Work"} <ArrowDown size={16} />
                 </a>
 
                 {/* Ghost buttons */}
@@ -483,7 +540,7 @@ export default function LightHero() {
                   href={OWNER.cvPdf}
                   download
                   icon={<Download size={15} />}
-                  label="Download CV"
+                  label={isHe ? "הורד קורות חיים" : "Download CV"}
                 />
                 <GhostBtn
                   href={OWNER.linkedin}
@@ -511,7 +568,7 @@ export default function LightHero() {
             }}
           >
             <FadeIn delay={0.2}>
-              <ArchDiagram />
+              <ArchDiagram lang={lang} />
             </FadeIn>
           </div>
         </div>
