@@ -270,7 +270,7 @@ function makeSections(isHe: boolean): StorySectionData[] {
             המיצוב התחרותי (מול Netskope, Zscaler, Purview, Symantec) ומקרי
             בוחן — כולם נשאבו מ-<code>forcepoint.com</code> באמצעות{" "}
             <strong style={{ color: "#4cc7b8" }}>Antigravity</strong> והוזנו
-            כ-Tenant בודד במערכת — אותו Zero-code pipeline שעוברת כל חברה.
+            כסביבת לקוח נפרדת במערכת — אותו Zero-code pipeline שעוברת כל חברה.
           </p>
           <p>
             <strong style={{ color: "#cbd5e1" }}>נסו את זה עכשיו.</strong>{" "}
