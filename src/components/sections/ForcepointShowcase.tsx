@@ -428,7 +428,7 @@ export function ForcepointShowcase({ lang = "en" }: { lang?: Lang }) {
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto text-sm leading-relaxed">
             {isHe
-              ? "שילוב מדויק בין מהירות פיתוח (AI Velocity) להבנת מערכות Low-Level — בדיוק הסט-יכולות ש-Forcepoint צריכה כדי לפתח ולשחרר (Ship) כלי אבטחה מבוססי AI במהירות ובבטחה."
+              ? "שילוב מדויק בין מהירות פיתוח להבנת מערכות Low-Level"
               : "AI automation velocity paired with low-level systems engineering \u2014 the exact combination Forcepoint needs to build and ship AI-native security tooling fast."}
           </p>
         </div>
