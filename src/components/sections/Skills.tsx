@@ -10,11 +10,11 @@ type Lang = "en" | "he";
 
 const HE: Record<string, { role:string; organization:string; period:string; metric?:string; highlights:string[] }> = {
   freelance: {
-    role: "מפתח Web ו-AI עצמאי", organization: "פרילנס", period: "2023 – היום", metric: "3 מערכות Production הושקו",
+    role: "מפתח Web ו-AI עצמאי", organization: "פרילנס", period: "2023 – היום", metric: "הובלת 3 פרויקטים מקצה לקצה (End-to-End) שהושקו לסביבת ייצור (Production).",
     highlights: [
-      "פיתוח מערכות Web לייצור: React, Node.js, WordPress",
-      "בניית סוכן מכירות GenAI מבוסס LangGraph (Multi-agent)",
-      "אינטגרציית מודלי שפה (LLM API) מול מערכות Dashboard ב-React",
+      "ארכיטקטורה ופיתוח אפליקציות Web מתקדמות ב-React ו-Node.js, תוך דגש על ביצועים וחווית משתמש.",
+      "תכנון ומימוש סוכני מכירות אוטונומיים (GenAI) בארכיטקטורת Multi-agent מורכבת מבוססת LangGraph.",
+      "הטמעת יכולות בינה מלאכותית (LLMs) בתוך ממשקי ניהול (Dashboards), ויצירת תהליכי עבודה חכמים מבוססי דאטה.",
     ],
   },
   idf: {
@@ -45,8 +45,8 @@ export function Skills({ lang = "en" }: { lang?: Lang }) {
         <FadeIn>
           <div className="mb-12 text-center">
             <p className="text-xs font-mono uppercase tracking-widest text-text-muted mb-3">{isHe ? "ניסיון" : "Experience"}</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-text-primary">{isHe ? "נבנה תחת אילוצים אמיתיים" : "Built under real constraints"}</h2>
-            <p className="mt-3 text-text-secondary max-w-xl mx-auto">{isHe ? "ממדמי ים לפרילנס AI — נשלח ובייצור." : "From Navy simulators to AI freelance work — shipped and in production."}</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text-primary">{isHe ? "פיתוח בתנאי שטח ואילוצי אמת" : "Built under real constraints"}</h2>
+            <p className="mt-3 text-text-secondary max-w-xl mx-auto">{isHe ? "מסימולטורים בחיל הים ועד מערכות AI בייצור (Production)." : "From Navy simulators to AI freelance work — shipped and in production."}</p>
           </div>
         </FadeIn>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
