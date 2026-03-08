@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, Geist_Mono, IBM_Plex_Sans_Hebrew } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -70,6 +71,7 @@ export default function RootLayout({
           <div className="orb orb-4" />
         </div>
         {children}
+        <Analytics />
       </body>
     </html>
   );
