@@ -42,7 +42,7 @@ interface StorySectionData {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DEMO_COMPANIES: DemoCompanyMeta[] = [
-  { domain: "geula-surf.co.il", label: "מועדון גלישה גאולה", type: "B2C" },
+  { domain: "geula-surf.co.il", label: "מועדון גלישה אלמוג", type: "B2C" },
   { domain: "scaleit.co.il", label: "SCALE IT", type: "B2B" },
   { domain: "forcepoint.com", label: "Forcepoint", type: "B2B" },
 ];
