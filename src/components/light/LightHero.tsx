@@ -205,25 +205,17 @@ export default function LightHero({ lang = "en" }: LightHeroProps) {
                   lineHeight: 1.4,
                 }}
               >
-                {isHe ? (
-                  <>
-                    אני בונה מערכות{" "}
-                    <span style={{ color: "#4F46E5" }}>מונחות-מדיניות</span>{" "}
-                    (Policy-Driven).
-                  </>
-                ) : (
-                  <>
-                    I build{" "}
-                    <span style={{ color: "#4F46E5" }}>
-                      <FlipWords
-                        words={HERO_ROTATING_WORDS}
-                        duration={3000}
-                        className="font-bold"
-                      />
-                    </span>
-                    {" "}systems.
-                  </>
-                )}
+                <>
+                  I build{" "}
+                  <span style={{ color: "#4F46E5" }}>
+                    <FlipWords
+                      words={HERO_ROTATING_WORDS}
+                      duration={3000}
+                      className="font-bold"
+                    />
+                  </span>
+                  {" "}systems.
+                </>
               </div>
             </FadeIn>
 
@@ -238,9 +230,7 @@ export default function LightHero({ lang = "en" }: LightHeroProps) {
                   maxWidth: "28rem",
                 }}
               >
-                {isHe
-                  ? "עומר זילברשטיין הופך תהליכים מורכבים למערכות AI חכמות. מפתח תוכנה ויוצא חיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד בשטח. מתמחה בבניית מערכות מונחות-מדיניות (Policy-Driven) באמצעות כלים כמו FastAPI ו-LangGraph, עם חשיבה שמתחילה תמיד מאבטחת מידע (Security-First)."
-                  : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
+                {"IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
               </p>
             </FadeIn>
 
