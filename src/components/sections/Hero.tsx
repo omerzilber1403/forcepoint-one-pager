@@ -64,33 +64,22 @@ export function Hero({ lang = "en" }: HeroProps) {
             {/* Flip tagline / static HE tagline */}
             <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
-              {isHe ? (
-                <>
-                  אני בונה מערכות מונחות-מדיניות{" "}
-                  <span className="inline-block relative text-accent font-bold">
-                    (Policy-Driven).
-                  </span>
-                </>
-              ) : (
-                <>
-                  I build{" "}
-                  <FlipWords
-                    words={HERO_ROTATING_WORDS}
-                    duration={3000}
-                    className="text-accent font-bold"
-                  />
-                  {" "}systems.
-                </>
-              )}
+              <>
+                I build{" "}
+                <FlipWords
+                  words={HERO_ROTATING_WORDS}
+                  duration={3000}
+                  className="text-accent font-bold"
+                />
+                {" "}systems.
+              </>
             </div>
             </FadeIn>
 
             {/* Bio blurb */}
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
-              {isHe
-                ? "עומר זילברשטיין הופך תהליכים מורכבים למערכות AI חכמות. מפתח תוכנה ויוצא חיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד בשטח. מתמחה בבניית מערכות מונחות-מדיניות (Policy-Driven) באמצעות כלים כמו FastAPI ו-LangGraph, עם חשיבה שמתחילה תמיד מאבטחת מידע (Security-First)."
-                : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
+              {"IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>
 
