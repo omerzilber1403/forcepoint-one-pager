@@ -64,22 +64,33 @@ export function Hero({ lang = "en" }: HeroProps) {
             {/* Flip tagline / static HE tagline */}
             <FadeIn delay={0.15}>
             <div className="mt-5 text-2xl sm:text-3xl font-bold text-text-secondary leading-snug">
-              <>
-                I build{" "}
-                <FlipWords
-                  words={HERO_ROTATING_WORDS}
-                  duration={3000}
-                  className="text-accent font-bold"
-                />
-                {" "}systems.
-              </>
+              {isHe ? (
+                <>
+                  אני בונה מערכות חכמות. אבטחת מידע מעל הכל{" "}
+                  <span className="inline-block relative text-accent font-bold">
+                    (Security-First).
+                  </span>
+                </>
+              ) : (
+                <>
+                  I build{" "}
+                  <FlipWords
+                    words={HERO_ROTATING_WORDS}
+                    duration={3000}
+                    className="text-accent font-bold"
+                  />
+                  {" "}systems.
+                </>
+              )}
             </div>
             </FadeIn>
 
             {/* Bio blurb */}
             <FadeIn delay={0.25}>
             <p className="mt-4 text-text-secondary text-base leading-relaxed max-w-md">
-              {"IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
+              {isHe
+                ? "בוגר יחידה טכנולוגית בחיל הים, כיום סטודנט למדעי המחשב באוניברסיטת בן גוריון ופרילנסר בעולמות ה-AI. הפוקוס שלי הוא איתור צווארי בקבוק ופיתוח אוטומציות שמייצרות אימפקט אמיתי ומדיד. אני מתמחה בבניית מערכות AI (כמו FastAPI ו-LangGraph) ששמות את אבטחת המידע בחזית, ומשלב יכולות פיתוח Low-Level עם מהירות עבודה של AI."
+                : "IDF Navy developer — now BGU CS student & AI freelancer. I identify high-friction workflows and ship automations with measurable before/after impact. FastAPI, LangGraph, always security-first."}
             </p>
             </FadeIn>
 
